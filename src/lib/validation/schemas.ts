@@ -135,6 +135,13 @@ export const adminMemberRoleSchema = z.object({
   is_active: z.boolean().default(true),
 });
 
+export const generalRequestSchema = z.object({
+  title: z.string().min(3, 'Title must be at least 3 characters'),
+  category: z.enum(['equipment', 'tool_access', 'sponsorship', 'mentorship', 'general']).default('general'),
+  description: z.string().min(10, 'Please describe your request in detail (what you need, why, timeline)'),
+  urgency: z.enum(['low', 'medium', 'high', 'critical']).default('medium'),
+});
+
 export const adminSettingsSchema = z.object({
   club_name: z.string().min(2, 'Club name required'),
   allowed_email_domain: z.string().min(2, 'Domain required (e.g. university.edu)'),

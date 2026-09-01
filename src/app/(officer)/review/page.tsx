@@ -4,16 +4,8 @@ import { requireRole } from '@/lib/auth/require-role';
 import { getDb } from '@/lib/db/mock-data';
 import { RequestCard } from '@/components/domain/request-card';
 import { EmptyState } from '@/components/domain/empty-state';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import {
   Inbox,
-  Clock,
-  CheckCircle2,
-  Users,
-  Trophy,
-  Lightbulb,
-  DollarSign,
   Filter,
 } from 'lucide-react';
 
@@ -28,7 +20,7 @@ export default async function OfficerReviewQueuePage({
   const kindFilter = params.kind || 'all';
   const statusFilter = params.status || 'pending';
 
-  // Gather requests from all 4 tables
+  // Gather requests from all 5 tables
   const teamReqs = db.team_requests.map((r) => ({
     ...r,
     kind: 'team' as const,
@@ -61,11 +53,20 @@ export default async function OfficerReviewQueuePage({
     amountCents: r.amount_requested_cents,
   }));
 
+  const generalReqs = (db.general_requests || []).map((r) => ({
+    ...r,
+    kind: 'general' as const,
+    title: r.title,
+    summary: `[Category: ${r.category} | Urgency: ${r.urgency}] ${r.description}`,
+    amountCents: undefined,
+  }));
+
   const allRequests = [
     ...teamReqs,
     ...compReqs,
     ...workshopReqs,
     ...fundingReqs,
+    ...generalReqs,
   ];
 
   // Counts by kind (pending)
@@ -73,7 +74,8 @@ export default async function OfficerReviewQueuePage({
   const pendingCompCount = compReqs.filter((r) => r.status === 'pending').length;
   const pendingWorkshopCount = workshopReqs.filter((r) => r.status === 'pending').length;
   const pendingFundingCount = fundingReqs.filter((r) => r.status === 'pending').length;
-  const totalPending = pendingTeamCount + pendingCompCount + pendingWorkshopCount + pendingFundingCount;
+  const pendingGeneralCount = generalReqs.filter((r) => r.status === 'pending').length;
+  const totalPending = pendingTeamCount + pendingCompCount + pendingWorkshopCount + pendingFundingCount + pendingGeneralCount;
 
   // Filter
   let filtered = allRequests;
@@ -93,38 +95,39 @@ export default async function OfficerReviewQueuePage({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100 flex items-center gap-2.5">
-              <Inbox className="h-6 w-6 text-brand-600" />
+            <h1 className="text-2xl font-black text-white flex items-center gap-2.5">
+              <Inbox className="h-6 w-6 text-red-500" />
               Unified Officer Review Queue
             </h1>
             {totalPending > 0 && (
-              <span className="flex h-6 px-2 items-center justify-center rounded-full bg-amber-500 text-white font-bold text-xs">
+              <span className="flex h-6 px-2.5 items-center justify-center rounded-full bg-red-600 text-white font-bold text-xs shadow-md shadow-red-950/50">
                 {totalPending} pending
               </span>
             )}
           </div>
-          <p className="text-xs text-slate-500">
-            Review, approve, or request modifications for new teams, proposed competitions, workshop topics, and project funding.
+          <p className="text-xs text-zinc-400">
+            Review and decide proposals across competitions, subteams, workshops, hardware funding, and lab equipment access.
           </p>
         </div>
       </div>
 
       {/* Kind Tabs with Pending Badges */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-slate-200 dark:border-slate-800">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-zinc-800">
         {[
           { id: 'all', label: 'All Requests', count: totalPending },
-          { id: 'team', label: 'Teams', count: pendingTeamCount },
           { id: 'competition', label: 'Competitions', count: pendingCompCount },
-          { id: 'workshop', label: 'Workshops', count: pendingWorkshopCount },
           { id: 'funding', label: 'Funding', count: pendingFundingCount },
+          { id: 'team', label: 'Subteams', count: pendingTeamCount },
+          { id: 'workshop', label: 'Workshops', count: pendingWorkshopCount },
+          { id: 'general', label: 'Equipment / Other', count: pendingGeneralCount },
         ].map((tab) => (
           <Link
             key={tab.id}
             href={`/review?kind=${tab.id}&status=${statusFilter}`}
-            className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap ${
+            className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all whitespace-nowrap ${
               kindFilter === tab.id
-                ? 'bg-brand-600 text-white shadow-xs'
-                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                ? 'bg-red-600 text-white shadow-md shadow-red-950/60'
+                : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200'
             }`}
           >
             <span>{tab.label}</span>
@@ -132,8 +135,8 @@ export default async function OfficerReviewQueuePage({
               <span
                 className={`text-3xs font-bold px-1.5 py-0.2 rounded-full ${
                   kindFilter === tab.id
-                    ? 'bg-white/20 text-white'
-                    : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+                    ? 'bg-black/40 text-white'
+                    : 'bg-red-950 text-red-400 border border-red-800'
                 }`}
               >
                 {tab.count}
@@ -145,7 +148,7 @@ export default async function OfficerReviewQueuePage({
 
       {/* Status Filter Sub-bar */}
       <div className="flex items-center gap-2 text-xs">
-        <span className="text-slate-400 flex items-center gap-1 font-medium">
+        <span className="text-zinc-500 flex items-center gap-1 font-medium">
           <Filter className="h-3 w-3" /> Status:
         </span>
         {[
@@ -158,10 +161,10 @@ export default async function OfficerReviewQueuePage({
           <Link
             key={st.id}
             href={`/review?kind=${kindFilter}&status=${st.id}`}
-            className={`px-2.5 py-1 rounded-md transition-colors ${
+            className={`px-2.5 py-1 rounded-md transition-all text-xs ${
               statusFilter === st.id
-                ? 'bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-bold'
-                : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                ? 'bg-zinc-800 text-white font-bold border border-zinc-700'
+                : 'text-zinc-500 hover:text-zinc-300'
             }`}
           >
             {st.label}
@@ -173,7 +176,7 @@ export default async function OfficerReviewQueuePage({
       {filtered.length === 0 ? (
         <EmptyState
           title="No Requests In This Queue View"
-          description="Everything in this category is currently up to date."
+          description="Everything in this category is currently processed."
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

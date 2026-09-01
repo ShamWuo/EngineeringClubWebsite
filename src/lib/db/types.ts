@@ -696,6 +696,50 @@ export interface Database {
           created_at?: string;
         };
       };
+      general_requests: {
+        Row: {
+          id: string;
+          requested_by: string;
+          title: string;
+          category: string;
+          description: string;
+          urgency: string;
+          status: RequestStatus;
+          reviewed_by: string | null;
+          reviewed_at: string | null;
+          review_note: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          requested_by: string;
+          title: string;
+          category?: string;
+          description: string;
+          urgency?: string;
+          status?: RequestStatus;
+          reviewed_by?: string | null;
+          reviewed_at?: string | null;
+          review_note?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          requested_by?: string;
+          title?: string;
+          category?: string;
+          description?: string;
+          urgency?: string;
+          status?: RequestStatus;
+          reviewed_by?: string | null;
+          reviewed_at?: string | null;
+          review_note?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
       club_settings: {
         Row: {
           id: string;
@@ -726,7 +770,7 @@ export interface Database {
     Views: {
       pending_requests: {
         Row: {
-          kind: 'team' | 'competition' | 'workshop' | 'funding';
+          kind: 'team' | 'competition' | 'workshop' | 'funding' | 'general';
           id: string;
           requested_by: string;
           created_at: string;

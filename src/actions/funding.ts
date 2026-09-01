@@ -1,8 +1,8 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { createAction } from '@/lib/actions/action-wrapper';
+import { safeRevalidatePath } from '@/lib/actions/safe-revalidate';
 import { fundingRequestSchema, fundingReviewSchema } from '@/lib/validation/schemas';
 import type { FundingStatus } from '@/lib/db/types';
 
@@ -85,9 +85,9 @@ export const submitFundingRequest = createAction(
         });
       });
 
-    revalidatePath('/funding');
-    revalidatePath('/dashboard');
-    revalidatePath('/review');
+    safeRevalidatePath('/requests');
+    safeRevalidatePath('/dashboard');
+    safeRevalidatePath('/review');
     return { request: fundingReq };
   }
 );
@@ -130,7 +130,7 @@ export const reviewFundingRequest = createAction(
       kind: 'funding_decision',
       title: `Funding Request ${newStatus.toUpperCase()} 💵`,
       body: `Your request "${req.title}" was updated to ${newStatus}. Note: ${input.note || 'None'}`,
-      href: '/funding',
+      href: '/requests',
       read_at: null,
       created_at: now,
     });
@@ -145,9 +145,8 @@ export const reviewFundingRequest = createAction(
       created_at: now,
     });
 
-    revalidatePath('/funding');
-    revalidatePath('/manage/funding');
-    revalidatePath('/review');
+    safeRevalidatePath('/requests');
+    safeRevalidatePath('/review');
     return { request: req };
   }
 );
@@ -170,7 +169,7 @@ export const markFundingReimbursed = createAction(
       kind: 'funding_reimbursed',
       title: 'Funds Reimbursed! 🏦',
       body: `Reimbursement processed for "${req.title}".`,
-      href: '/funding',
+      href: '/requests',
       read_at: null,
       created_at: now,
     });
@@ -185,8 +184,8 @@ export const markFundingReimbursed = createAction(
       created_at: now,
     });
 
-    revalidatePath('/funding');
-    revalidatePath('/manage/funding');
+    safeRevalidatePath('/requests');
+    safeRevalidatePath('/review');
     return { request: req };
   }
 );

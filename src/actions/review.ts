@@ -6,7 +6,7 @@ import { safeRevalidatePath } from '@/lib/actions/safe-revalidate';
 
 export const reviewRequestAction = createAction(
   z.object({
-    kind: z.enum(['team', 'competition', 'workshop', 'funding']),
+    kind: z.enum(['team', 'competition', 'workshop', 'funding', 'general']),
     requestId: z.string().uuid(),
     decision: z.enum(['approve', 'reject', 'changes_requested']),
     note: z.string().optional().nullable(),
@@ -18,7 +18,41 @@ export const reviewRequestAction = createAction(
     const { kind, requestId, decision, note } = input;
 
     if (decision === 'approve') {
-      if (kind === 'team') {
+      if (kind === 'general') {
+        const req = db.general_requests.find((r) => r.id === requestId);
+        if (!req) throw new Error('General request not found.');
+        req.status = 'approved';
+        req.reviewed_by = user.id;
+        req.reviewed_at = now;
+        req.review_note = note || null;
+        req.updated_at = now;
+
+        db.notifications.push({
+          id: crypto.randomUUID(),
+          user_id: req.requested_by,
+          kind: 'request_approved',
+          title: 'Request Approved! 🚀',
+          body: `Your request "${req.title}" has been approved by the officer team.`,
+          href: '/requests',
+          read_at: null,
+          created_at: now,
+        });
+
+        db.audit_log.push({
+          id: db.audit_log.length + 1,
+          actor_id: user.id,
+          action: 'approve_general_request',
+          entity_type: 'general_requests',
+          entity_id: requestId,
+          diff: { status: 'approved', note },
+          created_at: now,
+        });
+
+        safeRevalidatePath('/requests');
+        safeRevalidatePath('/review');
+        safeRevalidatePath('/dashboard');
+        return { createdEntityId: requestId };
+      } else if (kind === 'team') {
         const req = db.team_requests.find((r) => r.id === requestId);
         if (!req) throw new Error('Team request not found.');
         if (req.status !== 'pending' && req.status !== 'changes_requested') {
@@ -282,7 +316,17 @@ export const reviewRequestAction = createAction(
       let targetUserId = '';
       let targetTitle = '';
 
-      if (kind === 'team') {
+      if (kind === 'general') {
+        const req = db.general_requests.find((r) => r.id === requestId);
+        if (!req) throw new Error('General request not found.');
+        req.status = decision === 'reject' ? 'rejected' : 'changes_requested';
+        req.reviewed_by = user.id;
+        req.reviewed_at = now;
+        req.review_note = note || null;
+        req.updated_at = now;
+        targetUserId = req.requested_by;
+        targetTitle = req.title;
+      } else if (kind === 'team') {
         const req = db.team_requests.find((r) => r.id === requestId);
         if (!req) throw new Error('Team request not found.');
         req.status = decision === 'reject' ? 'rejected' : 'changes_requested';

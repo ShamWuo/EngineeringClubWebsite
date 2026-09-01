@@ -14,7 +14,7 @@ export function ReviewDecisionForm({
   currentStatus,
   requestedAmountCents,
 }: {
-  kind: 'team' | 'competition' | 'workshop' | 'funding';
+  kind: 'team' | 'competition' | 'workshop' | 'funding' | 'general';
   requestId: string;
   currentStatus: string;
   requestedAmountCents?: number;

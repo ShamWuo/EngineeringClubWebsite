@@ -216,9 +216,9 @@ export default async function TeamWorkspacePage({
                   <DollarSign className="h-4 w-4 text-emerald-600" />
                   Team Funding
                 </CardTitle>
-                <Link href="/funding/new">
-                  <Button variant="ghost" size="sm" className="h-6 text-2xs text-brand-600">
-                    + New
+                <Link href="/requests/new?type=funding">
+                  <Button variant="ghost" size="sm" className="h-6 text-2xs text-red-400 hover:text-red-300">
+                    + Request
                   </Button>
                 </Link>
               </div>

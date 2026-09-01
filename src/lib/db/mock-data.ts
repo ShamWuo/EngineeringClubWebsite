@@ -15,6 +15,7 @@ export interface AppState {
   funding_requests: Database['public']['Tables']['funding_requests']['Row'][];
   funding_line_items: Database['public']['Tables']['funding_line_items']['Row'][];
   funding_attachments: Database['public']['Tables']['funding_attachments']['Row'][];
+  general_requests: Database['public']['Tables']['general_requests']['Row'][];
   work_logs: Database['public']['Tables']['work_logs']['Row'][];
   links: Database['public']['Tables']['links']['Row'][];
   notifications: Database['public']['Tables']['notifications']['Row'][];
@@ -26,6 +27,22 @@ export function getInitialMockData(): AppState {
   const now = new Date();
 
   return {
+    general_requests: [
+      {
+        id: 'b0000001-1111-1111-1111-111111111111',
+        requested_by: '44444444-4444-4444-4444-444444444444',
+        title: 'Formlabs Form 4 SLA Resin 3D Printer Access',
+        category: 'equipment',
+        description: 'Requesting permission and budget allocation for high-precision resin printing for aerodynamic wind tunnel models and optical sensor brackets.',
+        urgency: 'medium',
+        status: 'pending',
+        reviewed_by: null,
+        reviewed_at: null,
+        review_note: null,
+        created_at: new Date(Date.now() - 3 * 86400000).toISOString(),
+        updated_at: new Date().toISOString(),
+      },
+    ],
     club_settings: {
       id: 'default',
       club_name: 'Apex University Engineering Club',

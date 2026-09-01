@@ -62,6 +62,23 @@ describe('Server Actions & Atomic Side-Effects', () => {
       expect(fundingReq.amount_approved_cents).toBe(40000);
       expect(fundingReq.review_note).toContain('Approved up to $400');
     });
+
+    it('approving a general equipment request updates status and records audit log', async () => {
+      const db = getDb();
+      const genReq = db.general_requests[0];
+      expect(genReq.status).toBe('pending');
+
+      const res = await reviewRequestAction({
+        kind: 'general',
+        requestId: genReq.id,
+        decision: 'approve',
+        note: 'Granted 3D printing lab access.',
+      });
+
+      expect(res.ok).toBe(true);
+      expect(genReq.status).toBe('approved');
+      expect(genReq.review_note).toBe('Granted 3D printing lab access.');
+    });
   });
 
   describe('Links Tier Constraints', () => {

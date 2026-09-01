@@ -9,6 +9,7 @@ import {
   workshopRequestSchema,
   fundingRequestSchema,
   fundingLineItemSchema,
+  generalRequestSchema,
   workLogSchema,
   linkSchema,
   adminSettingsSchema,
@@ -130,6 +131,27 @@ describe('Validation Schemas', () => {
         label: 'Bad Link',
         url: 'not-a-url',
         tier: 'secondary',
+      });
+      expect(res.success).toBe(false);
+    });
+  });
+
+  describe('generalRequestSchema', () => {
+    it('accepts valid general and equipment requests', () => {
+      const res = generalRequestSchema.safeParse({
+        title: 'Formlabs Resin 3D Printer Access',
+        category: 'equipment',
+        description: 'Need access to SLA resin 3D printing for aerodynamic wind tunnel parts.',
+        urgency: 'high',
+      });
+      expect(res.success).toBe(true);
+    });
+
+    it('rejects short descriptions under 10 characters', () => {
+      const res = generalRequestSchema.safeParse({
+        title: 'Tool Access',
+        category: 'equipment',
+        description: 'short',
       });
       expect(res.success).toBe(false);
     });
