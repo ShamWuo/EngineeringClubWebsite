@@ -73,7 +73,7 @@ export function ClubSettingsEditor({ settings }: { settings: SettingsRow }) {
             </label>
             <Input
               required
-              placeholder="university.edu"
+              placeholder="bvsd.org"
               value={domain}
               onChange={(e) => setDomain(e.target.value)}
             />

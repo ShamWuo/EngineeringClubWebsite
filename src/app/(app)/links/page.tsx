@@ -23,7 +23,7 @@ export default async function LinksPage() {
             Curated Club Links & Resources
           </h1>
           <p className="text-xs text-slate-500 mt-1">
-            Access essential software licenses, safety waivers, team Discord servers, and university expense guidelines.
+            Access essential software licenses, safety waivers, team Discord servers, and FHS school travel and equipment policies.
           </p>
         </div>
 

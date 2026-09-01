@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Plus, Send, Trophy, Users, Lightbulb, DollarSign, HelpCircle, ArrowRight, MessageSquare } from 'lucide-react';
 
 export const metadata = {
-  title: 'Request Center — Apex Engineering',
+  title: 'Request Center — FHS Engineering',
   description: 'Submit and track your competition, funding, subteam, workshop, and equipment requests.',
 };
 

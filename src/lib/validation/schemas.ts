@@ -144,6 +144,6 @@ export const generalRequestSchema = z.object({
 
 export const adminSettingsSchema = z.object({
   club_name: z.string().min(2, 'Club name required'),
-  allowed_email_domain: z.string().min(2, 'Domain required (e.g. university.edu)'),
+  allowed_email_domain: z.string().min(2, 'Domain required (e.g. bvsd.org)'),
   budget_ceiling_cents: z.coerce.number().int().min(0),
 });

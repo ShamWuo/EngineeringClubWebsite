@@ -4,7 +4,7 @@ import { getDb } from '@/lib/db/mock-data';
 import { UniversalRequestForm } from './universal-request-form';
 
 export const metadata = {
-  title: 'Submit Request — Apex Engineering',
+  title: 'Submit Request — FHS Engineering',
   description: 'Submit competition proposals, funding requests, subteams, workshops, or equipment access.',
 };
 

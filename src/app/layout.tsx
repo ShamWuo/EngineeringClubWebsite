@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Engineering Club Portal',
-  description: 'Members-only portal for university engineering competitions, teams, workshops, funding, and work logs.',
+  title: 'Fairview High School Engineering Club | FHS Knights',
+  description: 'Members portal for Fairview High School engineering competitions, subteams, workshops, and request center.',
 };
 
 export default function RootLayout({
@@ -13,7 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full">
-      <body className="min-h-full flex flex-col bg-slate-50 dark:bg-slate-950 font-sans text-slate-900 dark:text-slate-100">
+      <body className="min-h-full flex flex-col bg-black font-sans text-zinc-100">
         {children}
       </body>
     </html>

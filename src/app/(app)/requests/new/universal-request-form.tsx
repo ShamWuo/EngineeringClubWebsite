@@ -513,7 +513,7 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                     </label>
                     <Input
                       required
-                      placeholder="e.g. Apex Autonomous Navigation"
+                      placeholder="e.g. FHS Knights Autonomous Navigation"
                       value={teamProposedName}
                       onChange={(e) => setTeamProposedName(e.target.value)}
                       className="bg-zinc-900 border-zinc-800 text-white"

@@ -105,7 +105,7 @@ describe('Server Actions & Atomic Side-Effects', () => {
   describe('Admin Role Management', () => {
     it('allows club admin to promote a member to officer', async () => {
       const db = getDb();
-      const member = db.profiles.find((p) => p.email === 'jordan.chen@university.edu')!;
+      const member = db.profiles.find((p) => p.email === 'jordan.chen@bvsd.org')!;
       expect(member.role).toBe('member');
 
       const res = await updateMemberRole({

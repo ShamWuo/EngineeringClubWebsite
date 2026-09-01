@@ -13,7 +13,7 @@ const DEMO_PERSONAS = [
   {
     id: '11111111-1111-1111-1111-111111111111',
     name: 'Alex Vance',
-    email: 'alex.vance@university.edu',
+    email: 'alex.vance@bvsd.org',
     role: 'Admin',
     description: 'Club President (Full administrative access & settings)',
     badgeColor: 'bg-red-950 text-red-400 border-red-800',
@@ -21,7 +21,7 @@ const DEMO_PERSONAS = [
   {
     id: '22222222-2222-2222-2222-222222222222',
     name: 'Maya Lin',
-    email: 'maya.lin@university.edu',
+    email: 'maya.lin@bvsd.org',
     role: 'Officer',
     description: 'VP Operations (Review queue, manage comps & workshops)',
     badgeColor: 'bg-red-900/50 text-red-300 border-red-700',
@@ -29,7 +29,7 @@ const DEMO_PERSONAS = [
   {
     id: '33333333-3333-3333-3333-333333333333',
     name: 'Sam Rivera',
-    email: 'sam.rivera@university.edu',
+    email: 'sam.rivera@bvsd.org',
     role: 'Member (Lead)',
     description: 'Powertrain Team Lead (Submits requests, leads team)',
     badgeColor: 'bg-zinc-800 text-zinc-300 border-zinc-700',
@@ -37,7 +37,7 @@ const DEMO_PERSONAS = [
   {
     id: '44444444-4444-4444-4444-444444444444',
     name: 'Jordan Chen',
-    email: 'jordan.chen@university.edu',
+    email: 'jordan.chen@bvsd.org',
     role: 'Member',
     description: 'Software Member (Signs up for comps, RSVPs to workshops)',
     badgeColor: 'bg-zinc-800 text-zinc-300 border-zinc-700',
@@ -190,7 +190,7 @@ export default function LoginPage() {
                   <Input
                     type="email"
                     required
-                    placeholder="student@university.edu"
+                    placeholder="student@bvsd.org"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="pl-9 text-sm bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-600 focus:border-red-600"

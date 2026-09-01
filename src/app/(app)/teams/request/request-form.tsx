@@ -95,7 +95,7 @@ export function TeamRequestForm({
             </label>
             <Input
               required
-              placeholder="e.g. Apex Aero Subsystem / Titan Rover Drivetrain"
+              placeholder="e.g. FHS Knights Aero Subsystem / Titan Rover Drivetrain"
               value={proposedName}
               onChange={(e) => setProposedName(e.target.value)}
             />

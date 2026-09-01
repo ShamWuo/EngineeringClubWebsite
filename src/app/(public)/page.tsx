@@ -29,18 +29,18 @@ export default function LandingPage() {
       <section className="text-center py-12 sm:py-20 space-y-6 max-w-4xl mx-auto">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-950/80 border border-red-800 text-xs font-semibold text-red-300 shadow-md shadow-red-950/40">
           <Sparkles className="h-3.5 w-3.5 text-red-400" />
-          <span>2026-27 Engineering Season Now Open</span>
+          <span>Fairview High School Engineering • 2026-27 Season</span>
         </div>
 
         <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-white leading-tight">
-          Where Student Engineers <br className="hidden sm:inline" />
+          Where Fairview Knights <br className="hidden sm:inline" />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-400 to-rose-400">
             Build The Future.
           </span>
         </h1>
 
         <p className="text-sm sm:text-base text-zinc-400 max-w-2xl mx-auto leading-relaxed">
-          The centralized platform for student engineering teams. Join competition rosters, submit hardware funding and equipment requests, attend technical workshops, and launch projects.
+          The centralized platform for Fairview High School engineering squads and robotics subteams. Join competition rosters, submit hardware funding and lab equipment requests, attend technical workshops, and launch projects.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">

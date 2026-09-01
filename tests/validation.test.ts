@@ -18,7 +18,7 @@ import {
 describe('Validation Schemas', () => {
   describe('loginSchema', () => {
     it('accepts valid email addresses', () => {
-      const res = loginSchema.safeParse({ email: 'alex.vance@university.edu' });
+      const res = loginSchema.safeParse({ email: 'alex.vance@bvsd.org' });
       expect(res.success).toBe(true);
     });
 
@@ -54,7 +54,7 @@ describe('Validation Schemas', () => {
     it('validates a team request with proposed member UUIDs', () => {
       const res = teamRequestSchema.safeParse({
         competition_id: '11111111-1111-1111-1111-111111111111',
-        proposed_name: 'Apex Powertrain',
+        proposed_name: 'FHS Knights Powertrain',
         purpose: 'Designing the 400V inverter and high-voltage contactor box.',
         proposed_member_ids: ['22222222-2222-2222-2222-222222222222'],
         needs_funding: true,
@@ -65,7 +65,7 @@ describe('Validation Schemas', () => {
     it('rejects team requests with short purpose descriptions', () => {
       const res = teamRequestSchema.safeParse({
         competition_id: '11111111-1111-1111-1111-111111111111',
-        proposed_name: 'Apex',
+        proposed_name: 'FHS Knights',
         purpose: 'short',
       });
       expect(res.success).toBe(false);
