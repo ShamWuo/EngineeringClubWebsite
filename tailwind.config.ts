@@ -9,6 +9,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontSize: {
+        '2xs': '0.6875rem',
+        '3xs': '0.625rem',
+      },
       colors: {
         brand: {
           50: '#fef2f2',

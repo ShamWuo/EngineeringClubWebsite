@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus, Trash2, DollarSign } from 'lucide-react';
@@ -56,10 +56,10 @@ export function LineItemBuilder({ items, onChange }: LineItemBuilderProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200">
+        <h4 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">
           Budget Line Items
         </h4>
-        <div className="flex items-center gap-1.5 text-sm font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1 rounded-lg border border-emerald-200 dark:border-emerald-800">
+        <div className="flex items-center gap-1.5 text-sm font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1 rounded-lg border border-emerald-200 dark:border-emerald-800">
           <DollarSign className="h-4 w-4" />
           <span>Total: ${(totalCents / 100).toFixed(2)}</span>
         </div>
@@ -72,12 +72,12 @@ export function LineItemBuilder({ items, onChange }: LineItemBuilderProps) {
           return (
             <div
               key={item.id}
-              className="p-3.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 space-y-3"
+              className="p-3.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 space-y-3"
             >
-              <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
+              <div className="flex items-center justify-between text-xs text-zinc-500 font-medium">
                 <span>Item #{index + 1}</span>
                 <div className="flex items-center gap-3">
-                  <span className="font-semibold text-slate-900 dark:text-slate-100">
+                  <span className="font-semibold text-zinc-900 dark:text-zinc-100">
                     Subtotal: ${(rowTotalCents / 100).toFixed(2)}
                   </span>
                   {items.length > 1 && (
@@ -96,7 +96,7 @@ export function LineItemBuilder({ items, onChange }: LineItemBuilderProps) {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <div>
-                  <label className="block text-2xs font-medium text-slate-500 mb-1">
+                  <label className="block text-2xs font-medium text-zinc-500 mb-1">
                     Description *
                   </label>
                   <Input
@@ -108,7 +108,7 @@ export function LineItemBuilder({ items, onChange }: LineItemBuilderProps) {
                   />
                 </div>
                 <div>
-                  <label className="block text-2xs font-medium text-slate-500 mb-1">
+                  <label className="block text-2xs font-medium text-zinc-500 mb-1">
                     Vendor / Supplier
                   </label>
                   <Input
@@ -122,7 +122,7 @@ export function LineItemBuilder({ items, onChange }: LineItemBuilderProps) {
 
               <div className="grid grid-cols-3 gap-2.5">
                 <div>
-                  <label className="block text-2xs font-medium text-slate-500 mb-1">
+                  <label className="block text-2xs font-medium text-zinc-500 mb-1">
                     Unit Price ($) *
                   </label>
                   <Input
@@ -143,7 +143,7 @@ export function LineItemBuilder({ items, onChange }: LineItemBuilderProps) {
                   />
                 </div>
                 <div>
-                  <label className="block text-2xs font-medium text-slate-500 mb-1">
+                  <label className="block text-2xs font-medium text-zinc-500 mb-1">
                     Quantity *
                   </label>
                   <Input
@@ -158,7 +158,7 @@ export function LineItemBuilder({ items, onChange }: LineItemBuilderProps) {
                   />
                 </div>
                 <div>
-                  <label className="block text-2xs font-medium text-slate-500 mb-1">
+                  <label className="block text-2xs font-medium text-zinc-500 mb-1">
                     Product Link
                   </label>
                   <Input

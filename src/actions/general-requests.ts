@@ -14,7 +14,7 @@ export const submitGeneralRequest = createAction(
 
     try {
       const supabase = await createClient();
-      const { error } = await supabase.from('general_requests').insert({
+      const { error } = await (supabase.from('general_requests') as any).insert({
         id: requestId,
         requested_by: user.id,
         title: input.title,

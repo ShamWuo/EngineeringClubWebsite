@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getDb } from '@/lib/db/mock-data';
+import { getWorkshops } from '@/lib/db/queries';
 
 function formatICSDate(dateStr: string | null): string {
   if (!dateStr) return '';
@@ -8,16 +8,16 @@ function formatICSDate(dateStr: string | null): string {
 }
 
 export async function GET() {
-  const db = getDb();
-  const workshops = db.workshops.filter((w) => w.status !== 'cancelled');
+  const allWorkshops = await getWorkshops();
+  const workshops = allWorkshops.filter((w) => w.status !== 'cancelled');
 
-  let icsContent = [
+  const icsContent = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Engineering Club//Workshops Calendar//EN',
+    'PRODID:-//Fairview High School Engineering Club//Workshops Calendar//EN',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
-    'X-WR-CALNAME:Engineering Club Workshops',
+    'X-WR-CALNAME:FHS Engineering Workshops',
     'X-WR-TIMEZONE:UTC',
   ];
 
@@ -28,13 +28,13 @@ export async function GET() {
 
     icsContent.push(
       'BEGIN:VEVENT',
-      `UID:${w.id}@engineering-club.org`,
+      `UID:${w.id}@fairview-engineering.bvsd.org`,
       `DTSTAMP:${formatICSDate(new Date().toISOString())}`,
       `DTSTART:${start}`,
       end ? `DTEND:${end}` : `DTEND:${start}`,
       `SUMMARY:${w.title.replace(/[,;]/g, '\\$&')}`,
       `DESCRIPTION:${(w.description || '').replace(/\n/g, '\\n').replace(/[,;]/g, '\\$&')}`,
-      `LOCATION:${(w.location || 'Online').replace(/[,;]/g, '\\$&')}`,
+      `LOCATION:${(w.location || 'FHS Makerspace').replace(/[,;]/g, '\\$&')}`,
       `STATUS:${w.status === 'scheduled' ? 'CONFIRMED' : 'TENTATIVE'}`,
       'END:VEVENT'
     );

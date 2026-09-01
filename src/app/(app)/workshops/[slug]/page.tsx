@@ -2,7 +2,8 @@ import React from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { requireUser } from '@/lib/auth/require-role';
-import { getDb } from '@/lib/db/mock-data';
+import { getWorkshopBySlug } from '@/lib/db/queries';
+import { createClient } from '@/lib/supabase/server';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -16,8 +17,6 @@ import {
   Video,
   FileText,
   ArrowLeft,
-  UserCheck,
-  CheckCircle2,
 } from 'lucide-react';
 
 export default async function WorkshopDetailPage({
@@ -26,34 +25,43 @@ export default async function WorkshopDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const user = await requireUser();
-  const db = getDb();
   const { slug } = await params;
 
-  const workshop = db.workshops.find((w) => w.slug === slug);
-  if (!workshop) {
+  const result = await getWorkshopBySlug(slug);
+  if (!result) {
     notFound();
   }
 
-  const rsvps = db.workshop_rsvps.filter((r) => r.workshop_id === workshop.id);
+  const workshop = result.workshop;
+  const rsvps = result.rsvps;
   const isRsvped = rsvps.some((r) => r.user_id === user.id);
   const isFull = workshop.capacity ? rsvps.length >= workshop.capacity : false;
 
+  const supabase = await createClient();
+  const userIds = rsvps.map((r) => r.user_id);
+  let profiles: any[] = [];
+  if (userIds.length > 0) {
+    const { data } = await supabase.from('profiles').select('*').in('id', userIds);
+    profiles = data || [];
+  }
+  const profileMap = new Map(profiles.map((p) => [p.id, p]));
+
   const attendeeProfiles = rsvps.map((r) => {
-    const profile = db.profiles.find((p) => p.id === r.user_id);
+    const profile = profileMap.get(r.user_id);
     return {
       ...r,
       full_name: profile?.full_name || null,
-      email: profile?.email || 'Unknown',
+      email: profile?.email || 'FHS Student',
       avatar_url: profile?.avatar_url || null,
     };
   });
 
   return (
-    <div className="space-y-8 max-w-5xl">
+    <div className="space-y-8 max-w-5xl mx-auto pb-12">
       <div>
         <Link
           href="/workshops"
-          className="inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 mb-3"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-zinc-400 hover:text-white mb-3"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           Back to workshops
@@ -67,7 +75,7 @@ export default async function WorkshopDetailPage({
               </Badge>
               <StatusBadge status={workshop.status} />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100">
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
               {workshop.title}
             </h1>
           </div>
@@ -84,20 +92,20 @@ export default async function WorkshopDetailPage({
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <Card>
+          <Card className="bg-zinc-950 border-zinc-850">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base font-bold">Workshop Overview & Syllabus</CardTitle>
+              <CardTitle className="text-base font-bold text-white">Workshop Overview & Syllabus</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap leading-relaxed">
+              <p className="text-sm text-zinc-300 whitespace-pre-wrap leading-relaxed">
                 {workshop.description || 'No detailed syllabus provided.'}
               </p>
 
               {(workshop.materials_url || workshop.recording_url) && (
-                <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-wrap gap-3">
+                <div className="pt-4 border-t border-zinc-850 flex flex-wrap gap-3">
                   {workshop.materials_url && (
                     <a href={workshop.materials_url} target="_blank" rel="noopener noreferrer">
-                      <Button variant="outline" size="sm" className="gap-1.5 text-xs font-semibold">
+                      <Button variant="outline" size="sm" className="gap-1.5 text-xs font-semibold bg-zinc-900 border-zinc-800 text-zinc-300">
                         <FileText className="h-4 w-4" />
                         Download Slides & Files
                       </Button>
@@ -105,7 +113,7 @@ export default async function WorkshopDetailPage({
                   )}
                   {workshop.recording_url && (
                     <a href={workshop.recording_url} target="_blank" rel="noopener noreferrer">
-                      <Button variant="outline" size="sm" className="gap-1.5 text-xs font-semibold text-red-600 border-red-200">
+                      <Button variant="outline" size="sm" className="gap-1.5 text-xs font-semibold text-red-400 border-red-900 bg-red-950/20">
                         <Video className="h-4 w-4" />
                         Watch Session Recording
                       </Button>
@@ -117,16 +125,16 @@ export default async function WorkshopDetailPage({
           </Card>
 
           {/* Attendee list */}
-          <Card>
+          <Card className="bg-zinc-950 border-zinc-850">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base font-bold flex items-center gap-2">
-                <Users className="h-4 w-4 text-brand-600" />
+              <CardTitle className="text-base font-bold text-white flex items-center gap-2">
+                <Users className="h-4 w-4 text-red-500" />
                 Registered Members ({rsvps.length} {workshop.capacity ? `/ ${workshop.capacity}` : ''})
               </CardTitle>
             </CardHeader>
             <CardContent>
               {attendeeProfiles.length === 0 ? (
-                <div className="text-center py-6 text-xs text-slate-400">
+                <div className="text-center py-6 text-xs text-zinc-500">
                   No members have RSVP'd yet. Be the first to register!
                 </div>
               ) : (
@@ -134,7 +142,7 @@ export default async function WorkshopDetailPage({
                   {attendeeProfiles.map((att) => (
                     <div
                       key={att.user_id}
-                      className="flex items-center gap-2.5 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 text-xs"
+                      className="flex items-center gap-2.5 p-2.5 rounded-lg border border-zinc-850 bg-zinc-900/40 text-xs"
                     >
                       {att.avatar_url ? (
                         <img
@@ -143,15 +151,15 @@ export default async function WorkshopDetailPage({
                           className="h-7 w-7 rounded-full object-cover"
                         />
                       ) : (
-                        <div className="h-7 w-7 rounded-full bg-brand-100 text-brand-700 font-bold flex items-center justify-center text-3xs">
+                        <div className="h-7 w-7 rounded-full bg-red-950 text-red-400 font-bold flex items-center justify-center text-3xs border border-red-800">
                           {(att.full_name || att.email).substring(0, 1)}
                         </div>
                       )}
                       <div className="min-w-0">
-                        <div className="font-semibold text-slate-900 dark:text-slate-100 truncate">
+                        <div className="font-semibold text-zinc-200 truncate">
                           {att.full_name || att.email}
                         </div>
-                        <div className="text-3xs text-slate-400 truncate">{att.email}</div>
+                        <div className="text-3xs text-zinc-500 truncate">{att.email}</div>
                       </div>
                     </div>
                   ))}
@@ -163,15 +171,15 @@ export default async function WorkshopDetailPage({
 
         {/* Sidebar Info */}
         <div className="space-y-6">
-          <Card>
+          <Card className="bg-zinc-950 border-zinc-850">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-bold">Session Details</CardTitle>
+              <CardTitle className="text-sm font-bold text-white">Session Details</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-xs">
               {workshop.starts_at && (
-                <div className="flex items-start justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
-                  <span className="text-slate-500">Date & Time</span>
-                  <span className="font-semibold text-slate-800 dark:text-slate-200 text-right">
+                <div className="flex items-start justify-between py-1.5 border-b border-zinc-850">
+                  <span className="text-zinc-500">Date & Time</span>
+                  <span className="font-semibold text-zinc-200 text-right">
                     {new Date(workshop.starts_at).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
                     <br />
                     {new Date(workshop.starts_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -179,20 +187,20 @@ export default async function WorkshopDetailPage({
                 </div>
               )}
               {workshop.location && (
-                <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
-                  <span className="text-slate-500">Location</span>
-                  <span className="font-semibold text-slate-800 dark:text-slate-200">{workshop.location}</span>
+                <div className="flex items-center justify-between py-1.5 border-b border-zinc-850">
+                  <span className="text-zinc-500">Location</span>
+                  <span className="font-semibold text-zinc-200">{workshop.location}</span>
                 </div>
               )}
               {workshop.instructor_name && (
-                <div className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
-                  <span className="text-slate-500">Instructor</span>
-                  <span className="font-semibold text-brand-600">{workshop.instructor_name}</span>
+                <div className="flex items-center justify-between py-1.5 border-b border-zinc-850">
+                  <span className="text-zinc-500">Instructor</span>
+                  <span className="font-semibold text-red-400">{workshop.instructor_name}</span>
                 </div>
               )}
               <div className="flex items-center justify-between py-1.5">
-                <span className="text-slate-500">Max Capacity</span>
-                <span className="font-semibold text-slate-800 dark:text-slate-200">
+                <span className="text-zinc-500">Max Capacity</span>
+                <span className="font-semibold text-zinc-200">
                   {workshop.capacity ? `${workshop.capacity} seats` : 'Open / Unlimited'}
                 </span>
               </div>

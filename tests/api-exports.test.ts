@@ -16,7 +16,7 @@ describe('API Route Handlers & Exports', () => {
 
       const text = await response.text();
       expect(text).toContain('BEGIN:VCALENDAR');
-      expect(text).toContain('PRODID:-//Engineering Club//Workshops Calendar//EN');
+      expect(text).toContain('PRODID:-//Fairview High School Engineering Club//Workshops Calendar//EN');
       expect(text).toContain('BEGIN:VEVENT');
       expect(text).toContain('SUMMARY:Mastering Surface Modeling in SolidWorks');
       expect(text).toContain('END:VCALENDAR');

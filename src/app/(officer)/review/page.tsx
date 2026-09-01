@@ -95,24 +95,24 @@ export default async function OfficerReviewQueuePage({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <h1 className="text-2xl font-black text-white flex items-center gap-2.5">
-              <Inbox className="h-6 w-6 text-red-500" />
+            <h1 className="text-2xl font-black text-zinc-900 dark:text-white flex items-center gap-2.5">
+              <Inbox className="h-6 w-6 text-red-600 dark:text-red-500" />
               Unified Officer Review Queue
             </h1>
             {totalPending > 0 && (
-              <span className="flex h-6 px-2.5 items-center justify-center rounded-full bg-red-600 text-white font-bold text-xs shadow-md shadow-red-950/50">
+              <span className="flex h-6 px-2.5 items-center justify-center rounded-full bg-red-600 text-white font-bold text-xs shadow-md shadow-red-950/30">
                 {totalPending} pending
               </span>
             )}
           </div>
-          <p className="text-xs text-zinc-400">
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">
             Review and decide proposals across competitions, subteams, workshops, hardware funding, and lab equipment access.
           </p>
         </div>
       </div>
 
       {/* Kind Tabs with Pending Badges */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-zinc-800">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-zinc-200 dark:border-zinc-800">
         {[
           { id: 'all', label: 'All Requests', count: totalPending },
           { id: 'competition', label: 'Competitions', count: pendingCompCount },
@@ -126,8 +126,8 @@ export default async function OfficerReviewQueuePage({
             href={`/review?kind=${tab.id}&status=${statusFilter}`}
             className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all whitespace-nowrap ${
               kindFilter === tab.id
-                ? 'bg-red-600 text-white shadow-md shadow-red-950/60'
-                : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200'
+                ? 'bg-red-600 text-white shadow-md shadow-red-950/40'
+                : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-zinc-200'
             }`}
           >
             <span>{tab.label}</span>
@@ -135,8 +135,8 @@ export default async function OfficerReviewQueuePage({
               <span
                 className={`text-3xs font-bold px-1.5 py-0.2 rounded-full ${
                   kindFilter === tab.id
-                    ? 'bg-black/40 text-white'
-                    : 'bg-red-950 text-red-400 border border-red-800'
+                    ? 'bg-black/30 text-white'
+                    : 'bg-red-50 text-red-700 border border-red-200 dark:bg-red-950 dark:text-red-400 dark:border-red-800'
                 }`}
               >
                 {tab.count}
@@ -163,8 +163,8 @@ export default async function OfficerReviewQueuePage({
             href={`/review?kind=${kindFilter}&status=${st.id}`}
             className={`px-2.5 py-1 rounded-md transition-all text-xs ${
               statusFilter === st.id
-                ? 'bg-zinc-800 text-white font-bold border border-zinc-700'
-                : 'text-zinc-500 hover:text-zinc-300'
+                ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-white font-bold border border-zinc-300 dark:border-zinc-700'
+                : 'text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300'
             }`}
           >
             {st.label}

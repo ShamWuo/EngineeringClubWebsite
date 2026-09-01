@@ -4,8 +4,8 @@ import React, { useTransition } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { updateTeamRoster } from '@/actions/teams';
-import { Crown, UserMinus, ShieldAlert } from 'lucide-react';
-import type { Database, TeamRole } from '@/lib/db/types';
+import { Crown, UserMinus } from 'lucide-react';
+import type { TeamRole } from '@/lib/db/types';
 
 interface MemberInfo {
   user_id: string;
@@ -52,9 +52,9 @@ export function RosterTable({ teamId, members, canManage, currentUserId }: Roste
   };
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800">
+    <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
       <table className="w-full text-left text-sm">
-        <thead className="bg-slate-50 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+        <thead className="bg-zinc-50 dark:bg-zinc-900/80 border-b border-zinc-200 dark:border-zinc-800 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
           <tr>
             <th className="py-3 px-4">Member</th>
             <th className="py-3 px-4">Role</th>
@@ -63,33 +63,33 @@ export function RosterTable({ teamId, members, canManage, currentUserId }: Roste
             {canManage && <th className="py-3 px-4 text-right">Actions</th>}
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-200 dark:divide-slate-800 bg-white dark:bg-slate-950">
+        <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800 bg-white dark:bg-zinc-950">
           {members.map((m) => {
             const isLead = m.role === 'lead';
 
             return (
-              <tr key={m.user_id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50 transition-colors">
+              <tr key={m.user_id} className="hover:bg-zinc-50/60 dark:hover:bg-zinc-900/50 transition-colors">
                 <td className="py-3 px-4">
                   <div className="flex items-center gap-3">
                     {m.avatar_url ? (
                       <img
                         src={m.avatar_url}
                         alt={m.full_name || 'Member'}
-                        className="h-8 w-8 rounded-full object-cover border border-slate-200"
+                        className="h-8 w-8 rounded-full object-cover border border-zinc-200 dark:border-zinc-700"
                       />
                     ) : (
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-100 text-brand-700 font-bold text-xs">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300 font-bold text-xs border border-red-200 dark:border-red-900">
                         {(m.full_name || m.email || 'U').substring(0, 2).toUpperCase()}
                       </div>
                     )}
                     <div>
-                      <div className="font-medium text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+                      <div className="font-medium text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5">
                         <span>{m.full_name || m.email}</span>
                         {m.user_id === currentUserId && (
-                          <span className="text-2xs text-brand-600 font-normal">(You)</span>
+                          <span className="text-2xs text-red-600 dark:text-red-400 font-normal">(You)</span>
                         )}
                       </div>
-                      <div className="text-xs text-slate-400">{m.email}</div>
+                      <div className="text-xs text-zinc-400 dark:text-zinc-500">{m.email}</div>
                     </div>
                   </div>
                 </td>
@@ -113,18 +113,18 @@ export function RosterTable({ teamId, members, canManage, currentUserId }: Roste
                       m.skills.slice(0, 3).map((s) => (
                         <span
                           key={s}
-                          className="inline-block text-2xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-2 py-0.5 rounded"
+                          className="inline-block text-2xs bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 px-2 py-0.5 rounded"
                         >
                           {s}
                         </span>
                       ))
                     ) : (
-                      <span className="text-slate-400 text-xs">No skills listed</span>
+                      <span className="text-zinc-400 dark:text-zinc-500 text-xs">No skills listed</span>
                     )}
                   </div>
                 </td>
 
-                <td className="py-3 px-4 hidden sm:table-cell text-xs text-slate-500">
+                <td className="py-3 px-4 hidden sm:table-cell text-xs text-zinc-500 dark:text-zinc-400">
                   {new Date(m.joined_at).toLocaleDateString()}
                 </td>
 
@@ -149,7 +149,7 @@ export function RosterTable({ teamId, members, canManage, currentUserId }: Roste
                         variant="ghost"
                         onClick={() => handleRemove(m.user_id, m.full_name || m.email)}
                         disabled={isPending}
-                        className="h-7 text-xs gap-1 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/40"
+                        className="h-7 text-xs gap-1 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/40"
                         title="Remove Member"
                       >
                         <UserMinus className="h-3.5 w-3.5" />

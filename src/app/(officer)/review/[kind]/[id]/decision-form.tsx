@@ -4,14 +4,13 @@ import React, { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input, Textarea, Select } from '@/components/ui/input';
+import { Input, Textarea } from '@/components/ui/input';
 import { reviewRequestAction } from '@/actions/review';
 import { CheckCircle2, XCircle, AlertTriangle, Send } from 'lucide-react';
 
 export function ReviewDecisionForm({
   kind,
   requestId,
-  currentStatus,
   requestedAmountCents,
 }: {
   kind: 'team' | 'competition' | 'workshop' | 'funding' | 'general';
@@ -53,22 +52,22 @@ export function ReviewDecisionForm({
   };
 
   return (
-    <Card className="border-brand-200 dark:border-brand-900 sticky top-20 shadow-md">
+    <Card className="border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 sticky top-20 shadow-md">
       <form onSubmit={handleSubmit}>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base font-bold text-slate-900 dark:text-slate-100">
+          <CardTitle className="text-base font-bold text-zinc-900 dark:text-zinc-100">
             Officer Action Panel
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {error && (
-            <div className="p-3 text-xs rounded bg-red-50 text-red-700 border border-red-200">
+            <div className="p-3 text-xs rounded bg-red-50 text-red-700 dark:bg-red-950/80 dark:text-red-300 border border-red-200 dark:border-red-800">
               {error}
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
               Decision
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -78,7 +77,7 @@ export function ReviewDecisionForm({
                 className={`flex flex-col items-center justify-center p-2.5 rounded-lg border text-xs font-bold transition-all cursor-pointer ${
                   decision === 'approve'
                     ? 'bg-emerald-50 border-emerald-500 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 shadow-xs'
-                    : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50'
+                    : 'border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900'
                 }`}
               >
                 <CheckCircle2 className="h-4 w-4 mb-1 text-emerald-600" />
@@ -91,7 +90,7 @@ export function ReviewDecisionForm({
                 className={`flex flex-col items-center justify-center p-2.5 rounded-lg border text-xs font-bold transition-all cursor-pointer ${
                   decision === 'changes_requested'
                     ? 'bg-amber-50 border-amber-500 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 shadow-xs'
-                    : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50'
+                    : 'border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900'
                 }`}
               >
                 <AlertTriangle className="h-4 w-4 mb-1 text-amber-600" />
@@ -104,7 +103,7 @@ export function ReviewDecisionForm({
                 className={`flex flex-col items-center justify-center p-2.5 rounded-lg border text-xs font-bold transition-all cursor-pointer ${
                   decision === 'reject'
                     ? 'bg-red-50 border-red-500 text-red-700 dark:bg-red-950/60 dark:text-red-300 shadow-xs'
-                    : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50'
+                    : 'border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900'
                 }`}
               >
                 <XCircle className="h-4 w-4 mb-1 text-red-600" />
@@ -115,7 +114,7 @@ export function ReviewDecisionForm({
 
           {kind === 'funding' && decision === 'approve' && (
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                 Approved Amount ($)
               </label>
               <Input
@@ -126,14 +125,14 @@ export function ReviewDecisionForm({
                 onChange={(e) => setApprovedAmount(e.target.value)}
                 className="text-xs"
               />
-              <span className="text-3xs text-slate-500 mt-1 block">
+              <span className="text-3xs text-zinc-500 mt-1 block">
                 Requested: ${((requestedAmountCents || 0) / 100).toFixed(2)}
               </span>
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
               Reviewer Feedback / Decision Note
             </label>
             <Textarea
@@ -146,7 +145,7 @@ export function ReviewDecisionForm({
           </div>
         </CardContent>
 
-        <CardFooter className="pt-2 border-t border-slate-100 dark:border-slate-800">
+        <CardFooter className="pt-2 border-t border-zinc-100 dark:border-zinc-800">
           <Button
             type="submit"
             disabled={isPending}

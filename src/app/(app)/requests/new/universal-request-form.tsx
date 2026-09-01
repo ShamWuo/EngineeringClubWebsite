@@ -10,7 +10,7 @@ import { submitFundingRequest } from '@/actions/funding';
 import { submitTeamRequest } from '@/actions/teams';
 import { submitWorkshopRequest } from '@/actions/workshops';
 import { submitGeneralRequest } from '@/actions/general-requests';
-import { Trophy, DollarSign, Users, Lightbulb, HelpCircle, Plus, Trash2, ArrowRight, CheckCircle2, AlertCircle, Sparkles } from 'lucide-react';
+import { Trophy, DollarSign, Users, Lightbulb, HelpCircle, Plus, Trash2, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
 
 type RequestType = 'competition' | 'funding' | 'team' | 'workshop' | 'general';
 
@@ -100,48 +100,52 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
       try {
         if (activeType === 'competition') {
           const res = await submitCompetitionRequest({
-            name: compName,
-            organizer: compOrganizer || null,
-            url: compUrl || null,
-            why: compWhy,
-            estimated_cost_cents: Math.round(parseFloat(compCost || '0') * 100),
-            estimated_team_size: parseInt(compTeamSize) || 8,
-            deadline: compDeadline || null,
+            name: compName.trim(),
+            organizer: compOrganizer.trim() || undefined,
+            url: compUrl.trim() || undefined,
+            why: compWhy.trim(),
+            estimated_cost_cents: compCost ? Math.round(parseFloat(compCost) * 100) : undefined,
+            estimated_team_size: compTeamSize ? parseInt(compTeamSize, 10) : undefined,
+            registration_deadline: compDeadline ? new Date(compDeadline).toISOString() : undefined,
           });
           if (!res.ok) throw new Error(res.error);
-          setSuccess('Competition proposal submitted for officer review!');
+          setSuccess('Competition request submitted successfully to officer review queue!');
         } else if (activeType === 'funding') {
+          const validLineItems = lineItems.filter((item) => item.description.trim().length > 0);
+          if (validLineItems.length === 0) {
+            throw new Error('Please add at least one line item with a description.');
+          }
+
           const res = await submitFundingRequest({
-            title: fundTitle,
-            team_id: fundTeamId || null,
-            competition_id: null,
-            justification: fundJustification,
-            line_items: lineItems.map((item) => ({
-              description: item.description,
-              vendor: item.vendor || null,
-              unit_cost_cents: item.unit_cost_cents,
-              quantity: item.quantity,
-              url: item.url || null,
+            title: fundTitle.trim(),
+            team_id: fundTeamId || undefined,
+            justification: fundJustification.trim(),
+            line_items: validLineItems.map((item) => ({
+              description: item.description.trim(),
+              vendor: item.vendor.trim() || undefined,
+              unit_cost_cents: item.unit_cost_cents || 0,
+              quantity: item.quantity || 1,
+              url: item.url.trim() || undefined,
             })),
           });
           if (!res.ok) throw new Error(res.error);
-          setSuccess('Funding procurement request submitted!');
+          setSuccess('Funding & procurement request submitted successfully!');
         } else if (activeType === 'team') {
+          if (!teamCompId) throw new Error('Please select a parent competition.');
           const res = await submitTeamRequest({
             competition_id: teamCompId,
-            proposed_name: teamProposedName,
-            purpose: teamPurpose,
-            proposed_member_ids: [],
+            proposed_name: teamProposedName.trim(),
+            purpose: teamPurpose.trim(),
             needs_funding: teamNeedsFunding,
           });
           if (!res.ok) throw new Error(res.error);
-          setSuccess('Subteam formation request submitted!');
+          setSuccess('Subteam proposal submitted to officers!');
         } else if (activeType === 'workshop') {
           const res = await submitWorkshopRequest({
-            topic: workshopTopic,
-            rationale: workshopRationale,
+            topic: workshopTopic.trim(),
+            rationale: workshopRationale.trim(),
             offering_to_teach: workshopTeach,
-            preferred_timeframe: workshopTimeframe || null,
+            preferred_timeframe: workshopTimeframe.trim() || undefined,
           });
           if (!res.ok) throw new Error(res.error);
           setSuccess('Workshop proposal submitted!');
@@ -168,14 +172,14 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
   return (
     <div className="space-y-6">
       {/* Category Tabs */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 p-1.5 rounded-xl bg-zinc-900/90 border border-zinc-800">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 p-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800">
         <button
           type="button"
           onClick={() => { setActiveType('competition'); setError(null); }}
           className={`p-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
             activeType === 'competition'
-              ? 'bg-red-600 text-white shadow-md shadow-red-950/60'
-              : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800'
+              ? 'bg-red-600 text-white shadow-md shadow-red-950/40'
+              : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-white dark:hover:bg-zinc-800'
           }`}
         >
           <Trophy className="h-4 w-4" />
@@ -187,8 +191,8 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
           onClick={() => { setActiveType('funding'); setError(null); }}
           className={`p-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
             activeType === 'funding'
-              ? 'bg-red-600 text-white shadow-md shadow-red-950/60'
-              : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800'
+              ? 'bg-red-600 text-white shadow-md shadow-red-950/40'
+              : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-white dark:hover:bg-zinc-800'
           }`}
         >
           <DollarSign className="h-4 w-4" />
@@ -200,8 +204,8 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
           onClick={() => { setActiveType('team'); setError(null); }}
           className={`p-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
             activeType === 'team'
-              ? 'bg-red-600 text-white shadow-md shadow-red-950/60'
-              : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800'
+              ? 'bg-red-600 text-white shadow-md shadow-red-950/40'
+              : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-white dark:hover:bg-zinc-800'
           }`}
         >
           <Users className="h-4 w-4" />
@@ -213,8 +217,8 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
           onClick={() => { setActiveType('workshop'); setError(null); }}
           className={`p-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
             activeType === 'workshop'
-              ? 'bg-red-600 text-white shadow-md shadow-red-950/60'
-              : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800'
+              ? 'bg-red-600 text-white shadow-md shadow-red-950/40'
+              : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-white dark:hover:bg-zinc-800'
           }`}
         >
           <Lightbulb className="h-4 w-4" />
@@ -226,8 +230,8 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
           onClick={() => { setActiveType('general'); setError(null); }}
           className={`p-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer col-span-2 sm:col-span-1 ${
             activeType === 'general'
-              ? 'bg-red-600 text-white shadow-md shadow-red-950/60'
-              : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800'
+              ? 'bg-red-600 text-white shadow-md shadow-red-950/40'
+              : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-white dark:hover:bg-zinc-800'
           }`}
         >
           <HelpCircle className="h-4 w-4" />
@@ -235,17 +239,17 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
         </button>
       </div>
 
-      <Card className="border-zinc-800 bg-zinc-950 shadow-2xl">
+      <Card className="border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-xl">
         <form onSubmit={handleSubmit}>
-          <CardHeader className="border-b border-zinc-850 pb-4">
-            <CardTitle className="text-base font-bold text-white flex items-center gap-2">
+          <CardHeader className="border-b border-zinc-100 dark:border-zinc-850 pb-4">
+            <CardTitle className="text-base font-bold text-zinc-900 dark:text-white flex items-center gap-2">
               {activeType === 'competition' && <>🏆 Propose a New Competition</>}
               {activeType === 'funding' && <>💰 Procurement & Funding Request</>}
               {activeType === 'team' && <>👥 Form a New Competition Subteam</>}
               {activeType === 'workshop' && <>💡 Propose a Technical Workshop</>}
               {activeType === 'general' && <>🛠️ Equipment, Tools & General Request</>}
             </CardTitle>
-            <CardDescription className="text-xs text-zinc-400">
+            <CardDescription className="text-xs text-zinc-500 dark:text-zinc-400">
               {activeType === 'competition' && 'Submit an engineering competition for club registration, backing, and travel funding.'}
               {activeType === 'funding' && 'Itemize components, sensors, raw stock, or tooling needed for team milestones.'}
               {activeType === 'team' && 'Request an official subteam roster under an active club competition.'}
@@ -256,14 +260,14 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
 
           <CardContent className="pt-6 space-y-4">
             {error && (
-              <div className="p-3 text-xs rounded-lg bg-red-950/80 text-red-300 border border-red-800 flex items-start gap-2">
-                <AlertCircle className="h-4 w-4 shrink-0 text-red-500 mt-0.5" />
+              <div className="p-3 text-xs rounded-lg bg-red-50 dark:bg-red-950/80 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 flex items-start gap-2">
+                <AlertCircle className="h-4 w-4 shrink-0 text-red-600 dark:text-red-500 mt-0.5" />
                 <span>{error}</span>
               </div>
             )}
             {success && (
-              <div className="p-3 text-xs rounded-lg bg-emerald-950/80 text-emerald-300 border border-emerald-800 flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+              <div className="p-3 text-xs rounded-lg bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                 <span>{success}</span>
               </div>
             )}
@@ -273,7 +277,7 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                    <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                       Competition Name *
                     </label>
                     <Input
@@ -281,24 +285,22 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                       placeholder="e.g. Shell Eco-Marathon Americas"
                       value={compName}
                       onChange={(e) => setCompName(e.target.value)}
-                      className="bg-zinc-900 border-zinc-800 text-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                    <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                       Organizer / Organization
                     </label>
                     <Input
                       placeholder="e.g. Shell / SAE International"
                       value={compOrganizer}
                       onChange={(e) => setCompOrganizer(e.target.value)}
-                      className="bg-zinc-900 border-zinc-800 text-white"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Official Competition Website / Rulebook URL
                   </label>
                   <Input
@@ -306,12 +308,11 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                     placeholder="https://..."
                     value={compUrl}
                     onChange={(e) => setCompUrl(e.target.value)}
-                    className="bg-zinc-900 border-zinc-800 text-white"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Why should our club participate? (Justification & Goals) *
                   </label>
                   <textarea
@@ -320,13 +321,13 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                     placeholder="Explain technical learning opportunities, subteam requirements, and student impact..."
                     value={compWhy}
                     onChange={(e) => setCompWhy(e.target.value)}
-                    className="w-full text-xs rounded-lg bg-zinc-900 border border-zinc-800 p-3 text-white placeholder:text-zinc-600 focus:outline-none focus:border-red-600"
+                    className="w-full text-xs rounded-lg bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 p-3 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                    <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                       Estimated Cost ($ USD)
                     </label>
                     <Input
@@ -336,11 +337,10 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                       placeholder="e.g. 2500"
                       value={compCost}
                       onChange={(e) => setCompCost(e.target.value)}
-                      className="bg-zinc-900 border-zinc-800 text-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                    <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                       Estimated Team Size
                     </label>
                     <Input
@@ -349,18 +349,16 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                       placeholder="8"
                       value={compTeamSize}
                       onChange={(e) => setCompTeamSize(e.target.value)}
-                      className="bg-zinc-900 border-zinc-800 text-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                    <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                       Registration Deadline
                     </label>
                     <Input
                       type="date"
                       value={compDeadline}
                       onChange={(e) => setCompDeadline(e.target.value)}
-                      className="bg-zinc-900 border-zinc-800 text-white"
                     />
                   </div>
                 </div>
@@ -372,7 +370,7 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                    <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                       Funding Request Title *
                     </label>
                     <Input
@@ -380,17 +378,16 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                       placeholder="e.g. Titanium Fasteners & Suspension Rod Ends"
                       value={fundTitle}
                       onChange={(e) => setFundTitle(e.target.value)}
-                      className="bg-zinc-900 border-zinc-800 text-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                    <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                       Associated Subteam
                     </label>
                     <select
                       value={fundTeamId}
                       onChange={(e) => setFundTeamId(e.target.value)}
-                      className="w-full h-10 px-3 text-xs rounded-md bg-zinc-900 border border-zinc-800 text-white focus:outline-none focus:border-red-600"
+                      className="w-full h-10 px-3 text-xs rounded-lg bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
                     >
                       <option value="">General Club / Independent Project</option>
                       {teams.map((t) => (
@@ -403,7 +400,7 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Justification & Technical Need *
                   </label>
                   <textarea
@@ -412,24 +409,24 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                     placeholder="Why are these items critical? What technical milestone do they unlock?"
                     value={fundJustification}
                     onChange={(e) => setFundJustification(e.target.value)}
-                    className="w-full text-xs rounded-lg bg-zinc-900 border border-zinc-800 p-3 text-white placeholder:text-zinc-600 focus:outline-none focus:border-red-600"
+                    className="w-full text-xs rounded-lg bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 p-3 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
                   />
                 </div>
 
                 {/* Line items builder */}
                 <div className="space-y-3 pt-2">
-                  <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
-                    <span className="text-xs font-bold text-zinc-200 uppercase tracking-wider">
+                  <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
+                    <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider">
                       Itemized Line Items
                     </span>
-                    <span className="text-xs font-mono font-bold text-red-400">
+                    <span className="text-xs font-mono font-bold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-900/60 px-2 py-0.5 rounded">
                       Total: ${(totalFundingCents / 100).toFixed(2)}
                     </span>
                   </div>
 
                   <div className="space-y-2">
                     {lineItems.map((item, idx) => (
-                      <div key={item.id} className="p-3 rounded-lg bg-zinc-900/80 border border-zinc-850 space-y-2">
+                      <div key={item.id} className="p-3 rounded-lg bg-zinc-50 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-850 space-y-2">
                         <div className="grid grid-cols-1 sm:grid-cols-12 gap-2">
                           <div className="sm:col-span-6">
                             <Input
@@ -437,7 +434,7 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                               placeholder="Item description (e.g. 400V Contactor)"
                               value={item.description}
                               onChange={(e) => updateLineItem(idx, 'description', e.target.value)}
-                              className="h-8 text-xs bg-zinc-950 border-zinc-800 text-white"
+                              className="h-8 text-xs"
                             />
                           </div>
                           <div className="sm:col-span-3">
@@ -445,7 +442,7 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                               placeholder="Vendor (e.g. Mouser)"
                               value={item.vendor}
                               onChange={(e) => updateLineItem(idx, 'vendor', e.target.value)}
-                              className="h-8 text-xs bg-zinc-950 border-zinc-800 text-white"
+                              className="h-8 text-xs"
                             />
                           </div>
                           <div className="sm:col-span-2">
@@ -456,7 +453,7 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                               placeholder="Unit Cost ($)"
                               value={item.unit_cost_cents ? (item.unit_cost_cents / 100).toString() : ''}
                               onChange={(e) => updateLineItem(idx, 'unit_cost_cents', Math.round(parseFloat(e.target.value || '0') * 100))}
-                              className="h-8 text-xs bg-zinc-950 border-zinc-800 text-white"
+                              className="h-8 text-xs"
                             />
                           </div>
                           <div className="sm:col-span-1 flex items-center justify-end">
@@ -464,7 +461,8 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                               type="button"
                               onClick={() => removeLineItem(idx)}
                               disabled={lineItems.length <= 1}
-                              className="p-1.5 text-zinc-500 hover:text-red-400 disabled:opacity-30 cursor-pointer"
+                              className="p-1.5 text-zinc-400 hover:text-red-600 disabled:opacity-30 cursor-pointer transition-colors"
+                              title="Remove item"
                             >
                               <Trash2 className="h-4 w-4" />
                             </button>
@@ -478,7 +476,7 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                     type="button"
                     variant="outline"
                     onClick={addLineItem}
-                    className="w-full text-xs h-8 border-dashed border-zinc-700 bg-zinc-950 hover:bg-zinc-900 text-zinc-300 gap-1.5"
+                    className="w-full text-xs h-8 border-dashed border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300 gap-1.5"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     <span>Add Another Line Item</span>
@@ -492,13 +490,13 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                    <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                       Parent Competition *
                     </label>
                     <select
                       value={teamCompId}
                       onChange={(e) => setTeamCompId(e.target.value)}
-                      className="w-full h-10 px-3 text-xs rounded-md bg-zinc-900 border border-zinc-800 text-white focus:outline-none focus:border-red-600"
+                      className="w-full h-10 px-3 text-xs rounded-lg bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
                     >
                       {competitions.map((c) => (
                         <option key={c.id} value={c.id}>
@@ -508,7 +506,7 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                    <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                       Proposed Team Name *
                     </label>
                     <Input
@@ -516,13 +514,12 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                       placeholder="e.g. FHS Knights Autonomous Navigation"
                       value={teamProposedName}
                       onChange={(e) => setTeamProposedName(e.target.value)}
-                      className="bg-zinc-900 border-zinc-800 text-white"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Team Mission & Subsystem Focus *
                   </label>
                   <textarea
@@ -531,19 +528,19 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                     placeholder="Describe engineering scope, subsystem boundaries, CAD/PCB tools to be used, and goals..."
                     value={teamPurpose}
                     onChange={(e) => setTeamPurpose(e.target.value)}
-                    className="w-full text-xs rounded-lg bg-zinc-900 border border-zinc-800 p-3 text-white placeholder:text-zinc-600 focus:outline-none focus:border-red-600"
+                    className="w-full text-xs rounded-lg bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 p-3 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
                   />
                 </div>
 
-                <div className="flex items-center gap-2 p-3 rounded-lg bg-zinc-900 border border-zinc-800">
+                <div className="flex items-center gap-2 p-3 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
                   <input
                     type="checkbox"
                     id="needsFunding"
                     checked={teamNeedsFunding}
                     onChange={(e) => setTeamNeedsFunding(e.target.checked)}
-                    className="h-4 w-4 rounded border-zinc-700 bg-zinc-950 text-red-600 focus:ring-red-600"
+                    className="h-4 w-4 rounded border-zinc-300 dark:border-zinc-700 text-red-600 focus:ring-red-600"
                   />
-                  <label htmlFor="needsFunding" className="text-xs text-zinc-300 cursor-pointer">
+                  <label htmlFor="needsFunding" className="text-xs text-zinc-700 dark:text-zinc-300 cursor-pointer">
                     This subteam will require dedicated club procurement funding this season
                   </label>
                 </div>
@@ -554,7 +551,7 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
             {activeType === 'workshop' && (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Workshop Topic Title *
                   </label>
                   <Input
@@ -562,12 +559,11 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                     placeholder="e.g. High-Speed PCB Layout & Differential Routing in KiCad"
                     value={workshopTopic}
                     onChange={(e) => setWorkshopTopic(e.target.value)}
-                    className="bg-zinc-900 border-zinc-800 text-white"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Why is this valuable to club members? *
                   </label>
                   <textarea
@@ -576,20 +572,20 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                     placeholder="What skills will members take away? What real-world tools will be demonstrated?"
                     value={workshopRationale}
                     onChange={(e) => setWorkshopRationale(e.target.value)}
-                    className="w-full text-xs rounded-lg bg-zinc-900 border border-zinc-800 p-3 text-white placeholder:text-zinc-600 focus:outline-none focus:border-red-600"
+                    className="w-full text-xs rounded-lg bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 p-3 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex items-center gap-2 p-3 rounded-lg bg-zinc-900 border border-zinc-800">
+                  <div className="flex items-center gap-2 p-3 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
                     <input
                       type="checkbox"
                       id="teachToggle"
                       checked={workshopTeach}
                       onChange={(e) => setWorkshopTeach(e.target.checked)}
-                      className="h-4 w-4 rounded border-zinc-700 bg-zinc-950 text-red-600 focus:ring-red-600"
+                      className="h-4 w-4 rounded border-zinc-300 dark:border-zinc-700 text-red-600 focus:ring-red-600"
                     />
-                    <label htmlFor="teachToggle" className="text-xs text-zinc-300 cursor-pointer">
+                    <label htmlFor="teachToggle" className="text-xs text-zinc-700 dark:text-zinc-300 cursor-pointer">
                       I volunteer to teach or co-instruct this workshop
                     </label>
                   </div>
@@ -598,7 +594,6 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                       placeholder="Preferred timeframe (e.g. Next Tuesday 6 PM)"
                       value={workshopTimeframe}
                       onChange={(e) => setWorkshopTimeframe(e.target.value)}
-                      className="bg-zinc-900 border-zinc-800 text-white"
                     />
                   </div>
                 </div>
@@ -610,7 +605,7 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                    <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                       Request Summary / Title *
                     </label>
                     <Input
@@ -618,17 +613,16 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                       placeholder="e.g. Access to CNC Waterjet Cutter or Markforged Onyx"
                       value={genTitle}
                       onChange={(e) => setGenTitle(e.target.value)}
-                      className="bg-zinc-900 border-zinc-800 text-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                    <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                       Category
                     </label>
                     <select
                       value={genCategory}
                       onChange={(e) => setGenCategory(e.target.value as any)}
-                      className="w-full h-10 px-3 text-xs rounded-md bg-zinc-900 border border-zinc-800 text-white focus:outline-none focus:border-red-600"
+                      className="w-full h-10 px-3 text-xs rounded-lg bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
                     >
                       <option value="equipment">Makerspace & Heavy Equipment</option>
                       <option value="tool_access">Software License / Tool Key Access</option>
@@ -640,7 +634,7 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Detailed Request Description & Justification *
                   </label>
                   <textarea
@@ -649,12 +643,12 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                     placeholder="Describe exactly what you need, how it will be used, target milestones, and timeline..."
                     value={genDescription}
                     onChange={(e) => setGenDescription(e.target.value)}
-                    className="w-full text-xs rounded-lg bg-zinc-900 border border-zinc-800 p-3 text-white placeholder:text-zinc-600 focus:outline-none focus:border-red-600"
+                    className="w-full text-xs rounded-lg bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 p-3 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Urgency Level
                   </label>
                   <div className="grid grid-cols-4 gap-2">
@@ -665,8 +659,8 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                         onClick={() => setGenUrgency(urg)}
                         className={`p-2 rounded-lg text-xs font-bold capitalize transition-all border cursor-pointer ${
                           genUrgency === urg
-                            ? 'bg-red-950 text-red-400 border-red-600'
-                            : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:border-zinc-700'
+                            ? 'bg-red-50 text-red-700 border-red-300 dark:bg-red-950 dark:text-red-400 dark:border-red-600'
+                            : 'bg-zinc-50 text-zinc-600 border-zinc-200 dark:bg-zinc-900 dark:text-zinc-400 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
                         }`}
                       >
                         {urg}
@@ -678,12 +672,12 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
             )}
           </CardContent>
 
-          <CardFooter className="border-t border-zinc-850 pt-4 flex items-center justify-between">
+          <CardFooter className="border-t border-zinc-100 dark:border-zinc-850 pt-4 flex items-center justify-between">
             <Button
               type="button"
               variant="outline"
               onClick={() => router.push('/requests')}
-              className="text-xs bg-zinc-900 border-zinc-800 text-zinc-300 hover:bg-zinc-800"
+              className="text-xs"
             >
               Cancel
             </Button>
@@ -691,7 +685,7 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
             <Button
               type="submit"
               disabled={isPending}
-              className="bg-red-600 hover:bg-red-700 text-white font-bold gap-2 text-xs shadow-lg shadow-red-950/60"
+              className="bg-red-600 hover:bg-red-700 text-white font-bold gap-2 text-xs shadow-lg shadow-red-950/40"
             >
               <span>{isPending ? 'Submitting to Officers...' : 'Submit Request'}</span>
               <ArrowRight className="h-4 w-4" />

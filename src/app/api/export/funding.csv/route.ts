@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getCurrentUser } from '@/lib/supabase/server';
-import { getDb } from '@/lib/db/mock-data';
+import { getCurrentUser, createClient } from '@/lib/supabase/server';
 
 export async function GET() {
   const user = await getCurrentUser();
@@ -8,12 +7,25 @@ export async function GET() {
     return new NextResponse('Unauthorized', { status: 403 });
   }
 
-  const db = getDb();
-  const requests = db.funding_requests;
-  const lineItems = db.funding_line_items;
-  const profiles = db.profiles;
-  const teams = db.teams;
-  const competitions = db.competitions;
+  const supabase = await createClient();
+
+  const [
+    { data: requests },
+    { data: lineItems },
+    { data: profiles },
+    { data: teams },
+    { data: competitions },
+  ] = await Promise.all([
+    (supabase.from('funding_requests') as any).select('*'),
+    (supabase.from('funding_line_items') as any).select('*'),
+    (supabase.from('profiles') as any).select('*'),
+    (supabase.from('teams') as any).select('*'),
+    (supabase.from('competitions') as any).select('*'),
+  ]);
+
+  const profileMap = new Map((profiles || []).map((p: any) => [p.id, p]));
+  const teamMap = new Map((teams || []).map((t: any) => [t.id, t]));
+  const compMap = new Map((competitions || []).map((c: any) => [c.id, c]));
 
   const headers = [
     'Request ID',
@@ -36,11 +48,11 @@ export async function GET() {
 
   const rows: string[][] = [headers];
 
-  requests.forEach((req) => {
-    const requester = profiles.find((p) => p.id === req.requested_by);
-    const team = teams.find((t) => t.id === req.team_id);
-    const comp = competitions.find((c) => c.id === req.competition_id);
-    const items = lineItems.filter((i) => i.funding_request_id === req.id);
+  ((requests as any[]) || []).forEach((req: any) => {
+    const requester: any = profileMap.get(req.requested_by);
+    const team: any = req.team_id ? teamMap.get(req.team_id) : null;
+    const comp: any = req.competition_id ? compMap.get(req.competition_id) : null;
+    const items = ((lineItems as any[]) || []).filter((i: any) => i.funding_request_id === req.id);
 
     if (items.length === 0) {
       rows.push([
@@ -62,7 +74,7 @@ export async function GET() {
         req.reimbursed_at ? req.reimbursed_at.split('T')[0] : 'Pending',
       ]);
     } else {
-      items.forEach((item) => {
+      items.forEach((item: any) => {
         const lineTotal = (item.unit_cost_cents * item.quantity) / 100;
         rows.push([
           req.id,

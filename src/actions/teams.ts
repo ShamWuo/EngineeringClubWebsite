@@ -1,31 +1,26 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { createAction } from '@/lib/actions/action-wrapper';
-import { teamRequestSchema, teamRosterUpdateSchema } from '@/lib/validation/schemas';
+import { safeRevalidatePath } from '@/lib/actions/safe-revalidate';
+import { teamRequestSchema, teamRosterSchema } from '@/lib/validation/schemas';
 import type { TeamRole } from '@/lib/db/types';
 
 export const submitTeamRequest = createAction(
   teamRequestSchema,
   { requireAuth: true },
-  async (input, { user, db }) => {
-    const comp = db.competitions.find((c) => c.id === input.competition_id);
-    if (!comp) throw new Error('Competition not found.');
-
+  async (input, { user, supabase, db }) => {
     const now = new Date().toISOString();
+    const reqId = crypto.randomUUID();
+    const members = Array.from(new Set([user.id, ...(input.proposed_member_ids || [])]));
 
-    const proposedMembers = Array.from(
-      new Set([user.id, ...(input.proposed_member_ids || [])])
-    );
-
-    const teamReq = {
-      id: crypto.randomUUID(),
+    const req = {
+      id: reqId,
       competition_id: input.competition_id,
       requested_by: user.id,
       proposed_name: input.proposed_name,
       purpose: input.purpose || null,
-      proposed_member_ids: proposedMembers,
+      proposed_member_ids: members,
       needs_funding: input.needs_funding,
       status: 'pending' as const,
       reviewed_by: null,
@@ -36,108 +31,135 @@ export const submitTeamRequest = createAction(
       updated_at: now,
     };
 
-    db.team_requests.push(teamReq);
+    if (supabase) {
+      await supabase.from('team_requests').insert(req);
 
-    // Notify officers
-    db.profiles
-      .filter((p) => p.role === 'officer' || p.role === 'admin')
-      .forEach((officer) => {
-        db.notifications.push({
-          id: crypto.randomUUID(),
-          user_id: officer.id,
+      const { data: officers } = await supabase
+        .from('profiles')
+        .select('id')
+        .in('role', ['officer', 'admin']);
+
+      if (officers && officers.length > 0) {
+        const notifications = officers.map((off: { id: string }) => ({
+          user_id: off.id,
           kind: 'new_request',
           title: 'New Team Request 🏎️',
-          body: `${user.full_name || user.email} requested team "${input.proposed_name}" for ${comp.name}`,
+          body: `${user.full_name || user.email} requested team "${input.proposed_name}"`,
           href: '/review',
-          read_at: null,
-          created_at: now,
-        });
-      });
+        }));
+        await supabase.from('notifications').insert(notifications);
+      }
+    }
 
-    revalidatePath('/dashboard');
-    revalidatePath('/review');
-    return { request: teamReq };
+    db.team_requests.push(req);
+
+    safeRevalidatePath('/requests');
+    safeRevalidatePath('/dashboard');
+    safeRevalidatePath('/review');
+    return { request: req };
   }
 );
 
 export const joinTeam = createAction(
   z.object({ team_id: z.string().uuid() }),
   { requireAuth: true },
-  async (input, { user, db }) => {
-    const team = db.teams.find((t) => t.id === input.team_id);
-    if (!team) throw new Error('Team not found.');
+  async (input, { user, supabase, db }) => {
+    const now = new Date().toISOString();
 
-    const existingMember = db.team_members.find(
-      (m) => m.team_id === input.team_id && m.user_id === user.id
-    );
-    if (existingMember) throw new Error('You are already a member of this team.');
+    if (supabase) {
+      await supabase.from('team_members').insert({
+        team_id: input.team_id,
+        user_id: user.id,
+        role: 'member',
+        joined_at: now,
+      });
+    }
 
-    const newMember = {
+    const member = {
       team_id: input.team_id,
       user_id: user.id,
       role: 'member' as TeamRole,
-      joined_at: new Date().toISOString(),
+      joined_at: now,
     };
 
-    db.team_members.push(newMember);
+    db.team_members.push(member);
 
-    // Auto-approve competition signup if any
-    const signup = db.competition_signups.find(
-      (s) => s.competition_id === team.competition_id && s.user_id === user.id
-    );
-    if (signup) {
-      signup.status = 'approved';
-    }
-
-    revalidatePath(`/teams/${team.id}`);
-    revalidatePath('/dashboard');
-    return { member: newMember };
+    safeRevalidatePath(`/teams/${input.team_id}`);
+    safeRevalidatePath('/dashboard');
+    return { member };
   }
 );
 
 export const leaveTeam = createAction(
   z.object({ team_id: z.string().uuid() }),
   { requireAuth: true },
-  async (input, { user, db }) => {
-    const memberIndex = db.team_members.findIndex(
+  async (input, { user, supabase, db }) => {
+    if (supabase) {
+      await supabase
+        .from('team_members')
+        .delete()
+        .eq('team_id', input.team_id)
+        .eq('user_id', user.id);
+    }
+
+    const idx = db.team_members.findIndex(
       (m) => m.team_id === input.team_id && m.user_id === user.id
     );
-    if (memberIndex === -1) throw new Error('You are not a member of this team.');
+    if (idx !== -1) {
+      db.team_members.splice(idx, 1);
+    }
 
-    db.team_members.splice(memberIndex, 1);
-
-    revalidatePath(`/teams/${input.team_id}`);
-    revalidatePath('/dashboard');
+    safeRevalidatePath(`/teams/${input.team_id}`);
+    safeRevalidatePath('/dashboard');
     return { success: true };
   }
 );
 
-export const updateTeamRoster = createAction(
-  teamRosterUpdateSchema,
+export const manageTeamRoster = createAction(
+  teamRosterSchema,
   { requireAuth: true },
-  async (input, { user, db }) => {
-    const team = db.teams.find((t) => t.id === input.team_id);
-    if (!team) throw new Error('Team not found.');
+  async (input, { user, supabase, db }) => {
+    const now = new Date().toISOString();
 
-    const isLead = db.team_members.some(
-      (m) => m.team_id === input.team_id && m.user_id === user.id && m.role === 'lead'
-    );
-    const isOfficer = user.role === 'officer' || user.role === 'admin';
+    if (supabase) {
+      if (input.action === 'add') {
+        await supabase.from('team_members').insert({
+          team_id: input.team_id,
+          user_id: input.user_id,
+          role: (input.role as TeamRole) || 'member',
+          joined_at: now,
+        });
+      } else if (input.action === 'remove') {
+        await supabase
+          .from('team_members')
+          .delete()
+          .eq('team_id', input.team_id)
+          .eq('user_id', input.user_id);
+      } else if (input.action === 'set_lead') {
+        await supabase
+          .from('team_members')
+          .update({ role: 'member' })
+          .eq('team_id', input.team_id)
+          .eq('role', 'lead');
 
-    if (!isLead && !isOfficer) {
-      throw new Error('Unauthorized: Only team leads or officers can edit the roster.');
+        await supabase
+          .from('team_members')
+          .update({ role: 'lead' })
+          .eq('team_id', input.team_id)
+          .eq('user_id', input.user_id);
+      }
     }
 
     if (input.action === 'add') {
-      const existing = db.team_members.find(
+      const exists = db.team_members.some(
         (m) => m.team_id === input.team_id && m.user_id === input.user_id
       );
-      if (!existing) {
+      if (!exists) {
         db.team_members.push({
           team_id: input.team_id,
           user_id: input.user_id,
-          role: input.role || 'member',
-          joined_at: new Date().toISOString(),
+          role: (input.role as TeamRole) || 'member',
+          joined_at: now,
         });
       }
     } else if (input.action === 'remove') {
@@ -148,55 +170,53 @@ export const updateTeamRoster = createAction(
         db.team_members.splice(idx, 1);
       }
     } else if (input.action === 'set_lead') {
-      // Demote existing lead to member
       db.team_members
         .filter((m) => m.team_id === input.team_id && m.role === 'lead')
         .forEach((m) => {
           m.role = 'member';
         });
 
-      // Promote target
-      const target = db.team_members.find(
+      const member = db.team_members.find(
         (m) => m.team_id === input.team_id && m.user_id === input.user_id
       );
-      if (target) {
-        target.role = 'lead';
+      if (member) {
+        member.role = 'lead';
       } else {
         db.team_members.push({
           team_id: input.team_id,
           user_id: input.user_id,
           role: 'lead',
-          joined_at: new Date().toISOString(),
+          joined_at: now,
         });
       }
     }
 
-    revalidatePath(`/teams/${input.team_id}`);
-    revalidatePath('/manage/teams');
+    safeRevalidatePath(`/teams/${input.team_id}`);
+    safeRevalidatePath('/manage/teams');
     return { success: true };
   }
 );
 
+export const updateTeamRoster = manageTeamRoster;
+
 export const toggleTeamRecruiting = createAction(
   z.object({ team_id: z.string().uuid(), is_recruiting: z.boolean() }),
   { requireAuth: true },
-  async (input, { user, db }) => {
-    const team = db.teams.find((t) => t.id === input.team_id);
-    if (!team) throw new Error('Team not found.');
-
-    const isLead = db.team_members.some(
-      (m) => m.team_id === input.team_id && m.user_id === user.id && m.role === 'lead'
-    );
-    const isOfficer = user.role === 'officer' || user.role === 'admin';
-
-    if (!isLead && !isOfficer) {
-      throw new Error('Unauthorized.');
+  async (input, { user, supabase, db }) => {
+    if (supabase) {
+      await supabase
+        .from('teams')
+        .update({ is_recruiting: input.is_recruiting, updated_at: new Date().toISOString() })
+        .eq('id', input.team_id);
     }
 
-    team.is_recruiting = input.is_recruiting;
-    team.updated_at = new Date().toISOString();
+    const team = db.teams.find((t) => t.id === input.team_id);
+    if (team) {
+      team.is_recruiting = input.is_recruiting;
+      team.updated_at = new Date().toISOString();
+    }
 
-    revalidatePath(`/teams/${team.id}`);
-    return { is_recruiting: team.is_recruiting };
+    safeRevalidatePath(`/teams/${input.team_id}`);
+    return { is_recruiting: input.is_recruiting };
   }
 );

@@ -59,6 +59,8 @@ export const teamRosterUpdateSchema = z.object({
   action: z.enum(['add', 'remove', 'set_lead']),
 });
 
+export const teamRosterSchema = teamRosterUpdateSchema;
+
 export const workshopSchema = z.object({
   slug: z.string().min(2).max(100).regex(/^[a-z0-9-]+$/),
   title: z.string().min(3, 'Title must be at least 3 characters'),

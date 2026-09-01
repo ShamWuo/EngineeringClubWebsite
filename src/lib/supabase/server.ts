@@ -1,25 +1,28 @@
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import type { Database, UserRole } from '@/lib/db/types';
-import { getDb } from '@/lib/db/mock-data';
 
 export async function createClient() {
   let cookieStore: any;
   try {
     cookieStore = await cookies();
   } catch {
-    // Return a mock client when outside request context
-    return {
-      auth: {
-        async getUser() {
-          return { data: { user: null }, error: null };
+    // Outside request context (e.g. static generation / build time fallback)
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://vanpniumrtgctqobfzmw.supabase.co';
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_4WzLhRnDkfDsngU4fz76ww_u0w5z18i';
+
+    return createServerClient<Database>(supabaseUrl, supabaseAnonKey, {
+      cookies: {
+        getAll() {
+          return [];
         },
+        setAll() {},
       },
-    } as any;
+    });
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:54321';
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'mock-anon-key';
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://vanpniumrtgctqobfzmw.supabase.co';
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_4WzLhRnDkfDsngU4fz76ww_u0w5z18i';
 
   return createServerClient<Database>(supabaseUrl, supabaseAnonKey, {
     cookies: {
@@ -32,7 +35,7 @@ export async function createClient() {
             cookieStore?.set?.(name, value, options)
           );
         } catch {
-          // Ignore if called in Server Component
+          // Ignore if called in a Server Component during render
         }
       },
     },
@@ -51,103 +54,68 @@ export interface AuthUser {
 }
 
 export async function getCurrentUser(): Promise<AuthUser | null> {
-  const db = getDb();
-  let demoUserId: string | undefined;
-
-  try {
-    const cookieStore = await cookies();
-    demoUserId = cookieStore?.get?.('demo_user_id')?.value;
-  } catch {
-    // Outside of request scope (e.g. in test suite)
-    // Default to the first profile (Admin Alex Vance) to allow test execution
-    const adminUser = db.profiles[0];
+  // Test suite fallback
+  if (process.env.NODE_ENV === 'test') {
     return {
-      id: adminUser.id,
-      email: adminUser.email,
-      full_name: adminUser.full_name,
-      role: adminUser.role,
-      avatar_url: adminUser.avatar_url,
-      grad_year: adminUser.grad_year,
-      skills: adminUser.skills,
-      is_active: adminUser.is_active,
+      id: '11111111-1111-1111-1111-111111111111',
+      email: 'alex.vance@bvsd.org',
+      full_name: 'Alex Vance',
+      role: 'admin',
+      avatar_url: null,
+      grad_year: 2026,
+      skills: ['Robotics', 'CAD', 'Embedded Systems'],
+      is_active: true,
     };
   }
 
-  // If a demo user session cookie is set, resolve user from profiles
-  if (demoUserId) {
-    const profile = db.profiles.find((p) => p.id === demoUserId && p.is_active);
-    if (profile) {
-      return {
-        id: profile.id,
-        email: profile.email,
-        full_name: profile.full_name,
-        role: profile.role,
-        avatar_url: profile.avatar_url,
-        grad_year: profile.grad_year,
-        skills: profile.skills,
-        is_active: profile.is_active,
-      };
-    }
-  }
-
-  // Otherwise, attempt to read Supabase Auth session
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-    if (!user) {
-      // Default to the first profile for development preview
-      const defaultUser = db.profiles[0];
-      if (defaultUser) {
-        return {
-          id: defaultUser.id,
-          email: defaultUser.email,
-          full_name: defaultUser.full_name,
-          role: defaultUser.role,
-          avatar_url: defaultUser.avatar_url,
-          grad_year: defaultUser.grad_year,
-          skills: defaultUser.skills,
-          is_active: defaultUser.is_active,
-        };
-      }
+    if (userError || !user) {
       return null;
     }
 
-    const profile = db.profiles.find((p) => p.id === user.id);
+    // Fetch user profile from Supabase profiles table
+    const { data: profile } = await (supabase.from('profiles') as any)
+      .select('*')
+      .eq('id', user.id)
+      .single();
+
     if (profile) {
       return {
         id: profile.id,
         email: profile.email,
         full_name: profile.full_name,
-        role: profile.role,
+        role: profile.role as UserRole,
         avatar_url: profile.avatar_url,
         grad_year: profile.grad_year,
-        skills: profile.skills,
+        skills: profile.skills || [],
         is_active: profile.is_active,
       };
     }
 
+    // If profile row doesn't exist yet, build from user metadata
     return {
       id: user.id,
       email: user.email || '',
-      full_name: user.user_metadata?.full_name || null,
+      full_name:
+        user.user_metadata?.full_name ||
+        user.user_metadata?.name ||
+        user.user_metadata?.user_name ||
+        user.email?.split('@')[0] ||
+        null,
       role: (user.user_metadata?.role as UserRole) || 'member',
-      avatar_url: user.user_metadata?.avatar_url || null,
+      avatar_url:
+        user.user_metadata?.avatar_url ||
+        user.user_metadata?.picture ||
+        null,
       grad_year: user.user_metadata?.grad_year || null,
       skills: [],
       is_active: true,
     };
-  } catch {
-    const defaultUser = db.profiles[0];
-    return {
-      id: defaultUser.id,
-      email: defaultUser.email,
-      full_name: defaultUser.full_name,
-      role: defaultUser.role,
-      avatar_url: defaultUser.avatar_url,
-      grad_year: defaultUser.grad_year,
-      skills: defaultUser.skills,
-      is_active: defaultUser.is_active,
-    };
+  } catch (err) {
+    console.error('getCurrentUser error:', err);
+    return null;
   }
 }

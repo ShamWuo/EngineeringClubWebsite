@@ -23,7 +23,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     .sort((a, b) => a.sort_order - b.sort_order);
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-screen flex flex-col bg-zinc-50 dark:bg-zinc-950 transition-colors">
       <AppHeader
         currentUser={user}
         notifications={userNotifications}

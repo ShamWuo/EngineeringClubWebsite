@@ -2,24 +2,16 @@ import React from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { requireUser } from '@/lib/auth/require-role';
-import { getDb } from '@/lib/db/mock-data';
+import { getTeamById } from '@/lib/db/queries';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { StatusBadge } from '@/components/domain/status-badge';
-import { RosterTable } from '@/components/domain/roster-table';
-import { WorkLogCard } from '@/components/domain/work-log-card';
-import { WorkLogComposer } from '@/components/domain/work-log-composer';
-import { EmptyState } from '@/components/domain/empty-state';
 import {
   Users,
-  Trophy,
   DollarSign,
-  PenTool,
   ArrowLeft,
   Crown,
-  Calendar,
-  Sparkles,
 } from 'lucide-react';
 import { TeamMembershipButtons } from './membership-buttons';
 
@@ -29,52 +21,37 @@ export default async function TeamWorkspacePage({
   params: Promise<{ id: string }>;
 }) {
   const user = await requireUser();
-  const db = getDb();
   const { id } = await params;
 
-  const team = db.teams.find((t) => t.id === id);
-  if (!team) {
+  const result = await getTeamById(id);
+  if (!result) {
     notFound();
   }
 
-  const comp = db.competitions.find((c) => c.id === team.competition_id);
-  const teamMemberships = db.team_members.filter((m) => m.team_id === team.id);
-  const isMember = teamMemberships.some((m) => m.user_id === user.id);
-  const isLead = teamMemberships.some((m) => m.user_id === user.id && m.role === 'lead');
+  const { team, competition: comp, members: teamMemberships, funding: teamFunding } = result;
+
+  const isMember = teamMemberships.some((m: any) => m.user_id === user.id);
+  const isLead = teamMemberships.some((m: any) => m.user_id === user.id && m.role === 'lead');
   const isOfficer = user.role === 'officer' || user.role === 'admin';
   const canManageRoster = isLead || isOfficer;
 
-  // Hydrate members with profiles
-  const memberList = teamMemberships.map((m) => {
-    const profile = db.profiles.find((p) => p.id === m.user_id);
-    return {
-      user_id: m.user_id,
-      role: m.role,
-      joined_at: m.joined_at,
-      full_name: profile?.full_name || null,
-      email: profile?.email || 'Unknown',
-      avatar_url: profile?.avatar_url || null,
-      skills: profile?.skills || [],
-    };
-  });
-
-  // Team Work Logs
-  const teamLogs = db.work_logs
-    .filter((l) => l.team_id === team.id)
-    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-
-  // Team Funding Requests
-  const teamFunding = db.funding_requests
-    .filter((f) => f.team_id === team.id)
-    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  const memberList = teamMemberships.map((m: any) => ({
+    user_id: m.user_id,
+    role: m.role,
+    joined_at: m.joined_at,
+    full_name: m.profiles?.full_name || null,
+    email: m.profiles?.email || 'FHS Student',
+    avatar_url: m.profiles?.avatar_url || null,
+    skills: m.profiles?.skills || [],
+  }));
 
   return (
-    <div className="space-y-8 max-w-6xl">
+    <div className="space-y-8 max-w-6xl mx-auto pb-12">
       {/* Header */}
       <div>
         <Link
           href={comp ? `/competitions/${comp.slug}` : '/competitions'}
-          className="inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 mb-3"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-zinc-400 hover:text-white mb-3"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           Back to {comp?.name || 'Competition'}
@@ -83,7 +60,7 @@ export default async function TeamWorkspacePage({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1.5">
-              <Badge variant="outline" className="text-3xs font-mono">
+              <Badge variant="outline" className="text-3xs font-mono bg-zinc-900 border-zinc-800 text-zinc-400">
                 {comp?.name || 'Competition Subteam'}
               </Badge>
               {team.is_recruiting ? (
@@ -92,7 +69,7 @@ export default async function TeamWorkspacePage({
                 <Badge variant="secondary" className="text-3xs">Roster Closed</Badge>
               )}
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100">
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
               {team.name}
             </h1>
           </div>
@@ -112,72 +89,30 @@ export default async function TeamWorkspacePage({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-8">
           {/* About Section */}
-          <Card>
+          <Card className="bg-zinc-950 border-zinc-850">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base font-bold">Subteam Mission & Objectives</CardTitle>
+              <CardTitle className="text-base font-bold text-white">Subteam Mission & Objectives</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap leading-relaxed">
+              <p className="text-sm text-zinc-300 whitespace-pre-wrap leading-relaxed">
                 {team.description || 'No detailed team mission statement written.'}
               </p>
             </CardContent>
           </Card>
-
-          {/* Work Logs Stream */}
-          <section className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                <PenTool className="h-5 w-5 text-purple-600" />
-                Team Work-Log Stream ({teamLogs.length})
-              </h2>
-            </div>
-
-            {isMember && (
-              <WorkLogComposer
-                teams={[{ id: team.id, name: team.name }]}
-                defaultTeamId={team.id}
-              />
-            )}
-
-            {teamLogs.length === 0 ? (
-              <EmptyState
-                title="No Work Logs Yet"
-                description="Team members haven't logged their technical progress yet."
-              />
-            ) : (
-              <div className="space-y-3">
-                {teamLogs.map((log) => {
-                  const author = db.profiles.find((p) => p.id === log.author_id);
-                  return (
-                    <WorkLogCard
-                      key={log.id}
-                      log={log}
-                      authorName={author?.full_name || null}
-                      authorEmail={author?.email}
-                      authorAvatar={author?.avatar_url}
-                      teamName={team.name}
-                      currentUserId={user.id}
-                      isOfficer={isOfficer}
-                    />
-                  );
-                })}
-              </div>
-            )}
-          </section>
         </div>
 
         {/* Sidebar: Roster and Funding */}
         <div className="space-y-6">
           {/* Quick Roster Card */}
-          <Card>
+          <Card className="bg-zinc-950 border-zinc-850">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-bold flex items-center gap-1.5">
-                  <Users className="h-4 w-4 text-brand-600" />
+                <CardTitle className="text-sm font-bold flex items-center gap-1.5 text-white">
+                  <Users className="h-4 w-4 text-red-500" />
                   Roster ({memberList.length})
                 </CardTitle>
                 {canManageRoster && (
-                  <span className="text-3xs bg-purple-100 text-purple-700 font-bold px-1.5 py-0.5 rounded">
+                  <span className="text-3xs bg-red-950 text-red-400 border border-red-800 font-bold px-1.5 py-0.5 rounded">
                     Roster Admin
                   </span>
                 )}
@@ -185,13 +120,13 @@ export default async function TeamWorkspacePage({
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="space-y-2.5">
-                {memberList.map((m) => (
+                {memberList.map((m: any) => (
                   <div key={m.user_id} className="flex items-center justify-between gap-2 text-xs">
                     <div className="flex items-center gap-2 truncate">
-                      <div className="h-6 w-6 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-2xs text-slate-700 dark:text-slate-300 shrink-0">
+                      <div className="h-6 w-6 rounded-full bg-zinc-800 flex items-center justify-center font-bold text-2xs text-red-400 shrink-0">
                         {(m.full_name || m.email).substring(0, 1)}
                       </div>
-                      <span className="truncate font-medium text-slate-800 dark:text-slate-200">
+                      <span className="truncate font-medium text-zinc-200">
                         {m.full_name || m.email}
                       </span>
                     </div>
@@ -200,7 +135,7 @@ export default async function TeamWorkspacePage({
                         <Crown className="h-2.5 w-2.5" /> Lead
                       </Badge>
                     ) : (
-                      <span className="text-3xs text-slate-400 shrink-0">Member</span>
+                      <span className="text-3xs text-zinc-500 shrink-0">Member</span>
                     )}
                   </div>
                 ))}
@@ -209,11 +144,11 @@ export default async function TeamWorkspacePage({
           </Card>
 
           {/* Team Funding Tracker */}
-          <Card>
+          <Card className="bg-zinc-950 border-zinc-850">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-bold flex items-center gap-1.5">
-                  <DollarSign className="h-4 w-4 text-emerald-600" />
+                <CardTitle className="text-sm font-bold flex items-center gap-1.5 text-white">
+                  <DollarSign className="h-4 w-4 text-emerald-500" />
                   Team Funding
                 </CardTitle>
                 <Link href="/requests/new?type=funding">
@@ -225,18 +160,18 @@ export default async function TeamWorkspacePage({
             </CardHeader>
             <CardContent>
               {teamFunding.length === 0 ? (
-                <div className="text-center py-4 text-xs text-slate-400">
+                <div className="text-center py-4 text-xs text-zinc-500">
                   No funding requests filed for this team.
                 </div>
               ) : (
                 <div className="space-y-2.5 text-xs">
-                  {teamFunding.map((f) => (
-                    <div key={f.id} className="p-2.5 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between gap-2">
+                  {teamFunding.map((f: any) => (
+                    <div key={f.id} className="p-2.5 rounded-lg border border-zinc-850 bg-zinc-900/50 flex items-center justify-between gap-2">
                       <div className="min-w-0">
-                        <div className="font-semibold text-slate-900 dark:text-slate-100 truncate">
+                        <div className="font-semibold text-zinc-200 truncate">
                           {f.title}
                         </div>
-                        <div className="text-2xs text-emerald-600 font-bold">
+                        <div className="text-2xs text-emerald-400 font-bold">
                           ${(f.amount_requested_cents / 100).toFixed(2)}
                         </div>
                       </div>

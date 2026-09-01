@@ -5,7 +5,7 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input, Textarea } from '@/components/ui/input';
 import { submitWorkshopRequest } from '@/actions/workshops';
-import { Send, Sparkles } from 'lucide-react';
+import { Send } from 'lucide-react';
 
 export function WorkshopRequestForm() {
   const [topic, setTopic] = useState('');
@@ -42,22 +42,22 @@ export function WorkshopRequestForm() {
   };
 
   return (
-    <Card>
+    <Card className="bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-850 shadow-2xs">
       <form onSubmit={handleSubmit}>
         <CardContent className="pt-6 space-y-3.5">
           {error && (
-            <div className="p-3 text-xs rounded bg-red-50 text-red-700 border border-red-200">
+            <div className="p-3 text-xs rounded-lg bg-red-50 dark:bg-red-950/80 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800">
               {error}
             </div>
           )}
           {success && (
-            <div className="p-3 text-xs rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <div className="p-3 text-xs rounded-lg bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
               Workshop proposal posted to the community board!
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
               Workshop Topic *
             </label>
             <Input
@@ -69,7 +69,7 @@ export function WorkshopRequestForm() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
               Why Is This Valuable to Club Members? *
             </label>
             <Textarea
@@ -82,7 +82,7 @@ export function WorkshopRequestForm() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
               Preferred Timeframe (Optional)
             </label>
             <Input
@@ -98,19 +98,19 @@ export function WorkshopRequestForm() {
               id="offering_to_teach"
               checked={offeringToTeach}
               onChange={(e) => setOfferingToTeach(e.target.checked)}
-              className="rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+              className="h-4 w-4 rounded border-zinc-300 dark:border-zinc-700 text-red-600 focus:ring-red-600"
             />
-            <label htmlFor="offering_to_teach" className="text-xs text-slate-700 dark:text-slate-300 select-none">
+            <label htmlFor="offering_to_teach" className="text-xs text-zinc-700 dark:text-zinc-300 select-none cursor-pointer">
               I am offering to instruct/lead this workshop myself.
             </label>
           </div>
         </CardContent>
 
-        <CardFooter className="pt-2 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+        <CardFooter className="pt-2 border-t border-zinc-100 dark:border-zinc-850 flex justify-end">
           <Button
             type="submit"
             disabled={isPending || !topic.trim() || !rationale.trim()}
-            className="font-semibold gap-1.5 text-xs"
+            className="font-semibold gap-1.5 text-xs bg-red-600 hover:bg-red-700 text-white"
           >
             <Send className="h-3.5 w-3.5" />
             {isPending ? 'Submitting...' : 'Post Topic Proposal'}

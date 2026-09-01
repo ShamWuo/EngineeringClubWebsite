@@ -28,10 +28,10 @@ export default async function NewRequestPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-12">
       <div>
-        <h1 className="text-2xl font-black tracking-tight text-white">
+        <h1 className="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">
           Submit a Club Request
         </h1>
-        <p className="text-xs text-zinc-400 mt-1">
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
           Select what you need below. Submissions are immediately routed to the officer review queue.
         </p>
       </div>

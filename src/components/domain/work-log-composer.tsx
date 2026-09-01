@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/input';
 import { Input, Select } from '@/components/ui/input';
 import { createWorkLog } from '@/actions/logs';
-import { PenTool, Send, Clock, AlertCircle } from 'lucide-react';
+import { PenTool, Send } from 'lucide-react';
 
 interface TeamOption {
   id: string;
@@ -53,17 +53,17 @@ export function WorkLogComposer({
   };
 
   return (
-    <Card className="border-brand-200/80 dark:border-brand-900/60 bg-gradient-to-b from-white to-slate-50/50 dark:from-slate-900 dark:to-slate-950">
+    <Card className="border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/90 shadow-2xs">
       <CardHeader className="pb-3 pt-4 px-5">
-        <CardTitle className="text-sm font-semibold flex items-center gap-2">
-          <PenTool className="h-4 w-4 text-brand-600" />
+        <CardTitle className="text-sm font-semibold flex items-center gap-2 text-zinc-900 dark:text-white">
+          <PenTool className="h-4 w-4 text-red-600 dark:text-red-500" />
           Log What You're Working On
         </CardTitle>
       </CardHeader>
       <CardContent className="px-5 pb-4">
         <form onSubmit={handleSubmit} className="space-y-3">
           {error && (
-            <div className="p-2 text-xs rounded bg-red-50 text-red-700 border border-red-200">
+            <div className="p-2 text-xs rounded bg-red-50 text-red-700 dark:bg-red-950/80 dark:text-red-300 border border-red-200 dark:border-red-800">
               {error}
             </div>
           )}
@@ -80,7 +80,7 @@ export function WorkLogComposer({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {teams.length > 0 && (
               <div>
-                <label className="block text-2xs font-medium text-slate-500 mb-1">Team</label>
+                <label className="block text-2xs font-medium text-zinc-500 mb-1">Team</label>
                 <Select
                   value={teamId}
                   onChange={(e) => setTeamId(e.target.value)}
@@ -97,7 +97,7 @@ export function WorkLogComposer({
             )}
 
             <div>
-              <label className="block text-2xs font-medium text-slate-500 mb-1">
+              <label className="block text-2xs font-medium text-zinc-500 mb-1">
                 Hours Spent
               </label>
               <Input
@@ -112,7 +112,7 @@ export function WorkLogComposer({
             </div>
 
             <div>
-              <label className="block text-2xs font-medium text-slate-500 mb-1">
+              <label className="block text-2xs font-medium text-zinc-500 mb-1">
                 Visibility
               </label>
               <Select
@@ -127,7 +127,7 @@ export function WorkLogComposer({
           </div>
 
           <div>
-            <label className="block text-2xs font-medium text-slate-500 mb-1">
+            <label className="block text-2xs font-medium text-zinc-500 mb-1">
               Blockers / Bottlenecks (Optional)
             </label>
             <Input

@@ -34,62 +34,64 @@ export function RequestCard({
   const getKindIcon = () => {
     switch (kind) {
       case 'team':
-        return <Users className="h-4 w-4 text-red-400" />;
+        return <Users className="h-4 w-4 text-red-500 dark:text-red-400" />;
       case 'competition':
-        return <Trophy className="h-4 w-4 text-amber-400" />;
+        return <Trophy className="h-4 w-4 text-amber-500 dark:text-amber-400" />;
       case 'workshop':
-        return <Lightbulb className="h-4 w-4 text-emerald-400" />;
+        return <Lightbulb className="h-4 w-4 text-emerald-500 dark:text-emerald-400" />;
       case 'funding':
-        return <DollarSign className="h-4 w-4 text-purple-400" />;
+        return <DollarSign className="h-4 w-4 text-purple-500 dark:text-purple-400" />;
       case 'general':
-        return <HelpCircle className="h-4 w-4 text-zinc-300" />;
+        return <HelpCircle className="h-4 w-4 text-zinc-500 dark:text-zinc-300" />;
     }
   };
 
   const formattedDate = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
 
   return (
-    <Card className="hover:border-zinc-700 bg-zinc-950 border-zinc-850 transition-all flex flex-col justify-between">
+    <Card className="hover:border-zinc-400 dark:hover:border-zinc-700 bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 transition-all flex flex-col justify-between shadow-2xs hover:shadow-md">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between gap-2 mb-1.5">
-          <div className="flex items-center gap-1.5 text-3xs font-mono font-bold uppercase tracking-wider text-zinc-400">
+          <div className="flex items-center gap-1.5 text-3xs font-mono font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
             {getKindIcon()}
             <span>{kind} Request</span>
           </div>
           <StatusBadge status={status} />
         </div>
-        <CardTitle className="text-sm font-bold leading-snug line-clamp-1 text-white">{title}</CardTitle>
+        <CardTitle className="text-sm font-bold leading-snug line-clamp-1 text-zinc-900 dark:text-white">
+          {title}
+        </CardTitle>
         {requesterName && (
-          <CardDescription className="text-3xs text-zinc-500">
-            Proposed by <span className="font-medium text-zinc-300">{requesterName}</span> ({requesterEmail}) • {formattedDate}
+          <CardDescription className="text-3xs text-zinc-500 dark:text-zinc-400">
+            Proposed by <span className="font-medium text-zinc-800 dark:text-zinc-200">{requesterName}</span> ({requesterEmail}) • {formattedDate}
           </CardDescription>
         )}
       </CardHeader>
 
       <CardContent className="py-0 flex-1">
         {summary && (
-          <p className="text-xs text-zinc-400 line-clamp-2 mb-3 leading-relaxed">
+          <p className="text-xs text-zinc-600 dark:text-zinc-400 line-clamp-2 mb-3 leading-relaxed">
             {summary}
           </p>
         )}
         {amountCents !== undefined && (
-          <div className="text-xs font-bold text-red-400 bg-red-950/60 border border-red-900/60 px-2.5 py-1 rounded inline-block mb-3">
+          <div className="text-xs font-bold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-900/60 px-2.5 py-1 rounded inline-block mb-3">
             Requested: ${(amountCents / 100).toFixed(2)}
           </div>
         )}
       </CardContent>
 
-      <CardFooter className="pt-3 border-t border-zinc-850 flex justify-between items-center text-xs">
-        <span className="text-zinc-600 text-3xs font-mono">{id.substring(0, 8)}...</span>
+      <CardFooter className="pt-3 border-t border-zinc-100 dark:border-zinc-850 flex justify-between items-center text-xs">
+        <span className="text-zinc-400 dark:text-zinc-600 text-3xs font-mono">{id.substring(0, 8)}...</span>
         {isOfficerReview ? (
           <Link href={`/review/${kind}/${id}`}>
-            <Button size="sm" className="h-7 text-3xs gap-1 bg-red-600 hover:bg-red-700 text-white font-bold">
+            <Button size="sm" className="h-7 text-3xs gap-1 bg-red-600 hover:bg-red-700 text-white font-bold shadow-xs">
               Review Action
               <ArrowRight className="h-3 w-3" />
             </Button>
           </Link>
         ) : (
-          <span className="text-zinc-500 text-3xs">Submitted {formattedDate}</span>
+          <span className="text-zinc-500 dark:text-zinc-400 text-3xs">Submitted {formattedDate}</span>
         )}
       </CardFooter>
     </Card>

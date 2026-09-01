@@ -47,7 +47,7 @@ export function WorkLogCard({
   const formattedDate = formatDistanceToNow(new Date(log.created_at), { addSuffix: true });
 
   return (
-    <Card className="shadow-2xs hover:border-slate-300 dark:hover:border-slate-700 transition-colors">
+    <Card className="shadow-2xs hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors">
       <CardHeader className="pb-3 pt-4 px-5">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
@@ -55,16 +55,16 @@ export function WorkLogCard({
               <img
                 src={authorAvatar}
                 alt={authorName || 'Avatar'}
-                className="h-9 w-9 rounded-full object-cover border border-slate-200 dark:border-slate-700"
+                className="h-9 w-9 rounded-full object-cover border border-zinc-200 dark:border-zinc-700"
               />
             ) : (
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 text-brand-700 font-bold text-xs">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300 font-bold text-xs border border-red-200 dark:border-red-900">
                 {(authorName || authorEmail || 'U').substring(0, 2).toUpperCase()}
               </div>
             )}
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-semibold text-sm text-slate-900 dark:text-slate-100">
+                <span className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">
                   {authorName || authorEmail || 'Member'}
                 </span>
                 {teamName && (
@@ -73,23 +73,23 @@ export function WorkLogCard({
                   </Badge>
                 )}
               </div>
-              <span className="text-xs text-slate-500 dark:text-slate-400">{formattedDate}</span>
+              <span className="text-xs text-zinc-500 dark:text-zinc-400">{formattedDate}</span>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             {log.hours_spent && (
-              <div className="flex items-center gap-1 text-xs font-semibold text-brand-700 dark:text-brand-300 bg-brand-50 dark:bg-brand-950/50 px-2 py-0.5 rounded-full border border-brand-200 dark:border-brand-800">
+              <div className="flex items-center gap-1 text-xs font-semibold text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/50 px-2 py-0.5 rounded-full border border-red-200 dark:border-red-800">
                 <Clock className="h-3 w-3" />
                 <span>{log.hours_spent} hrs</span>
               </div>
             )}
             {log.visibility === 'club' ? (
-              <span title="Visible to entire club" className="text-slate-400">
+              <span title="Visible to entire club" className="text-zinc-400 dark:text-zinc-500">
                 <Globe className="h-3.5 w-3.5" />
               </span>
             ) : (
-              <span title="Visible to team and officers" className="text-slate-400">
+              <span title="Visible to team and officers" className="text-zinc-400 dark:text-zinc-500">
                 <Lock className="h-3.5 w-3.5" />
               </span>
             )}
@@ -99,7 +99,7 @@ export function WorkLogCard({
                 size="sm"
                 onClick={handleDelete}
                 disabled={isPending}
-                className="h-7 w-7 p-0 text-slate-400 hover:text-red-500"
+                className="h-7 w-7 p-0 text-zinc-400 hover:text-red-600 dark:hover:text-red-400"
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </Button>
@@ -109,7 +109,7 @@ export function WorkLogCard({
       </CardHeader>
 
       <CardContent className="px-5 pb-4 pt-0">
-        <div className="text-sm text-slate-800 dark:text-slate-200 whitespace-pre-wrap leading-relaxed">
+        <div className="text-sm text-zinc-800 dark:text-zinc-200 whitespace-pre-wrap leading-relaxed">
           {log.body}
         </div>
 

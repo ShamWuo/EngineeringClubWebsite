@@ -1,8 +1,8 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { createAction } from '@/lib/actions/action-wrapper';
+import { safeRevalidatePath } from '@/lib/actions/safe-revalidate';
 import { competitionSchema, competitionRequestSchema, competitionSignupSchema } from '@/lib/validation/schemas';
 import type { CompStatus } from '@/lib/db/types';
 
@@ -11,43 +11,52 @@ export const upsertCompetition = createAction(
     id: z.string().uuid().optional(),
   }),
   { role: ['officer', 'admin'] },
-  async (input, { user, db }) => {
+  async (input, { user, supabase, db }) => {
     const now = new Date().toISOString();
 
     if (input.id) {
+      if (supabase) {
+        await supabase
+          .from('competitions')
+          .update({
+            slug: input.slug,
+            name: input.name,
+            description: input.description || null,
+            organizer: input.organizer || null,
+            status: input.status as CompStatus,
+            season: input.season || null,
+            registration_opens_at: input.registration_opens_at || null,
+            registration_closes_at: input.registration_closes_at || null,
+            event_starts_at: input.event_starts_at || null,
+            event_ends_at: input.event_ends_at || null,
+            max_teams: input.max_teams || null,
+            max_team_size: input.max_team_size || null,
+            entry_fee_cents: input.entry_fee_cents ?? 0,
+            external_url: input.external_url || null,
+            updated_at: now,
+          })
+          .eq('id', input.id);
+      }
+
       const comp = db.competitions.find((c) => c.id === input.id);
-      if (!comp) throw new Error('Competition not found.');
+      if (comp) {
+        comp.slug = input.slug;
+        comp.name = input.name;
+        comp.description = input.description || null;
+        comp.organizer = input.organizer || null;
+        comp.status = input.status as CompStatus;
+        comp.season = input.season || null;
+        comp.updated_at = now;
+      }
 
-      // Check slug uniqueness among other competitions
-      const existingSlug = db.competitions.find((c) => c.slug === input.slug && c.id !== input.id);
-      if (existingSlug) throw new Error('A competition with this slug already exists.');
-
-      comp.slug = input.slug;
-      comp.name = input.name;
-      comp.description = input.description || null;
-      comp.organizer = input.organizer || null;
-      comp.status = input.status as CompStatus;
-      comp.season = input.season || null;
-      comp.registration_opens_at = input.registration_opens_at || null;
-      comp.registration_closes_at = input.registration_closes_at || null;
-      comp.event_starts_at = input.event_starts_at || null;
-      comp.event_ends_at = input.event_ends_at || null;
-      comp.max_teams = input.max_teams || null;
-      comp.max_team_size = input.max_team_size || null;
-      comp.entry_fee_cents = input.entry_fee_cents ?? 0;
-      comp.external_url = input.external_url || null;
-      comp.updated_at = now;
-
-      revalidatePath('/competitions');
-      revalidatePath(`/competitions/${comp.slug}`);
-      revalidatePath('/manage/competitions');
-      return { competition: comp };
+      safeRevalidatePath('/competitions');
+      safeRevalidatePath(`/competitions/${input.slug}`);
+      safeRevalidatePath('/manage/competitions');
+      return { competition: comp || { id: input.id, ...input } };
     } else {
-      const existingSlug = db.competitions.find((c) => c.slug === input.slug);
-      if (existingSlug) throw new Error('A competition with this slug already exists.');
-
+      const newCompId = crypto.randomUUID();
       const newComp = {
-        id: crypto.randomUUID(),
+        id: newCompId,
         slug: input.slug,
         name: input.name,
         description: input.description || null,
@@ -67,9 +76,13 @@ export const upsertCompetition = createAction(
         updated_at: now,
       };
 
+      if (supabase) {
+        await supabase.from('competitions').insert(newComp);
+      }
+
       db.competitions.push(newComp);
-      revalidatePath('/competitions');
-      revalidatePath('/manage/competitions');
+      safeRevalidatePath('/competitions');
+      safeRevalidatePath('/manage/competitions');
       return { competition: newComp };
     }
   }
@@ -78,9 +91,34 @@ export const upsertCompetition = createAction(
 export const signupForCompetition = createAction(
   competitionSignupSchema,
   { requireAuth: true },
-  async (input, { user, db }) => {
-    const comp = db.competitions.find((c) => c.id === input.competition_id);
-    if (!comp) throw new Error('Competition not found.');
+  async (input, { user, supabase, db }) => {
+    const now = new Date().toISOString();
+
+    if (supabase) {
+      const { data: existing } = await supabase
+        .from('competition_signups')
+        .select('*')
+        .eq('competition_id', input.competition_id)
+        .eq('user_id', user.id)
+        .single();
+
+      if (existing) {
+        await supabase
+          .from('competition_signups')
+          .update({ note: input.note || null, status: 'pending', updated_at: now })
+          .eq('id', existing.id);
+      } else {
+        await supabase.from('competition_signups').insert({
+          id: crypto.randomUUID(),
+          competition_id: input.competition_id,
+          user_id: user.id,
+          note: input.note || null,
+          status: 'pending',
+          created_at: now,
+          updated_at: now,
+        });
+      }
+    }
 
     const existingSignup = db.competition_signups.find(
       (s) => s.competition_id === input.competition_id && s.user_id === user.id
@@ -89,9 +127,9 @@ export const signupForCompetition = createAction(
     if (existingSignup) {
       existingSignup.note = input.note || null;
       existingSignup.status = 'pending';
-      existingSignup.updated_at = new Date().toISOString();
-      revalidatePath(`/competitions/${comp.slug}`);
-      revalidatePath('/dashboard');
+      existingSignup.updated_at = now;
+      safeRevalidatePath('/competitions');
+      safeRevalidatePath('/dashboard');
       return { signup: existingSignup };
     }
 
@@ -101,13 +139,13 @@ export const signupForCompetition = createAction(
       user_id: user.id,
       note: input.note || null,
       status: 'pending' as const,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      created_at: now,
+      updated_at: now,
     };
 
     db.competition_signups.push(signup);
-    revalidatePath(`/competitions/${comp.slug}`);
-    revalidatePath('/dashboard');
+    safeRevalidatePath('/competitions');
+    safeRevalidatePath('/dashboard');
     return { signup };
   }
 );
@@ -115,15 +153,24 @@ export const signupForCompetition = createAction(
 export const cancelCompetitionSignup = createAction(
   z.object({ competition_id: z.string().uuid() }),
   { requireAuth: true },
-  async (input, { user, db }) => {
+  async (input, { user, supabase, db }) => {
+    if (supabase) {
+      await supabase
+        .from('competition_signups')
+        .delete()
+        .eq('competition_id', input.competition_id)
+        .eq('user_id', user.id);
+    }
+
     const index = db.competition_signups.findIndex(
       (s) => s.competition_id === input.competition_id && s.user_id === user.id
     );
-    if (index === -1) throw new Error('Signup not found.');
+    if (index !== -1) {
+      db.competition_signups.splice(index, 1);
+    }
 
-    db.competition_signups.splice(index, 1);
-    revalidatePath('/competitions');
-    revalidatePath('/dashboard');
+    safeRevalidatePath('/competitions');
+    safeRevalidatePath('/dashboard');
     return { success: true };
   }
 );
@@ -131,10 +178,11 @@ export const cancelCompetitionSignup = createAction(
 export const submitCompetitionRequest = createAction(
   competitionRequestSchema,
   { requireAuth: true },
-  async (input, { user, db }) => {
+  async (input, { user, supabase, db }) => {
     const now = new Date().toISOString();
+    const reqId = crypto.randomUUID();
     const req = {
-      id: crypto.randomUUID(),
+      id: reqId,
       requested_by: user.id,
       name: input.name,
       organizer: input.organizer || null,
@@ -152,26 +200,32 @@ export const submitCompetitionRequest = createAction(
       updated_at: now,
     };
 
-    db.competition_requests.push(req);
+    if (supabase) {
+      await supabase.from('competition_requests').insert(req);
+      
+      // Notify officers in Supabase
+      const { data: officers } = await supabase
+        .from('profiles')
+        .select('id')
+        .in('role', ['officer', 'admin']);
 
-    // Notify officers
-    db.profiles
-      .filter((p) => p.role === 'officer' || p.role === 'admin')
-      .forEach((officer) => {
-        db.notifications.push({
-          id: crypto.randomUUID(),
-          user_id: officer.id,
+      if (officers && officers.length > 0) {
+        const notifications = officers.map((off: { id: string }) => ({
+          user_id: off.id,
           kind: 'new_request',
           title: 'New Competition Proposal 📋',
           body: `${user.full_name || user.email} proposed "${input.name}"`,
           href: '/review',
-          read_at: null,
-          created_at: now,
-        });
-      });
+        }));
+        await supabase.from('notifications').insert(notifications);
+      }
+    }
 
-    revalidatePath('/dashboard');
-    revalidatePath('/review');
+    db.competition_requests.push(req);
+
+    safeRevalidatePath('/requests');
+    safeRevalidatePath('/dashboard');
+    safeRevalidatePath('/review');
     return { request: req };
   }
 );

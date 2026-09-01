@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { getCurrentUser, type AuthUser } from '@/lib/supabase/server';
+import { getCurrentUser, createClient, type AuthUser } from '@/lib/supabase/server';
 import { getDb, type AppState } from '@/lib/db/mock-data';
 import type { UserRole } from '@/lib/db/types';
 
@@ -9,6 +9,7 @@ export type ActionResponse<T = unknown> =
 
 export interface ActionContext {
   user: AuthUser;
+  supabase: any;
   db: AppState;
 }
 
@@ -59,8 +60,16 @@ export function createAction<Schema extends z.ZodTypeAny, ReturnData>(
 
       // 4. Execute action handler
       const db = getDb();
+      let supabase: any;
+      try {
+        supabase = await createClient();
+      } catch {
+        supabase = null;
+      }
+
       const result = await handler(parsed.data, {
         user: user!,
+        supabase,
         db,
       });
 

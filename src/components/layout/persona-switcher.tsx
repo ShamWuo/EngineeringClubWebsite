@@ -2,7 +2,7 @@
 
 import React, { useTransition } from 'react';
 import { switchDemoUser } from '@/actions/auth';
-import { UserCheck, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import type { AuthUser } from '@/lib/supabase/server';
 
 interface PersonaSwitcherProps {
@@ -22,7 +22,7 @@ const PERSONAS = [
     name: 'Maya Lin',
     role: 'officer',
     desc: 'VP Operations / Officer',
-    color: 'bg-brand-500',
+    color: 'bg-red-600',
   },
   {
     id: '33333333-3333-3333-3333-333333333333',
@@ -58,8 +58,8 @@ export function PersonaSwitcher({ currentUser }: PersonaSwitcherProps) {
   };
 
   return (
-    <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800/80 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700">
-      <div className="flex items-center gap-1.5 text-xs font-medium text-slate-600 dark:text-slate-300">
+    <div className="flex items-center gap-2 bg-zinc-100 dark:bg-zinc-800/80 px-2.5 py-1 rounded-lg border border-zinc-200 dark:border-zinc-700 transition-colors">
+      <div className="flex items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-300">
         <Sparkles className="h-3.5 w-3.5 text-amber-500" />
         <span className="hidden sm:inline">Persona:</span>
       </div>
@@ -67,10 +67,10 @@ export function PersonaSwitcher({ currentUser }: PersonaSwitcherProps) {
         value={currentUser.id}
         onChange={handleSelect}
         disabled={isPending}
-        className="bg-transparent text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none cursor-pointer py-0.5"
+        className="bg-transparent text-xs font-semibold text-zinc-800 dark:text-zinc-100 focus:outline-none cursor-pointer py-0.5"
       >
         {PERSONAS.map((p) => (
-          <option key={p.id} value={p.id} className="text-slate-900 bg-white dark:bg-slate-900">
+          <option key={p.id} value={p.id} className="text-zinc-900 bg-white dark:bg-zinc-900 dark:text-zinc-100">
             {p.name} ({p.role.toUpperCase()})
           </option>
         ))}
