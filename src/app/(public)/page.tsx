@@ -131,57 +131,73 @@ export default function LandingPage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {teamsWithMeta.map((t) => (
-              <Card
-                key={t.id}
-                className="flex flex-col justify-between hover:border-red-500/50 dark:hover:border-red-600/50 bg-white dark:bg-zinc-900/80 border-zinc-200/90 dark:border-zinc-800 shadow-xs hover:shadow-md transition-all rounded-2xl p-5 group"
-              >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-3xs font-mono font-bold text-zinc-600 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded">
-                      {t.competition?.name || 'Independent Subteam'}
-                    </span>
-                    {t.is_recruiting ? (
-                      <span className="inline-flex items-center gap-1 text-3xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/70 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                        Recruiting
+          {teamsWithMeta.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {teamsWithMeta.map((t) => (
+                <Card
+                  key={t.id}
+                  className="flex flex-col justify-between hover:border-red-500/50 dark:hover:border-red-600/50 bg-white dark:bg-zinc-900/80 border-zinc-200/90 dark:border-zinc-800 shadow-xs hover:shadow-md transition-all rounded-2xl p-5 group"
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-3xs font-mono font-bold text-zinc-600 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded">
+                        {t.competition?.name || 'Independent Subteam'}
                       </span>
-                    ) : (
-                      <span className="text-3xs font-semibold px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
-                        Roster Locked
-                      </span>
-                    )}
+                      {t.is_recruiting ? (
+                        <span className="inline-flex items-center gap-1 text-3xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/70 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                          Recruiting
+                        </span>
+                      ) : (
+                        <span className="text-3xs font-semibold px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
+                          Roster Locked
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 className="font-extrabold text-base text-zinc-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">
+                      {t.name}
+                    </h3>
+
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-3 leading-relaxed">
+                      {t.description}
+                    </p>
                   </div>
 
-                  <h3 className="font-extrabold text-base text-zinc-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">
-                    {t.name}
-                  </h3>
+                  <div className="pt-4 mt-4 border-t border-zinc-100 dark:border-zinc-800/80 space-y-3">
+                    <div className="flex items-center justify-between text-xs text-zinc-500">
+                      <span className="flex items-center gap-1">
+                        <Users className="h-3.5 w-3.5 text-zinc-400" />
+                        {t.memberCount} Engineer{t.memberCount !== 1 ? 's' : ''}
+                      </span>
+                      <span className="text-3xs font-mono">Lead: {t.leadName}</span>
+                    </div>
 
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-3 leading-relaxed">
-                    {t.description}
-                  </p>
-                </div>
-
-                <div className="pt-4 mt-4 border-t border-zinc-100 dark:border-zinc-800/80 space-y-3">
-                  <div className="flex items-center justify-between text-xs text-zinc-500">
-                    <span className="flex items-center gap-1">
-                      <Users className="h-3.5 w-3.5 text-zinc-400" />
-                      {t.memberCount} Engineer{t.memberCount !== 1 ? 's' : ''}
-                    </span>
-                    <span className="text-3xs font-mono">Lead: {t.leadName}</span>
+                    <Link href={`/teams/${t.id}`}>
+                      <Button variant="outline" size="sm" className="w-full text-xs font-bold gap-1 group-hover:border-red-500/50">
+                        <span>View Team & Roster</span>
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </Button>
+                    </Link>
                   </div>
-
-                  <Link href={`/teams/${t.id}`}>
-                    <Button variant="outline" size="sm" className="w-full text-xs font-bold gap-1 group-hover:border-red-500/50">
-                      <span>View Team & Roster</span>
-                      <ArrowRight className="h-3.5 w-3.5" />
-                    </Button>
-                  </Link>
-                </div>
-              </Card>
-            ))}
-          </div>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 px-4 rounded-2xl border border-dashed border-zinc-300 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/30">
+              <Users className="h-8 w-8 text-zinc-400 mx-auto mb-3 opacity-60" />
+              <h3 className="font-bold text-sm text-zinc-900 dark:text-zinc-100 mb-1">No Active Squads Yet</h3>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-sm mx-auto mb-4">
+                Be the first to pitch an engineering squad or project for this season.
+              </p>
+              <Link href="/requests/new?type=team">
+                <Button size="sm" variant="outline" className="gap-1.5 font-bold text-xs h-8">
+                  <Sparkles className="h-3.5 w-3.5 text-red-600 dark:text-red-400" />
+                  <span>Pitch a Squad</span>
+                </Button>
+              </Link>
+            </div>
+          )}
         </section>
 
         {/* How We Build — technical blueprint band with connected pipeline rail */}
