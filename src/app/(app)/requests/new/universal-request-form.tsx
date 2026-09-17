@@ -239,9 +239,9 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
         </button>
       </div>
 
-      <Card className="border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-xl">
+      <Card className="border-zinc-200/90 dark:border-zinc-800 bg-white dark:bg-zinc-900/90 shadow-xl">
         <form onSubmit={handleSubmit}>
-          <CardHeader className="border-b border-zinc-100 dark:border-zinc-850 pb-4">
+          <CardHeader className="border-b border-zinc-100 dark:border-zinc-800 pb-4">
             <CardTitle className="text-base font-bold text-zinc-900 dark:text-white flex items-center gap-2">
               {activeType === 'competition' && <>🏆 Propose a New Competition</>}
               {activeType === 'funding' && <>💰 Procurement & Funding Request</>}
@@ -426,7 +426,7 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
 
                   <div className="space-y-2">
                     {lineItems.map((item, idx) => (
-                      <div key={item.id} className="p-3 rounded-lg bg-zinc-50 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-850 space-y-2">
+                      <div key={item.id} className="p-3 rounded-lg bg-zinc-50 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 space-y-2">
                         <div className="grid grid-cols-1 sm:grid-cols-12 gap-2">
                           <div className="sm:col-span-6">
                             <Input
@@ -439,34 +439,47 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                           </div>
                           <div className="sm:col-span-3">
                             <Input
-                              placeholder="Vendor (e.g. Mouser)"
-                              value={item.vendor}
-                              onChange={(e) => updateLineItem(idx, 'vendor', e.target.value)}
-                              className="h-8 text-xs"
+                              type="number"
+                              min="1"
+                              required
+                              placeholder="Qty"
+                              value={item.quantity}
+                              onChange={(e) => updateLineItem(idx, 'quantity', parseInt(e.target.value) || 1)}
+                              className="h-8 text-xs font-mono"
                             />
                           </div>
-                          <div className="sm:col-span-2">
+                          <div className="sm:col-span-3">
                             <Input
                               type="number"
-                              min="0"
                               step="0.01"
-                              placeholder="Unit Cost ($)"
-                              value={item.unit_cost_cents ? (item.unit_cost_cents / 100).toString() : ''}
+                              min="0"
+                              required
+                              placeholder="Unit ($)"
+                              value={(item.unit_cost_cents / 100) || ''}
                               onChange={(e) => updateLineItem(idx, 'unit_cost_cents', Math.round(parseFloat(e.target.value || '0') * 100))}
-                              className="h-8 text-xs"
+                              className="h-8 text-xs font-mono"
                             />
                           </div>
-                          <div className="sm:col-span-1 flex items-center justify-end">
-                            <button
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <Input
+                            placeholder="Vendor or product URL (e.g. McMaster, DigiKey, AndyMark)"
+                            value={item.url}
+                            onChange={(e) => updateLineItem(idx, 'url', e.target.value)}
+                            className="h-7 text-xs font-mono"
+                          />
+                          {lineItems.length > 1 && (
+                            <Button
                               type="button"
+                              variant="ghost"
+                              size="sm"
                               onClick={() => removeLineItem(idx)}
-                              disabled={lineItems.length <= 1}
-                              className="p-1.5 text-zinc-400 hover:text-red-600 disabled:opacity-30 cursor-pointer transition-colors"
-                              title="Remove item"
+                              className="h-7 w-7 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/40 shrink-0"
                             >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-                          </div>
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -475,8 +488,9 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                   <Button
                     type="button"
                     variant="outline"
+                    size="sm"
                     onClick={addLineItem}
-                    className="w-full text-xs h-8 border-dashed border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300 gap-1.5"
+                    className="w-full text-xs h-8 border-dashed border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 gap-1.5"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     <span>Add Another Line Item</span>
@@ -672,7 +686,7 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
             )}
           </CardContent>
 
-          <CardFooter className="border-t border-zinc-100 dark:border-zinc-850 pt-4 flex items-center justify-between">
+          <CardFooter className="border-t border-zinc-100 dark:border-zinc-800 pt-4 flex items-center justify-between">
             <Button
               type="button"
               variant="outline"

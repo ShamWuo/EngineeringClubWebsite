@@ -11,11 +11,11 @@ export default async function AdminSettingsPage() {
   return (
     <div className="max-w-2xl mx-auto space-y-6 pb-12">
       <div>
-        <h1 className="text-2xl font-black text-white flex items-center gap-2.5">
+        <h1 className="text-2xl font-black text-zinc-900 dark:text-white flex items-center gap-2.5">
           <Settings className="h-6 w-6 text-red-500" />
           Club & Platform Settings
         </h1>
-        <p className="text-xs text-zinc-400 mt-1">
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
           Configure domain registration policies, club branding, and annual procurement spend ceilings.
         </p>
       </div>

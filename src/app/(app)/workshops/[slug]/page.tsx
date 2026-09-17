@@ -61,7 +61,7 @@ export default async function WorkshopDetailPage({
       <div>
         <Link
           href="/workshops"
-          className="inline-flex items-center gap-1 text-xs font-semibold text-zinc-400 hover:text-white mb-3"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white mb-3 transition-colors"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           Back to workshops
@@ -75,7 +75,7 @@ export default async function WorkshopDetailPage({
               </Badge>
               <StatusBadge status={workshop.status} />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-zinc-900 dark:text-white">
               {workshop.title}
             </h1>
           </div>
@@ -92,20 +92,20 @@ export default async function WorkshopDetailPage({
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <Card className="bg-zinc-950 border-zinc-850">
+          <Card className="bg-white dark:bg-zinc-900/90 border-zinc-200/90 dark:border-zinc-800 shadow-sm">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base font-bold text-white">Workshop Overview & Syllabus</CardTitle>
+              <CardTitle className="text-base font-bold text-zinc-900 dark:text-white">Workshop Overview & Syllabus</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm text-zinc-300 whitespace-pre-wrap leading-relaxed">
+              <p className="text-sm text-zinc-700 dark:text-zinc-300 whitespace-pre-wrap leading-relaxed">
                 {workshop.description || 'No detailed syllabus provided.'}
               </p>
 
               {(workshop.materials_url || workshop.recording_url) && (
-                <div className="pt-4 border-t border-zinc-850 flex flex-wrap gap-3">
+                <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800 flex flex-wrap gap-3">
                   {workshop.materials_url && (
                     <a href={workshop.materials_url} target="_blank" rel="noopener noreferrer">
-                      <Button variant="outline" size="sm" className="gap-1.5 text-xs font-semibold bg-zinc-900 border-zinc-800 text-zinc-300">
+                      <Button variant="outline" size="sm" className="gap-1.5 text-xs font-semibold">
                         <FileText className="h-4 w-4" />
                         Download Slides & Files
                       </Button>
@@ -113,7 +113,7 @@ export default async function WorkshopDetailPage({
                   )}
                   {workshop.recording_url && (
                     <a href={workshop.recording_url} target="_blank" rel="noopener noreferrer">
-                      <Button variant="outline" size="sm" className="gap-1.5 text-xs font-semibold text-red-400 border-red-900 bg-red-950/20">
+                      <Button variant="outline" size="sm" className="gap-1.5 text-xs font-semibold text-red-600 dark:text-red-400 border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/20 hover:bg-red-100 dark:hover:bg-red-950/40">
                         <Video className="h-4 w-4" />
                         Watch Session Recording
                       </Button>
@@ -125,16 +125,16 @@ export default async function WorkshopDetailPage({
           </Card>
 
           {/* Attendee list */}
-          <Card className="bg-zinc-950 border-zinc-850">
+          <Card className="bg-white dark:bg-zinc-900/90 border-zinc-200/90 dark:border-zinc-800 shadow-sm">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base font-bold text-white flex items-center gap-2">
-                <Users className="h-4 w-4 text-red-500" />
+              <CardTitle className="text-base font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+                <Users className="h-4 w-4 text-red-600 dark:text-red-500" />
                 Registered Members ({rsvps.length} {workshop.capacity ? `/ ${workshop.capacity}` : ''})
               </CardTitle>
             </CardHeader>
             <CardContent>
               {attendeeProfiles.length === 0 ? (
-                <div className="text-center py-6 text-xs text-zinc-500">
+                <div className="text-center py-6 text-xs text-zinc-500 dark:text-zinc-400">
                   No members have RSVP'd yet. Be the first to register!
                 </div>
               ) : (
@@ -142,24 +142,24 @@ export default async function WorkshopDetailPage({
                   {attendeeProfiles.map((att) => (
                     <div
                       key={att.user_id}
-                      className="flex items-center gap-2.5 p-2.5 rounded-lg border border-zinc-850 bg-zinc-900/40 text-xs"
+                      className="flex items-center gap-2.5 p-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/40 text-xs"
                     >
                       {att.avatar_url ? (
                         <img
                           src={att.avatar_url}
                           alt="Avatar"
-                          className="h-7 w-7 rounded-full object-cover"
+                          className="h-7 w-7 rounded-full object-cover border border-zinc-200 dark:border-zinc-700"
                         />
                       ) : (
-                        <div className="h-7 w-7 rounded-full bg-red-950 text-red-400 font-bold flex items-center justify-center text-3xs border border-red-800">
+                        <div className="h-7 w-7 rounded-full bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-400 font-bold flex items-center justify-center text-3xs border border-red-200 dark:border-red-800">
                           {(att.full_name || att.email).substring(0, 1)}
                         </div>
                       )}
                       <div className="min-w-0">
-                        <div className="font-semibold text-zinc-200 truncate">
+                        <div className="font-semibold text-zinc-800 dark:text-zinc-200 truncate">
                           {att.full_name || att.email}
                         </div>
-                        <div className="text-3xs text-zinc-500 truncate">{att.email}</div>
+                        <div className="text-3xs text-zinc-400 dark:text-zinc-500 truncate">{att.email}</div>
                       </div>
                     </div>
                   ))}
@@ -171,15 +171,15 @@ export default async function WorkshopDetailPage({
 
         {/* Sidebar Info */}
         <div className="space-y-6">
-          <Card className="bg-zinc-950 border-zinc-850">
+          <Card className="bg-white dark:bg-zinc-900/90 border-zinc-200/90 dark:border-zinc-800 shadow-sm">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-bold text-white">Session Details</CardTitle>
+              <CardTitle className="text-sm font-bold text-zinc-900 dark:text-white">Session Details</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-xs">
               {workshop.starts_at && (
-                <div className="flex items-start justify-between py-1.5 border-b border-zinc-850">
-                  <span className="text-zinc-500">Date & Time</span>
-                  <span className="font-semibold text-zinc-200 text-right">
+                <div className="flex items-start justify-between py-1.5 border-b border-zinc-100 dark:border-zinc-800">
+                  <span className="text-zinc-500 dark:text-zinc-400">Date & Time</span>
+                  <span className="font-semibold text-zinc-800 dark:text-zinc-200 text-right">
                     {new Date(workshop.starts_at).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
                     <br />
                     {new Date(workshop.starts_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -187,20 +187,20 @@ export default async function WorkshopDetailPage({
                 </div>
               )}
               {workshop.location && (
-                <div className="flex items-center justify-between py-1.5 border-b border-zinc-850">
-                  <span className="text-zinc-500">Location</span>
-                  <span className="font-semibold text-zinc-200">{workshop.location}</span>
+                <div className="flex items-center justify-between py-1.5 border-b border-zinc-100 dark:border-zinc-800">
+                  <span className="text-zinc-500 dark:text-zinc-400">Location</span>
+                  <span className="font-semibold text-zinc-800 dark:text-zinc-200">{workshop.location}</span>
                 </div>
               )}
               {workshop.instructor_name && (
-                <div className="flex items-center justify-between py-1.5 border-b border-zinc-850">
-                  <span className="text-zinc-500">Instructor</span>
-                  <span className="font-semibold text-red-400">{workshop.instructor_name}</span>
+                <div className="flex items-center justify-between py-1.5 border-b border-zinc-100 dark:border-zinc-800">
+                  <span className="text-zinc-500 dark:text-zinc-400">Instructor</span>
+                  <span className="font-semibold text-red-600 dark:text-red-400">{workshop.instructor_name}</span>
                 </div>
               )}
               <div className="flex items-center justify-between py-1.5">
-                <span className="text-zinc-500">Max Capacity</span>
-                <span className="font-semibold text-zinc-200">
+                <span className="text-zinc-500 dark:text-zinc-400">Max Capacity</span>
+                <span className="font-semibold text-zinc-800 dark:text-zinc-200">
                   {workshop.capacity ? `${workshop.capacity} seats` : 'Open / Unlimited'}
                 </span>
               </div>

@@ -3,6 +3,7 @@ import { getDb, resetDb } from '@/lib/db/mock-data';
 import { reviewRequestAction } from '@/actions/review';
 import { upsertLink } from '@/actions/links';
 import { updateMemberRole } from '@/actions/admin';
+import { completeOnboarding } from '@/actions/auth';
 
 describe('Server Actions & Atomic Side-Effects', () => {
   beforeEach(() => {
@@ -105,7 +106,22 @@ describe('Server Actions & Atomic Side-Effects', () => {
   describe('Admin Role Management', () => {
     it('allows club admin to promote a member to officer', async () => {
       const db = getDb();
-      const member = db.profiles.find((p) => p.email === 'jordan.chen@bvsd.org')!;
+      const testMemberId = '44444444-4444-4444-4444-444444444444';
+      db.profiles.push({
+        id: testMemberId,
+        email: 'test.student@bvsd.org',
+        full_name: 'Test Student',
+        grad_year: 2028,
+        role: 'member',
+        skills: ['Full-Stack Web', 'C++'],
+        avatar_url: null,
+        is_active: true,
+        onboarding_completed: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+
+      const member = db.profiles.find((p) => p.id === testMemberId)!;
       expect(member.role).toBe('member');
 
       const res = await updateMemberRole({
@@ -116,6 +132,59 @@ describe('Server Actions & Atomic Side-Effects', () => {
 
       expect(res.ok).toBe(true);
       expect(member.role).toBe('officer');
+    });
+  });
+
+  describe('First-Time Member Onboarding Workflow', () => {
+    it('enforces safety pledge and skills selection during onboarding', async () => {
+      // Missing safety pledge
+      const res1 = await completeOnboarding({
+        full_name: 'Jordan Knight',
+        grad_year: 2027,
+        skills: ['CAD & 3D Modeling'],
+        safety_pledge: false,
+      });
+      expect(res1.ok).toBe(false);
+
+      // Empty skills
+      const res2 = await completeOnboarding({
+        full_name: 'Jordan Knight',
+        grad_year: 2027,
+        skills: [],
+        safety_pledge: true,
+      });
+      expect(res2.ok).toBe(false);
+    });
+
+    it('completes onboarding, saves skills, and creates welcome notification', async () => {
+      const db = getDb();
+      const initialNotifCount = db.notifications.length;
+
+      const res = await completeOnboarding({
+        full_name: 'Alex Vance Knight',
+        grad_year: 2026,
+        skills: ['CAD & 3D Modeling', 'Robotics & Automation'],
+        subteam_interest: 'FIRST Robotics Competition (FRC)',
+        safety_pledge: true,
+      });
+
+      expect(res.ok).toBe(true);
+      if (res.ok) {
+        expect(res.data.onboardingCompleted).toBe(true);
+      }
+
+      // Check profile in database
+      const profile = db.profiles.find((p) => p.id === '11111111-1111-1111-1111-111111111111');
+      expect(profile).toBeDefined();
+      expect(profile?.onboarding_completed).toBe(true);
+      expect(profile?.full_name).toBe('Alex Vance Knight');
+      expect(profile?.skills).toContain('Robotics & Automation');
+
+      // Check notification created
+      expect(db.notifications.length).toBe(initialNotifCount + 1);
+      const welcomeNotif = db.notifications[0];
+      expect(welcomeNotif.title).toContain('Welcome to Fairview');
+      expect(welcomeNotif.body).toContain('FIRST Robotics Competition (FRC)');
     });
   });
 });

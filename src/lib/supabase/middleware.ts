@@ -7,7 +7,10 @@ export async function updateSession(request: NextRequest) {
   });
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://vanpniumrtgctqobfzmw.supabase.co';
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_4WzLhRnDkfDsngU4fz76ww_u0w5z18i';
+  const supabaseAnonKey =
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    'sb_publishable_4WzLhRnDkfDsngU4fz76ww_u0w5z18i';
 
   const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
     cookies: {
@@ -27,7 +30,26 @@ export async function updateSession(request: NextRequest) {
   });
 
   // Refresh auth token if expired
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const path = request.nextUrl.pathname;
+  const sessionUserId = request.cookies.get('session_user_id')?.value;
+  const hasError = request.nextUrl.searchParams.has('error');
+
+  // If already authenticated and hitting /login, redirect to /dashboard
+  if ((user || sessionUserId) && path === '/login' && !hasError) {
+    const rawNext = request.nextUrl.searchParams.get('next');
+    const safeTarget =
+      rawNext && rawNext.startsWith('/') && !rawNext.startsWith('//') && rawNext !== '/'
+        ? rawNext
+        : '/dashboard';
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = safeTarget;
+    redirectUrl.search = '';
+    return NextResponse.redirect(redirectUrl);
+  }
 
   return supabaseResponse;
 }

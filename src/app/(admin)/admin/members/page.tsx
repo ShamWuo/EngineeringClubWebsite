@@ -11,11 +11,11 @@ export default async function AdminMembersPage() {
   return (
     <div className="space-y-6 max-w-5xl mx-auto pb-12">
       <div>
-        <h1 className="text-2xl font-black text-white flex items-center gap-2.5">
+        <h1 className="text-2xl font-black text-zinc-900 dark:text-white flex items-center gap-2.5">
           <Shield className="h-6 w-6 text-red-500" />
           Member Roles & Account Governance
         </h1>
-        <p className="text-xs text-zinc-400 mt-1">
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
           Promote or demote member roles and manage soft account deactivations for graduated students.
         </p>
       </div>

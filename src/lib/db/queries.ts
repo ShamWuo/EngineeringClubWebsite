@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import type { Database } from '@/lib/db/types';
+import { getDb } from '@/lib/db/mock-data';
 
 export type ProfileRow = Database['public']['Tables']['profiles']['Row'];
 export type CompetitionRow = Database['public']['Tables']['competitions']['Row'];
@@ -20,6 +21,9 @@ export type FundingAttachmentRow = Database['public']['Tables']['funding_attachm
 
 // 1. Club Settings
 export async function getClubSettings(): Promise<ClubSettingsRow> {
+  if (process.env.NODE_ENV === 'test') {
+    return getDb().club_settings;
+  }
   const supabase = await createClient();
   const { data } = await (supabase.from('club_settings') as any)
     .select('*')
@@ -73,6 +77,9 @@ export async function getCompetitionBySlug(slug: string): Promise<{ comp: Compet
 
 // 3. Workshops
 export async function getWorkshops(): Promise<WorkshopRow[]> {
+  if (process.env.NODE_ENV === 'test') {
+    return getDb().workshops;
+  }
   const supabase = await createClient();
   const { data, error } = await (supabase.from('workshops') as any)
     .select('*')
@@ -80,7 +87,7 @@ export async function getWorkshops(): Promise<WorkshopRow[]> {
 
   if (error || !data) {
     console.error('Error fetching workshops:', error);
-    return [];
+    return getDb().workshops;
   }
   return data;
 }

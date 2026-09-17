@@ -51,7 +51,7 @@ export default async function TeamWorkspacePage({
       <div>
         <Link
           href={comp ? `/competitions/${comp.slug}` : '/competitions'}
-          className="inline-flex items-center gap-1 text-xs font-semibold text-zinc-400 hover:text-white mb-3"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white mb-3 transition-colors"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           Back to {comp?.name || 'Competition'}
@@ -60,7 +60,7 @@ export default async function TeamWorkspacePage({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1.5">
-              <Badge variant="outline" className="text-3xs font-mono bg-zinc-900 border-zinc-800 text-zinc-400">
+              <Badge variant="outline" className="text-3xs font-mono">
                 {comp?.name || 'Competition Subteam'}
               </Badge>
               {team.is_recruiting ? (
@@ -69,7 +69,7 @@ export default async function TeamWorkspacePage({
                 <Badge variant="secondary" className="text-3xs">Roster Closed</Badge>
               )}
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-zinc-900 dark:text-white">
               {team.name}
             </h1>
           </div>
@@ -89,12 +89,12 @@ export default async function TeamWorkspacePage({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-8">
           {/* About Section */}
-          <Card className="bg-zinc-950 border-zinc-850">
+          <Card className="bg-white dark:bg-zinc-900/90 border-zinc-200/90 dark:border-zinc-800 shadow-sm">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base font-bold text-white">Subteam Mission & Objectives</CardTitle>
+              <CardTitle className="text-base font-bold text-zinc-900 dark:text-white">Subteam Mission & Objectives</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-zinc-300 whitespace-pre-wrap leading-relaxed">
+              <p className="text-sm text-zinc-700 dark:text-zinc-300 whitespace-pre-wrap leading-relaxed">
                 {team.description || 'No detailed team mission statement written.'}
               </p>
             </CardContent>
@@ -104,15 +104,15 @@ export default async function TeamWorkspacePage({
         {/* Sidebar: Roster and Funding */}
         <div className="space-y-6">
           {/* Quick Roster Card */}
-          <Card className="bg-zinc-950 border-zinc-850">
+          <Card className="bg-white dark:bg-zinc-900/90 border-zinc-200/90 dark:border-zinc-800 shadow-sm">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-bold flex items-center gap-1.5 text-white">
-                  <Users className="h-4 w-4 text-red-500" />
+                <CardTitle className="text-sm font-bold flex items-center gap-1.5 text-zinc-900 dark:text-white">
+                  <Users className="h-4 w-4 text-red-600 dark:text-red-500" />
                   Roster ({memberList.length})
                 </CardTitle>
                 {canManageRoster && (
-                  <span className="text-3xs bg-red-950 text-red-400 border border-red-800 font-bold px-1.5 py-0.5 rounded">
+                  <span className="text-3xs bg-red-50 text-red-700 border border-red-200 dark:bg-red-950 dark:text-red-400 dark:border-red-800 font-bold px-1.5 py-0.5 rounded">
                     Roster Admin
                   </span>
                 )}
@@ -123,10 +123,10 @@ export default async function TeamWorkspacePage({
                 {memberList.map((m: any) => (
                   <div key={m.user_id} className="flex items-center justify-between gap-2 text-xs">
                     <div className="flex items-center gap-2 truncate">
-                      <div className="h-6 w-6 rounded-full bg-zinc-800 flex items-center justify-center font-bold text-2xs text-red-400 shrink-0">
+                      <div className="h-6 w-6 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center font-bold text-2xs text-red-600 dark:text-red-400 shrink-0">
                         {(m.full_name || m.email).substring(0, 1)}
                       </div>
-                      <span className="truncate font-medium text-zinc-200">
+                      <span className="truncate font-medium text-zinc-800 dark:text-zinc-200">
                         {m.full_name || m.email}
                       </span>
                     </div>
@@ -135,7 +135,7 @@ export default async function TeamWorkspacePage({
                         <Crown className="h-2.5 w-2.5" /> Lead
                       </Badge>
                     ) : (
-                      <span className="text-3xs text-zinc-500 shrink-0">Member</span>
+                      <span className="text-3xs text-zinc-500 dark:text-zinc-400 shrink-0">Member</span>
                     )}
                   </div>
                 ))}
@@ -144,15 +144,15 @@ export default async function TeamWorkspacePage({
           </Card>
 
           {/* Team Funding Tracker */}
-          <Card className="bg-zinc-950 border-zinc-850">
+          <Card className="bg-white dark:bg-zinc-900/90 border-zinc-200/90 dark:border-zinc-800 shadow-sm">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-bold flex items-center gap-1.5 text-white">
-                  <DollarSign className="h-4 w-4 text-emerald-500" />
+                <CardTitle className="text-sm font-bold flex items-center gap-1.5 text-zinc-900 dark:text-white">
+                  <DollarSign className="h-4 w-4 text-emerald-600 dark:text-emerald-500" />
                   Team Funding
                 </CardTitle>
                 <Link href="/requests/new?type=funding">
-                  <Button variant="ghost" size="sm" className="h-6 text-2xs text-red-400 hover:text-red-300">
+                  <Button variant="ghost" size="sm" className="h-6 text-2xs text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300">
                     + Request
                   </Button>
                 </Link>
@@ -160,18 +160,18 @@ export default async function TeamWorkspacePage({
             </CardHeader>
             <CardContent>
               {teamFunding.length === 0 ? (
-                <div className="text-center py-4 text-xs text-zinc-500">
+                <div className="text-center py-4 text-xs text-zinc-500 dark:text-zinc-400">
                   No funding requests filed for this team.
                 </div>
               ) : (
                 <div className="space-y-2.5 text-xs">
                   {teamFunding.map((f: any) => (
-                    <div key={f.id} className="p-2.5 rounded-lg border border-zinc-850 bg-zinc-900/50 flex items-center justify-between gap-2">
+                    <div key={f.id} className="p-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 flex items-center justify-between gap-2">
                       <div className="min-w-0">
-                        <div className="font-semibold text-zinc-200 truncate">
+                        <div className="font-semibold text-zinc-800 dark:text-zinc-200 truncate">
                           {f.title}
                         </div>
-                        <div className="text-2xs text-emerald-400 font-bold">
+                        <div className="text-2xs text-emerald-700 dark:text-emerald-400 font-bold">
                           ${(f.amount_requested_cents / 100).toFixed(2)}
                         </div>
                       </div>

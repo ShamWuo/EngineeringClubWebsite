@@ -47,7 +47,7 @@ export function TeamMembershipButtons({
           disabled={isPending}
           className="text-xs font-semibold gap-1.5"
         >
-          <Radio className={`h-3 w-3 ${isRecruiting ? 'text-emerald-500' : 'text-slate-400'}`} />
+          <Radio className={`h-3 w-3 ${isRecruiting ? 'text-emerald-600 dark:text-emerald-500' : 'text-zinc-400 dark:text-zinc-500'}`} />
           <span>{isRecruiting ? 'Close Recruiting' : 'Open Recruiting'}</span>
         </Button>
       )}

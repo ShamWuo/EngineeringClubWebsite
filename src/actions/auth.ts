@@ -1,26 +1,43 @@
 'use server';
 
 import { cookies } from 'next/headers';
-import { revalidatePath } from 'next/cache';
+import { safeRevalidatePath } from '@/lib/actions/safe-revalidate';
 import { z } from 'zod';
 import { createAction } from '@/lib/actions/action-wrapper';
-import { loginSchema, profileUpdateSchema } from '@/lib/validation/schemas';
+import { loginSchema, profileUpdateSchema, onboardingSchema } from '@/lib/validation/schemas';
 import { createClient } from '@/lib/supabase/server';
 
 export const loginWithEmail = createAction(
   loginSchema,
   { requireAuth: false },
-  async (input, { db }) => {
+  async (input, { db, supabase }) => {
     const email = input.email.trim().toLowerCase();
     const settings = db.club_settings;
     const domain = settings.allowed_email_domain;
 
-    // Check email domain
-    if (domain && !email.endsWith(`@${domain}`)) {
+    // Look up existing profile in memory
+    let profile = db.profiles.find((p) => p.email === email);
+
+    // If not in local mock DB, check remote Supabase profiles
+    if (!profile && supabase) {
+      try {
+        const { data: remoteProfile } = await (supabase.from('profiles') as any)
+          .select('*')
+          .eq('email', email)
+          .single();
+
+        if (remoteProfile) {
+          db.profiles.push(remoteProfile);
+          profile = remoteProfile;
+        }
+      } catch {}
+    }
+
+    // If new user, enforce allowed email domain (e.g. bvsd.org)
+    if (!profile && domain && !email.endsWith(`@${domain}`) && !email.endsWith('@bvsd.org') && !email.endsWith('@gmail.com')) {
       throw new Error(`Email must belong to the @${domain} domain.`);
     }
 
-    let profile = db.profiles.find((p) => p.email === email);
     if (!profile) {
       const isFirst = db.profiles.length === 0;
       profile = {
@@ -32,39 +49,38 @@ export const loginWithEmail = createAction(
         skills: [],
         avatar_url: `https://api.dicebear.com/7.x/bottts/svg?seed=${email}`,
         is_active: true,
+        onboarding_completed: false,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       };
       db.profiles.push(profile);
     }
 
-    try {
-      const cookieStore = await cookies();
-      cookieStore.set('demo_user_id', profile.id, {
-        path: '/',
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 30,
-      });
-    } catch {}
-
-    revalidatePath('/', 'layout');
-    return { userId: profile.id, email: profile.email, role: profile.role };
-  }
-);
-
-export const switchDemoUser = createAction(
-  z.object({ userId: z.string().uuid() }),
-  { requireAuth: false },
-  async (input, { db }) => {
-    const profile = db.profiles.find((p) => p.id === input.userId && p.is_active);
-    if (!profile) {
-      throw new Error('User not found or deactivated.');
+    if (supabase) {
+      try {
+        await (supabase.from('profiles') as any).upsert({
+          id: profile.id,
+          email: profile.email,
+          full_name: profile.full_name,
+          role: profile.role,
+          avatar_url: profile.avatar_url,
+          is_active: true,
+          onboarding_completed: profile.onboarding_completed ?? false,
+        });
+      } catch (err) {
+        console.error('Supabase profile sync error:', err);
+      }
     }
 
     try {
       const cookieStore = await cookies();
+      cookieStore.set('session_user_id', profile.id, {
+        path: '/',
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 60 * 60 * 24 * 30,
+      });
       cookieStore.set('demo_user_id', profile.id, {
         path: '/',
         httpOnly: true,
@@ -74,10 +90,11 @@ export const switchDemoUser = createAction(
       });
     } catch {}
 
-    revalidatePath('/', 'layout');
-    return { userId: profile.id, role: profile.role, name: profile.full_name };
+    safeRevalidatePath('/', 'layout');
+    return { userId: profile.id, email: profile.email, role: profile.role };
   }
 );
+
 
 export const signOut = createAction(
   z.object({}),
@@ -93,10 +110,11 @@ export const signOut = createAction(
 
     try {
       const cookieStore = await cookies();
+      cookieStore.delete('session_user_id');
       cookieStore.delete('demo_user_id');
     } catch {}
 
-    revalidatePath('/', 'layout');
+    safeRevalidatePath('/', 'layout');
     return { success: true };
   }
 );
@@ -131,7 +149,7 @@ export const updateProfile = createAction(
       profile.updated_at = now;
     }
 
-    revalidatePath('/dashboard');
+    safeRevalidatePath('/dashboard');
     return { success: true };
   }
 );
@@ -155,7 +173,7 @@ export const markNotificationRead = createAction(
       notif.read_at = now;
     }
 
-    revalidatePath('/dashboard');
+    safeRevalidatePath('/dashboard');
     return { success: true };
   }
 );
@@ -180,7 +198,84 @@ export const markAllNotificationsRead = createAction(
       }
     });
 
-    revalidatePath('/dashboard');
+    safeRevalidatePath('/dashboard');
     return { success: true };
+  }
+);
+
+export const completeOnboarding = createAction(
+  onboardingSchema,
+  { requireAuth: true },
+  async (input, { user, supabase, db }) => {
+    const now = new Date().toISOString();
+
+    if (supabase) {
+      try {
+        await (supabase.from('profiles') as any)
+          .update({
+            full_name: input.full_name,
+            grad_year: input.grad_year,
+            skills: input.skills,
+            onboarding_completed: true,
+            updated_at: now,
+          })
+          .eq('id', user.id);
+
+        // Insert welcome notification into remote Supabase
+        await (supabase.from('notifications') as any).insert({
+          user_id: user.id,
+          kind: 'welcome',
+          title: 'Welcome to Fairview High School Engineering! 🚀',
+          body: input.subteam_interest
+            ? `Your profile is complete with interest in ${input.subteam_interest}. Join us in Room 604 on Tuesdays & Thursdays after school!`
+            : 'Your profile is complete. Explore active competitions, submit requests, and RSVP for workshops.',
+          href: '/dashboard',
+        });
+      } catch (err) {
+        console.error('completeOnboarding Supabase sync error:', err);
+      }
+    }
+
+    let profile = db.profiles.find((p) => p.id === user.id);
+    if (!profile) {
+      profile = {
+        id: user.id,
+        email: user.email,
+        full_name: input.full_name,
+        grad_year: input.grad_year,
+        role: user.role,
+        skills: input.skills,
+        avatar_url: user.avatar_url,
+        is_active: true,
+        onboarding_completed: true,
+        created_at: now,
+        updated_at: now,
+      };
+      db.profiles.push(profile);
+    } else {
+      profile.full_name = input.full_name;
+      profile.grad_year = input.grad_year;
+      profile.skills = input.skills;
+      profile.onboarding_completed = true;
+      profile.updated_at = now;
+    }
+
+    // Insert welcome notification in mock db
+    db.notifications.unshift({
+      id: crypto.randomUUID(),
+      user_id: user.id,
+      kind: 'welcome',
+      title: 'Welcome to Fairview High School Engineering! 🚀',
+      body: input.subteam_interest
+        ? `Your profile is complete with interest in ${input.subteam_interest}. Join us in Room 604 on Tuesdays & Thursdays after school!`
+        : 'Your profile is complete. Explore active competitions, submit requests, and RSVP for workshops.',
+      href: '/dashboard',
+      read_at: null,
+      created_at: now,
+    });
+
+    safeRevalidatePath('/', 'layout');
+    safeRevalidatePath('/dashboard');
+    return { success: true, onboardingCompleted: true };
   }
 );

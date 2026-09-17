@@ -42,7 +42,7 @@ export function WorkshopRequestForm() {
   };
 
   return (
-    <Card className="bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-850 shadow-2xs">
+    <Card className="bg-white dark:bg-zinc-900/90 border-zinc-200/90 dark:border-zinc-800 shadow-sm">
       <form onSubmit={handleSubmit}>
         <CardContent className="pt-6 space-y-3.5">
           {error && (
@@ -106,7 +106,7 @@ export function WorkshopRequestForm() {
           </div>
         </CardContent>
 
-        <CardFooter className="pt-2 border-t border-zinc-100 dark:border-zinc-850 flex justify-end">
+        <CardFooter className="pt-2 border-t border-zinc-100 dark:border-zinc-800 flex justify-end">
           <Button
             type="submit"
             disabled={isPending || !topic.trim() || !rationale.trim()}

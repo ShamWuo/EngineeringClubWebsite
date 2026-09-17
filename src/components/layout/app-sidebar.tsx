@@ -1,10 +1,14 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/components/ui/button';
 import { getLinkIcon } from '@/components/domain/tiered-links-grid';
+import { StatusBadge } from '@/components/domain/status-badge';
+import { NotificationBell } from '@/components/layout/notification-bell';
+import { ThemeToggle } from '@/components/theme/theme-toggle';
+import { UserMenu } from '@/components/layout/user-menu';
 import {
   LayoutDashboard,
   Trophy,
@@ -16,23 +20,36 @@ import {
   Users,
   Shield,
   ExternalLink,
+  Cpu,
+  Menu,
+  X,
 } from 'lucide-react';
 import type { UserRole, Database } from '@/lib/db/types';
+import type { AuthUser } from '@/lib/supabase/server';
 
 type LinkRow = Database['public']['Tables']['links']['Row'];
+type NotificationRow = Database['public']['Tables']['notifications']['Row'];
 
-interface AppSidebarProps {
-  userRole: UserRole;
+export interface AppSidebarProps {
+  currentUser: AuthUser;
+  notifications?: NotificationRow[];
+  clubName?: string;
+  userRole?: UserRole;
   pendingReviewCount?: number;
   primaryLinks?: LinkRow[];
 }
 
 export function AppSidebar({
-  userRole,
+  currentUser,
+  notifications = [],
+  clubName,
+  userRole = currentUser.role,
   pendingReviewCount = 0,
   primaryLinks = [],
 }: AppSidebarProps) {
   const pathname = usePathname();
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+
   const isOfficer = userRole === 'officer' || userRole === 'admin';
   const isAdmin = userRole === 'admin';
 
@@ -62,159 +79,274 @@ export function AppSidebar({
     { href: '/admin/settings', label: 'Club Settings', icon: Settings },
   ];
 
-  return (
-    <aside className="w-64 shrink-0 hidden md:flex flex-col border-r border-zinc-200 dark:border-zinc-850 bg-white dark:bg-black min-h-[calc(100vh-4rem)] p-4 justify-between transition-colors">
-      <div className="space-y-6">
-        {/* Member Navigation */}
-        <div>
-          <div className="text-2xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest px-3 mb-2 font-mono">
-            Club Spaces
-          </div>
-          <nav className="space-y-1">
-            {memberNav.map((item) => {
-              const Icon = item.icon;
-              const isActive =
-                item.href === '/dashboard'
-                  ? pathname === '/dashboard'
-                  : pathname.startsWith(item.href);
+  const sidebarNavContent = (
+    <div className="flex flex-col h-full justify-between overflow-hidden">
+      {/* Top Header & Scrollable Navigation Area */}
+      <div className="flex flex-col min-h-0 flex-1 overflow-hidden">
+        {/* Sidebar Brand Header */}
+        <div className="p-3.5 border-b border-zinc-200 dark:border-zinc-800 space-y-2.5 shrink-0">
+          <Link
+            href="/dashboard"
+            onClick={() => setIsMobileOpen(false)}
+            className="flex items-center gap-2.5 group min-w-0"
+          >
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-600 text-white shadow-md shadow-red-950/40 border border-red-500 group-hover:scale-105 transition-transform shrink-0">
+              <Cpu className="h-4.5 w-4.5" />
+            </div>
+            <div className="flex flex-col min-w-0">
+              <span className="font-black text-sm leading-tight text-zinc-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors truncate">
+                {clubName || 'Fairview High School Engineering'}
+              </span>
+              <span className="text-3xs text-zinc-500 dark:text-zinc-400 font-mono uppercase tracking-wider">
+                Members Portal
+              </span>
+            </div>
+          </Link>
 
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    'flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all',
-                    isActive
-                      ? 'bg-red-50 text-red-700 border border-red-200 shadow-xs dark:bg-red-950/70 dark:text-red-400 dark:border-red-800/80 dark:shadow-md dark:shadow-red-950/40'
-                      : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900/80 dark:hover:text-zinc-100'
-                  )}
-                >
-                  <Icon
-                    className={cn(
-                      'h-4 w-4',
-                      isActive ? 'text-red-600 dark:text-red-500' : 'text-zinc-400 dark:text-zinc-500'
-                    )}
-                  />
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
+          {/* Quick Utility Actions (Notifications & Theme) */}
+          <div className="flex items-center justify-between pt-1.5 border-t border-zinc-100 dark:border-zinc-800/80">
+            <div className="flex items-center gap-1.5">
+              <NotificationBell notifications={notifications} />
+              <span className="text-3xs font-semibold text-zinc-500 dark:text-zinc-400">Notifications</span>
+            </div>
+            <ThemeToggle />
+          </div>
         </div>
 
-        {/* Officer Management Navigation */}
-        {isOfficer && (
+        {/* Scrollable Nav Items */}
+        <div className="overflow-y-auto px-3 py-3.5 space-y-5 flex-1">
+          {/* Member Navigation */}
           <div>
-            <div className="text-2xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest px-3 mb-2 flex items-center justify-between font-mono">
-              <span>Officer Tools</span>
-              <span className="text-3xs bg-red-50 text-red-700 border border-red-200 dark:bg-red-950 dark:text-red-400 dark:border-red-800 px-1.5 py-0.2 rounded font-bold">
-                OFFICER
-              </span>
+            <div className="text-2xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest px-2 mb-1.5 font-mono">
+              Club Spaces
             </div>
-            <nav className="space-y-1">
-              {officerNav.map((item) => {
+            <nav className="space-y-0.5">
+              {memberNav.map((item) => {
                 const Icon = item.icon;
-                const isActive = pathname.startsWith(item.href);
+                const isActive =
+                  item.href === '/dashboard'
+                    ? pathname === '/dashboard'
+                    : pathname.startsWith(item.href);
 
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
+                    onClick={() => setIsMobileOpen(false)}
                     className={cn(
-                      'flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-all',
+                      'flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all',
                       isActive
-                        ? 'bg-red-50 text-red-700 border border-red-200 shadow-xs dark:bg-red-950/70 dark:text-red-400 dark:border-red-800/80 dark:shadow-md dark:shadow-red-950/40'
-                        : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900/80 dark:hover:text-zinc-100'
-                    )}
-                  >
-                    <div className="flex items-center gap-3">
-                      <Icon
-                        className={cn(
-                          'h-4 w-4',
-                          isActive ? 'text-red-600 dark:text-red-500' : 'text-zinc-400 dark:text-zinc-500'
-                        )}
-                      />
-                      <span>{item.label}</span>
-                    </div>
-                    {item.badge !== undefined && (
-                      <span className="flex h-4 px-1.5 items-center justify-center rounded-full bg-red-600 text-white font-bold text-3xs shadow-xs">
-                        {item.badge}
-                      </span>
-                    )}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-        )}
-
-        {/* Admin Navigation */}
-        {isAdmin && (
-          <div>
-            <div className="text-2xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest px-3 mb-2 flex items-center justify-between font-mono">
-              <span>Admin Center</span>
-              <span className="text-3xs bg-red-50 text-red-700 border border-red-200 dark:bg-red-950 dark:text-red-400 dark:border-red-800 px-1.5 py-0.2 rounded font-bold">
-                ADMIN
-              </span>
-            </div>
-            <nav className="space-y-1">
-              {adminNav.map((item) => {
-                const Icon = item.icon;
-                const isActive = pathname.startsWith(item.href);
-
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={cn(
-                      'flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all',
-                      isActive
-                        ? 'bg-red-50 text-red-700 border border-red-200 shadow-xs dark:bg-red-950/70 dark:text-red-400 dark:border-red-800/80 dark:shadow-md dark:shadow-red-950/40'
-                        : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900/80 dark:hover:text-zinc-100'
+                        ? 'bg-red-500/10 text-red-600 dark:bg-red-500/15 dark:text-red-400 font-semibold border-l-2 border-red-600'
+                        : 'text-zinc-600 hover:bg-zinc-100/80 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900/80 dark:hover:text-zinc-100'
                     )}
                   >
                     <Icon
                       className={cn(
-                        'h-4 w-4',
+                        'h-4 w-4 shrink-0',
                         isActive ? 'text-red-600 dark:text-red-500' : 'text-zinc-400 dark:text-zinc-500'
                       )}
                     />
-                    <span>{item.label}</span>
+                    <span className="truncate">{item.label}</span>
                   </Link>
                 );
               })}
             </nav>
           </div>
-        )}
+
+          {/* Officer Management Navigation */}
+          {isOfficer && (
+            <div>
+              <div className="text-2xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest px-2 mb-1.5 flex items-center justify-between font-mono">
+                <span>Officer Tools</span>
+                <span className="text-3xs bg-red-50 text-red-700 border border-red-200 dark:bg-red-950 dark:text-red-400 dark:border-red-800 px-1.5 py-0.2 rounded font-bold">
+                  OFFICER
+                </span>
+              </div>
+              <nav className="space-y-0.5">
+                {officerNav.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = pathname.startsWith(item.href);
+
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setIsMobileOpen(false)}
+                      className={cn(
+                        'flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all',
+                        isActive
+                          ? 'bg-red-500/10 text-red-600 dark:bg-red-500/15 dark:text-red-400 font-semibold border-l-2 border-red-600'
+                          : 'text-zinc-600 hover:bg-zinc-100/80 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900/80 dark:hover:text-zinc-100'
+                      )}
+                    >
+                      <div className="flex items-center gap-2.5 truncate">
+                        <Icon
+                          className={cn(
+                            'h-4 w-4 shrink-0',
+                            isActive ? 'text-red-600 dark:text-red-500' : 'text-zinc-400 dark:text-zinc-500'
+                          )}
+                        />
+                        <span className="truncate">{item.label}</span>
+                      </div>
+                      {item.badge !== undefined && (
+                        <span className="flex h-4 px-1.5 items-center justify-center rounded-full bg-red-600 text-white font-bold text-3xs shadow-xs ml-2 shrink-0">
+                          {item.badge}
+                        </span>
+                      )}
+                    </Link>
+                  );
+                })}
+              </nav>
+            </div>
+          )}
+
+          {/* Admin Navigation */}
+          {isAdmin && (
+            <div>
+              <div className="text-2xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest px-2 mb-1.5 flex items-center justify-between font-mono">
+                <span>Admin Center</span>
+                <span className="text-3xs bg-red-50 text-red-700 border border-red-200 dark:bg-red-950 dark:text-red-400 dark:border-red-800 px-1.5 py-0.2 rounded font-bold">
+                  ADMIN
+                </span>
+              </div>
+              <nav className="space-y-0.5">
+                {adminNav.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = pathname.startsWith(item.href);
+
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setIsMobileOpen(false)}
+                      className={cn(
+                        'flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all',
+                        isActive
+                          ? 'bg-red-500/10 text-red-600 dark:bg-red-500/15 dark:text-red-400 font-semibold border-l-2 border-red-600'
+                          : 'text-zinc-600 hover:bg-zinc-100/80 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900/80 dark:hover:text-zinc-100'
+                      )}
+                    >
+                      <Icon
+                        className={cn(
+                          'h-4 w-4 shrink-0',
+                          isActive ? 'text-red-600 dark:text-red-500' : 'text-zinc-400 dark:text-zinc-500'
+                        )}
+                      />
+                      <span className="truncate">{item.label}</span>
+                    </Link>
+                  );
+                })}
+              </nav>
+            </div>
+          )}
+
+          {/* Pinned Tier 1 Essential Hubs Rail */}
+          {primaryLinks.length > 0 && (
+            <div className="pt-3.5 border-t border-zinc-200 dark:border-zinc-800">
+              <div className="text-2xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest px-2 mb-1.5 font-mono">
+                Pinned Hubs (Tier 1)
+              </div>
+              <div className="space-y-0.5">
+                {primaryLinks.map((link) => (
+                  <a
+                    key={link.id}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-red-600 dark:hover:text-red-400 transition-all group"
+                  >
+                    <div className="flex items-center gap-2 truncate">
+                      <span className="text-red-600 dark:text-red-500 shrink-0">
+                        {getLinkIcon(link.icon, 'h-3.5 w-3.5')}
+                      </span>
+                      <span className="truncate">{link.label}</span>
+                    </div>
+                    <ExternalLink className="h-3 w-3 text-zinc-400 dark:text-zinc-600 group-hover:text-red-600 dark:group-hover:text-red-400 opacity-0 group-hover:opacity-100 shrink-0" />
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Pinned Tier 1 Essential Hubs Rail */}
-      {primaryLinks.length > 0 && (
-        <div className="pt-4 mt-6 border-t border-zinc-200 dark:border-zinc-850">
-          <div className="text-2xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest px-2 mb-2 font-mono">
-            Pinned Hubs (Tier 1)
+      {/* User Profile & Sign Out Footer */}
+      <div className="p-3 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50 shrink-0">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            {currentUser.avatar_url ? (
+              <img
+                src={currentUser.avatar_url}
+                alt={currentUser.full_name || 'User'}
+                className="h-7.5 w-7.5 rounded-full object-cover border border-zinc-200 dark:border-zinc-700 shrink-0"
+              />
+            ) : (
+              <div className="flex h-7.5 w-7.5 items-center justify-center rounded-full bg-red-600 text-white font-bold text-2xs shadow-xs shrink-0">
+                {(currentUser.full_name || currentUser.email || 'U').substring(0, 2).toUpperCase()}
+              </div>
+            )}
+            <div className="flex flex-col min-w-0">
+              <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-200 leading-tight truncate">
+                {currentUser.full_name || currentUser.email}
+              </span>
+              <div className="flex items-center gap-1 mt-0.5">
+                <StatusBadge status={currentUser.role} className="text-3xs py-0 px-1.5" />
+              </div>
+            </div>
           </div>
-          <div className="space-y-1">
-            {primaryLinks.map((link) => (
-              <a
-                key={link.id}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-red-600 dark:hover:text-red-400 transition-all group"
-              >
-                <div className="flex items-center gap-2 truncate">
-                  <span className="text-red-600 dark:text-red-500 shrink-0">
-                    {getLinkIcon(link.icon, 'h-3.5 w-3.5')}
-                  </span>
-                  <span className="truncate">{link.label}</span>
-                </div>
-                <ExternalLink className="h-3 w-3 text-zinc-400 dark:text-zinc-600 group-hover:text-red-600 dark:group-hover:text-red-400 opacity-0 group-hover:opacity-100 shrink-0" />
-              </a>
-            ))}
-          </div>
+
+          <UserMenu currentUser={currentUser} />
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Mobile Top Navigation Header */}
+      <header className="md:hidden sticky top-0 z-40 flex h-14 w-full items-center justify-between border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md px-4 transition-colors">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <button
+            type="button"
+            onClick={() => setIsMobileOpen(!isMobileOpen)}
+            className="p-1.5 -ml-1.5 rounded-lg text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+            aria-label="Toggle navigation menu"
+          >
+            {isMobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+          <Link href="/dashboard" className="flex items-center gap-2 min-w-0">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-600 text-white font-bold text-xs shrink-0">
+              <Cpu className="h-4 w-4" />
+            </div>
+            <span className="font-bold text-xs text-zinc-900 dark:text-white truncate max-w-[180px]">
+              {clubName || 'Fairview High School Engineering'}
+            </span>
+          </Link>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <NotificationBell notifications={notifications} />
+          <ThemeToggle />
+        </div>
+      </header>
+
+      {/* Mobile Sidebar Slide-Over Drawer */}
+      {isMobileOpen && (
+        <div className="md:hidden">
+          <div
+            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150"
+            onClick={() => setIsMobileOpen(false)}
+          />
+          <aside className="fixed inset-y-0 left-0 z-50 w-72 bg-white dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-800 shadow-2xl animate-in slide-in-from-left duration-200">
+            {sidebarNavContent}
+          </aside>
         </div>
       )}
-    </aside>
+
+      {/* Desktop Sticky Sidebar */}
+      <aside className="w-64 lg:w-72 shrink-0 hidden md:flex flex-col border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 h-screen sticky top-0 transition-colors z-30">
+        {sidebarNavContent}
+      </aside>
+    </>
   );
 }

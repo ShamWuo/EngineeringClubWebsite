@@ -77,7 +77,7 @@ export function LinkManager({ links }: { links: LinkRow[] }) {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+          <span className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
             Tier 1 Primary Slots:
           </span>
           <span
@@ -98,10 +98,10 @@ export function LinkManager({ links }: { links: LinkRow[] }) {
       </div>
 
       {editingLink && (
-        <Card className="border-brand-300 dark:border-brand-800 shadow-md">
+        <Card className="border-zinc-200 dark:border-zinc-800 shadow-md">
           <form onSubmit={handleSave}>
             <CardHeader className="pb-3 flex flex-row items-center justify-between">
-              <CardTitle className="text-base font-bold">
+              <CardTitle className="text-base font-bold text-zinc-900 dark:text-white">
                 {editingLink.id ? 'Edit Link' : 'Add New Link'}
               </CardTitle>
               <Button
@@ -117,14 +117,14 @@ export function LinkManager({ links }: { links: LinkRow[] }) {
 
             <CardContent className="space-y-4">
               {error && (
-                <div className="p-3 text-xs rounded bg-red-50 text-red-700 border border-red-200">
+                <div className="p-3 text-xs rounded-lg bg-red-50 dark:bg-red-950/80 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800">
                   {error}
                 </div>
               )}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Link Label *
                   </label>
                   <Input
@@ -134,7 +134,7 @@ export function LinkManager({ links }: { links: LinkRow[] }) {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Destination URL *
                   </label>
                   <Input
@@ -149,7 +149,7 @@ export function LinkManager({ links }: { links: LinkRow[] }) {
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Hierarchy Tier *
                   </label>
                   <Select
@@ -162,7 +162,7 @@ export function LinkManager({ links }: { links: LinkRow[] }) {
                   </Select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Icon Name (Lucide)
                   </label>
                   <Input
@@ -172,7 +172,7 @@ export function LinkManager({ links }: { links: LinkRow[] }) {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Sort Order Number
                   </label>
                   <Input
@@ -186,7 +186,7 @@ export function LinkManager({ links }: { links: LinkRow[] }) {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                   Description (Displayed on Tier 1 Primary Cards)
                 </label>
                 <Textarea
@@ -202,14 +202,14 @@ export function LinkManager({ links }: { links: LinkRow[] }) {
                   id="link_active"
                   checked={editingLink.is_active ?? true}
                   onChange={(e) => setEditingLink({ ...editingLink, is_active: e.target.checked })}
-                  className="rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+                  className="rounded border-zinc-300 dark:border-zinc-700 text-red-600 focus:ring-red-500 bg-white dark:bg-zinc-900"
                 />
-                <label htmlFor="link_active" className="text-xs text-slate-700 dark:text-slate-300">
+                <label htmlFor="link_active" className="text-xs text-zinc-700 dark:text-zinc-300 cursor-pointer">
                   Link is actively visible on portal
                 </label>
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t">
+              <div className="flex justify-end gap-2 pt-2 border-t border-zinc-100 dark:border-zinc-800">
                 <Button
                   type="button"
                   variant="ghost"
@@ -229,9 +229,9 @@ export function LinkManager({ links }: { links: LinkRow[] }) {
       )}
 
       {/* Links List Table */}
-      <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800">
+      <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
         <table className="w-full text-left text-xs">
-          <thead className="bg-slate-50 dark:bg-slate-900 border-b text-2xs uppercase text-slate-500 font-semibold">
+          <thead className="bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 text-2xs uppercase text-zinc-500 dark:text-zinc-400 font-semibold">
             <tr>
               <th className="py-3 px-4">Order</th>
               <th className="py-3 px-4">Label & URL</th>
@@ -241,19 +241,19 @@ export function LinkManager({ links }: { links: LinkRow[] }) {
               <th className="py-3 px-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-950">
+          <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800 bg-white dark:bg-zinc-950">
             {links
               .sort((a, b) => a.sort_order - b.sort_order)
               .map((l) => (
-                <tr key={l.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50">
-                  <td className="py-3 px-4 font-mono font-bold text-slate-400">#{l.sort_order}</td>
+                <tr key={l.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-colors">
+                  <td className="py-3 px-4 font-mono font-bold text-zinc-400 dark:text-zinc-500">#{l.sort_order}</td>
                   <td className="py-3 px-4">
-                    <div className="font-bold text-slate-900 dark:text-slate-100">{l.label}</div>
+                    <div className="font-bold text-zinc-900 dark:text-zinc-100">{l.label}</div>
                     <a
                       href={l.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-3xs text-brand-600 hover:underline flex items-center gap-1"
+                      className="text-3xs text-red-600 dark:text-red-400 hover:underline flex items-center gap-1"
                     >
                       <span className="truncate max-w-xs">{l.url}</span>
                       <ExternalLink className="h-2.5 w-2.5" />
@@ -262,12 +262,12 @@ export function LinkManager({ links }: { links: LinkRow[] }) {
                   <td className="py-3 px-4">
                     <StatusBadge status={l.tier} className="text-3xs" />
                   </td>
-                  <td className="py-3 px-4 font-mono text-3xs text-slate-500">{l.icon || '—'}</td>
+                  <td className="py-3 px-4 font-mono text-3xs text-zinc-500 dark:text-zinc-400">{l.icon || '—'}</td>
                   <td className="py-3 px-4">
                     {l.is_active ? (
-                      <span className="text-3xs font-bold text-emerald-600">Active</span>
+                      <span className="text-3xs font-bold text-emerald-600 dark:text-emerald-400">Active</span>
                     ) : (
-                      <span className="text-3xs text-slate-400">Hidden</span>
+                      <span className="text-3xs text-zinc-400 dark:text-zinc-500">Hidden</span>
                     )}
                   </td>
                   <td className="py-3 px-4 text-right space-x-2 whitespace-nowrap">
@@ -284,7 +284,7 @@ export function LinkManager({ links }: { links: LinkRow[] }) {
                       variant="ghost"
                       onClick={() => handleDelete(l.id, l.label)}
                       disabled={isPending}
-                      className="h-7 text-xs gap-1 text-red-500 hover:text-red-700"
+                      className="h-7 text-xs gap-1 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
                     >
                       <Trash2 className="h-3 w-3" />
                     </Button>

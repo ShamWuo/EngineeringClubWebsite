@@ -18,11 +18,11 @@ export default async function ManageWorkshopsPage() {
   return (
     <div className="space-y-6 max-w-5xl mx-auto pb-12">
       <div>
-        <h1 className="text-2xl font-black text-white flex items-center gap-2.5">
-          <CalendarCheck className="h-6 w-6 text-red-500" />
+        <h1 className="text-2xl font-black text-zinc-900 dark:text-white flex items-center gap-2.5">
+          <CalendarCheck className="h-6 w-6 text-red-600 dark:text-red-500" />
           Manage Workshops & Attendance
         </h1>
-        <p className="text-xs text-zinc-400 mt-1">
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
           Schedule technical sessions, update syllabus/materials, and verify member attendance for certification.
         </p>
       </div>

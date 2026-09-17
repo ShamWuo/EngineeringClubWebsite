@@ -4,21 +4,21 @@
 
 @layer base {
   :root {
-    --background: 0 0% 98%;
-    --foreground: 240 10% 3.9%;
+    --background: 0 0% 98.5%;
+    --foreground: 240 10% 4%;
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 240 10% 4%;
     --border: 240 5.9% 90%;
     --primary: 0 72.2% 50.6%;
     --primary-foreground: 0 85.7% 97.3%;
   }
 
   .dark {
-    --background: 0 0% 0%;
+    --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
+    --card: 240 10% 5.5%;
     --card-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
+    --border: 240 4% 16%;
     --primary: 0 72.2% 50.6%;
     --primary-foreground: 0 85.7% 97.3%;
   }
@@ -27,9 +27,13 @@
     border-color: hsl(var(--border));
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-zinc-50 dark:bg-black text-zinc-900 dark:text-zinc-100 antialiased selection:bg-red-600 selection:text-white;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    @apply bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 antialiased selection:bg-red-600 selection:text-white;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11", "rlig" 1, "calt" 1;
   }
 }
 
@@ -50,3 +54,155 @@
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-zinc-400 dark:bg-zinc-700;
 }
+
+/* ── Technical Grid & Ambient Lighting ──────────────────────────── */
+
+.bg-grid-pattern {
+  background-size: 36px 36px;
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+}
+
+.dark .bg-grid-pattern {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+}
+
+.bg-dot-pattern {
+  background-image: radial-gradient(rgba(0, 0, 0, 0.08) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.dark .bg-dot-pattern {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+.dark .glass-panel {
+  background: rgba(18, 20, 26, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ── Boulder Flatirons Vector Landscape Scene ──────────────────── */
+
+.ridge-scene {
+  --sky-top: #f8fafc;
+  --sky-mid: #eef2f7;
+  --sky-bottom: #e2e8f0;
+  --l-far-top: #c3cdd9;
+  --l-far-bot: #aeb9c9;
+  --l-mid-top: #8e9db3;
+  --l-mid-bot: #74839b;
+  --l-hills-top: #5d6b82;
+  --l-hills-bot: #47536a;
+  --l-hills-shade: #3b4557;
+  --l-building-top: #c22424;
+  --l-building-bot: #9a1616;
+  --l-building-shade: #7a1010;
+  --l-window: #ffffff;
+  --l-fence: #334155;
+  --l-fore-top: #1e293b;
+  --l-fore-bot: #0f172a;
+  --sun-fill: rgb(239 68 68 / 0.12);
+  --sun-core: rgb(239 68 68 / 0.20);
+  --sun-rim: rgb(239 68 68 / 0.10);
+  --sun-halo-a: rgb(251 146 60 / 0.10);
+  --sun-halo-b: rgb(251 146 60 / 0.04);
+  --cloud-fill: #f1f5f9;
+  --bird-stroke: #475569;
+  --haze: rgb(226 232 240 / 0.55);
+  --ground-shadow: rgb(15 23 42 / 0.16);
+  --vignette: rgb(15 23 42 / 0.14);
+  --crest: 0.45;
+}
+
+.dark .ridge-scene {
+  --sky-top: #09090b;
+  --sky-mid: #0b0e14;
+  --sky-bottom: #0f121a;
+  --l-far-top: #1e2230;
+  --l-far-bot: #171b26;
+  --l-mid-top: #262c3d;
+  --l-mid-bot: #1d2230;
+  --l-hills-top: #1c1f2b;
+  --l-hills-bot: #14161e;
+  --l-hills-shade: #0e1016;
+  --l-building-top: #a51e1e;
+  --l-building-bot: #7f1414;
+  --l-building-shade: #641010;
+  --l-window: #fca5a5;
+  --l-fence: #14151a;
+  --l-fore-top: #0c0d11;
+  --l-fore-bot: #060708;
+  --sun-fill: rgb(220 38 38 / 0.22);
+  --sun-core: rgb(248 113 113 / 0.30);
+  --sun-rim: rgb(220 38 38 / 0.14);
+  --sun-halo-a: rgb(220 38 38 / 0.10);
+  --sun-halo-b: rgb(220 38 38 / 0.03);
+  --cloud-fill: #1b202c;
+  --bird-stroke: #64748b;
+  --haze: rgb(15 18 26 / 0.50);
+  --ground-shadow: rgb(0 0 0 / 0.45);
+  --vignette: rgb(0 0 0 / 0.32);
+  --crest: 0.65;
+}
+
+.ridge-crest {
+  stroke: rgb(220 38 38 / var(--crest));
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.ridge-parallax {
+  transform: translate3d(
+    calc(var(--px, 0) * var(--drift) * 1px),
+    calc(var(--scroll, 0) * var(--lag) * 1px),
+    0
+  );
+}
+
+/* Slow cloud drift (60–150s loops, staggered via inline animation-delay) */
+.ridge-cloud {
+  animation: ridge-cloud-drift 120s linear infinite;
+}
+
+@keyframes ridge-cloud-drift {
+  from { transform: translateX(-3.5%); }
+  to   { transform: translateX(3.5%); }
+}
+
+/* Film grain: static; a drift would repaint the full hero every frame */
+.ridge-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+}
+
+.dark .ridge-grain {
+  opacity: 0.07;
+  mix-blend-mode: soft-light;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise {
+    animation: ridge-fade 400ms ease-out both !important;
+  }
+  .ridge-parallax {
+    transform: none !important;
+  }
+  .ridge-cloud {
+    animation: none;
+  }
+}
+

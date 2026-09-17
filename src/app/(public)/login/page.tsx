@@ -1,48 +1,13 @@
 'use client';
 
-import React, { useState, useTransition } from 'react';
+import React, { useState, useEffect, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { loginWithEmail, switchDemoUser } from '@/actions/auth';
+import { loginWithEmail } from '@/actions/auth';
 import { createClient } from '@/lib/supabase/client';
 import { Cpu, Mail, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
-
-const DEMO_PERSONAS = [
-  {
-    id: '11111111-1111-1111-1111-111111111111',
-    name: 'Alex Vance',
-    email: 'alex.vance@bvsd.org',
-    role: 'Admin',
-    description: 'Club President (Full administrative access & settings)',
-    badgeColor: 'bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-400 dark:border-red-800',
-  },
-  {
-    id: '22222222-2222-2222-2222-222222222222',
-    name: 'Maya Lin',
-    email: 'maya.lin@bvsd.org',
-    role: 'Officer',
-    description: 'VP Operations (Review queue, manage comps & workshops)',
-    badgeColor: 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-red-900/50 dark:text-red-300 dark:border-red-700',
-  },
-  {
-    id: '33333333-3333-3333-3333-333333333333',
-    name: 'Sam Rivera',
-    email: 'sam.rivera@bvsd.org',
-    role: 'Member (Lead)',
-    description: 'Powertrain Team Lead (Submits requests, leads team)',
-    badgeColor: 'bg-zinc-100 text-zinc-800 border-zinc-300 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700',
-  },
-  {
-    id: '44444444-4444-4444-4444-444444444444',
-    name: 'Jordan Chen',
-    email: 'jordan.chen@bvsd.org',
-    role: 'Member',
-    description: 'Software Member (Signs up for comps, RSVPs to workshops)',
-    badgeColor: 'bg-zinc-100 text-zinc-800 border-zinc-300 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700',
-  },
-];
 
 export default function LoginPage() {
   const router = useRouter();
@@ -52,19 +17,65 @@ export default function LoginPage() {
   const [isPending, startTransition] = useTransition();
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
+  useEffect(() => {
+    // Check for error parameters in URL (from OAuth provider or callback route)
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const urlError = params.get('error');
+      const errorDesc = params.get('error_description');
+      if (urlError || errorDesc) {
+        setError(decodeURIComponent(errorDesc || urlError || 'Authentication failed.'));
+      }
+    }
+
+    const supabase = createClient();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        const rawNext = new URLSearchParams(window.location.search).get('next');
+        const target =
+          rawNext && rawNext.startsWith('/') && !rawNext.startsWith('//') && rawNext !== '/'
+            ? rawNext
+            : '/dashboard';
+        router.replace(target);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION')) {
+        const rawNext = new URLSearchParams(window.location.search).get('next');
+        const target =
+          rawNext && rawNext.startsWith('/') && !rawNext.startsWith('//') && rawNext !== '/'
+            ? rawNext
+            : '/dashboard';
+        router.replace(target);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [router]);
+
   const handleGoogleOAuth = async () => {
     setError(null);
     setIsGoogleLoading(true);
     try {
       const supabase = createClient();
       const origin = window.location.origin;
+      const params = new URLSearchParams(window.location.search);
+      const rawNext = params.get('next');
+      const safeNext =
+        rawNext && rawNext.startsWith('/') && !rawNext.startsWith('//') && rawNext !== '/'
+          ? rawNext
+          : '/dashboard';
+
       const { error: authError } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${origin}/auth/callback`,
+          redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(safeNext)}`,
           queryParams: {
             access_type: 'offline',
-            prompt: 'consent',
+            prompt: 'select_account',
           },
         },
       });
@@ -92,50 +103,48 @@ export default function LoginPage() {
         setError(res.error);
       } else {
         setSuccessMsg(`Welcome, ${res.data.email}! Redirecting to dashboard...`);
+        const params = new URLSearchParams(window.location.search);
+        const rawNext = params.get('next');
+        const safeNext =
+          rawNext && rawNext.startsWith('/') && !rawNext.startsWith('//') && rawNext !== '/'
+            ? rawNext
+            : '/dashboard';
         setTimeout(() => {
-          router.push('/dashboard');
-        }, 600);
-      }
-    });
-  };
-
-  const handlePersonaLogin = (userId: string) => {
-    setError(null);
-    startTransition(async () => {
-      const res = await switchDemoUser({ userId });
-      if (!res.ok) {
-        setError(res.error);
-      } else {
-        router.push('/dashboard');
+          window.location.href = safeNext;
+        }, 400);
       }
     });
   };
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center p-4 bg-zinc-50 dark:bg-black transition-colors">
-      <div className="w-full max-w-md space-y-6">
+    <div className="min-h-[85vh] relative flex items-center justify-center p-4 bg-zinc-50 dark:bg-zinc-950 transition-colors overflow-hidden">
+      {/* Ambient background grid & lighting */}
+      <div className="absolute inset-0 bg-grid-pattern opacity-40 pointer-events-none" />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-red-600/10 dark:bg-red-600/15 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="relative z-10 w-full max-w-md space-y-6">
         <div className="text-center space-y-2">
-          <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-red-600 text-white shadow-lg shadow-red-950/40 mb-2 border border-red-500">
+          <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-red-600 text-white shadow-lg shadow-red-950/30 mb-2 border border-red-500/80">
             <Cpu className="h-6 w-6" />
           </div>
-          <h1 className="text-2xl font-black text-zinc-900 dark:text-white tracking-tight">
-            Engineering Club Portal
+          <h1 className="text-2xl sm:text-3xl font-black text-zinc-900 dark:text-white tracking-tight">
+            Knights Member Portal
           </h1>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-sm mx-auto">
-            Authenticate using your verified Google student account or campus email.
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-sm mx-auto leading-relaxed">
+            Authenticate using your verified Fairview Google account (@bvsd.org) to access squad rosters, funding grants, and workshops.
           </p>
         </div>
 
-        <Card className="border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950/80 shadow-2xl shadow-red-950/10 backdrop-blur-sm">
+        <Card className="border-zinc-200/90 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/90 shadow-xl shadow-zinc-950/5 dark:shadow-red-950/10 backdrop-blur-xl rounded-2xl">
           <CardContent className="pt-6 space-y-4">
             {error && (
-              <div className="p-3 text-xs rounded-lg bg-red-50 dark:bg-red-950/80 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 flex items-start gap-2">
+              <div className="p-3 text-xs rounded-xl bg-red-50 dark:bg-red-950/80 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 flex items-start gap-2">
                 <AlertCircle className="h-4 w-4 shrink-0 text-red-600 dark:text-red-500 mt-0.5" />
                 <span>{error}</span>
               </div>
             )}
             {successMsg && (
-              <div className="p-3 text-xs rounded-lg bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 flex items-center gap-2">
+              <div className="p-3 text-xs rounded-xl bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                 <span>{successMsg}</span>
               </div>
@@ -146,7 +155,7 @@ export default function LoginPage() {
               type="button"
               onClick={handleGoogleOAuth}
               disabled={isGoogleLoading || isPending}
-              className="w-full h-11 bg-white hover:bg-zinc-100 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-zinc-900 dark:text-white font-bold text-xs gap-3 border border-zinc-300 dark:border-zinc-700 shadow-sm transition-all cursor-pointer"
+              className="w-full h-11 bg-white hover:bg-zinc-50 dark:bg-zinc-800 dark:hover:bg-zinc-700/80 text-zinc-900 dark:text-white font-bold text-xs gap-3 border border-zinc-200 dark:border-zinc-700 shadow-xs transition-all cursor-pointer rounded-xl"
             >
               <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24">
                 <path
@@ -166,34 +175,34 @@ export default function LoginPage() {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
                 />
               </svg>
-              <span>{isGoogleLoading ? 'Connecting to Google...' : 'Continue with Google'}</span>
+              <span>{isGoogleLoading ? 'Connecting to Google...' : 'Continue with Student Google'}</span>
             </Button>
 
             <div className="relative my-4">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-zinc-200 dark:border-zinc-800" />
               </div>
-              <div className="relative flex justify-center text-2xs uppercase">
-                <span className="bg-white dark:bg-zinc-950 px-2 text-zinc-500 font-semibold">
-                  Or Email Sign In
+              <div className="relative flex justify-center text-3xs uppercase tracking-widest font-mono">
+                <span className="bg-white dark:bg-zinc-900 px-3 text-zinc-500 font-semibold">
+                  Or District Email
                 </span>
               </div>
             </div>
 
-            <form onSubmit={handleEmailLogin} className="space-y-3">
+            <form onSubmit={handleEmailLogin} className="space-y-3.5">
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
                   School Email Address
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-2.5 h-4 w-4 text-zinc-400 dark:text-zinc-500" />
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-zinc-400 dark:text-zinc-500" />
                   <Input
                     type="email"
                     required
                     placeholder="student@bvsd.org"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-9 text-sm bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:border-red-600"
+                    className="pl-9 h-10 text-sm bg-white dark:bg-zinc-950/80 border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:border-red-600 rounded-xl"
                   />
                 </div>
               </div>
@@ -201,55 +210,12 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={isPending}
-                className="w-full bg-red-600 hover:bg-red-700 text-white font-bold gap-2 text-xs shadow-md shadow-red-950/40 cursor-pointer"
+                className="w-full h-10 bg-red-600 hover:bg-red-700 text-white font-bold gap-2 text-xs shadow-md shadow-red-950/30 cursor-pointer rounded-xl"
               >
                 <span>{isPending ? 'Authenticating...' : 'Sign In with Email'}</span>
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </form>
-
-            <div className="relative my-4">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-zinc-200 dark:border-zinc-800" />
-              </div>
-              <div className="relative flex justify-center text-2xs uppercase">
-                <span className="bg-white dark:bg-zinc-950 px-2 text-zinc-500 font-semibold">
-                  Or Demo Persona Switcher
-                </span>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              {DEMO_PERSONAS.map((p) => (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => handlePersonaLogin(p.id)}
-                  disabled={isPending}
-                  className="w-full text-left p-2.5 rounded-lg border border-zinc-200 dark:border-zinc-850 hover:border-red-500/50 bg-zinc-50/80 hover:bg-red-50/50 dark:bg-zinc-900/60 dark:hover:bg-red-950/20 transition-all flex items-center justify-between group cursor-pointer"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className="h-7 w-7 rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-xs font-bold text-red-600 dark:text-red-400 border border-zinc-300 dark:border-zinc-700">
-                      {p.name.substring(0, 1)}
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="font-semibold text-xs text-zinc-800 dark:text-zinc-200 group-hover:text-red-600 dark:group-hover:text-red-400">
-                          {p.name}
-                        </span>
-                        <span className={`text-3xs font-bold px-1.5 py-0.2 rounded border ${p.badgeColor}`}>
-                          {p.role}
-                        </span>
-                      </div>
-                      <span className="text-2xs text-zinc-500 line-clamp-1">
-                        {p.description}
-                      </span>
-                    </div>
-                  </div>
-                  <ArrowRight className="h-3.5 w-3.5 text-zinc-400 group-hover:text-red-600 dark:group-hover:text-red-400 transition-transform group-hover:translate-x-0.5" />
-                </button>
-              ))}
-            </div>
           </CardContent>
         </Card>
       </div>

@@ -49,77 +49,16 @@ export function getInitialMockData(): AppState {
       allowed_email_domain: 'bvsd.org',
       budget_ceiling_cents: 5000000,
       updated_at: now.toISOString(),
-      updated_by: '11111111-1111-1111-1111-111111111111',
+      updated_by: null,
     },
-    profiles: [
-      {
-        id: '11111111-1111-1111-1111-111111111111',
-        email: 'alex.vance@bvsd.org',
-        full_name: 'Alex Vance',
-        grad_year: 2026,
-        role: 'admin',
-        skills: ['Robotics', 'CAD', 'Embedded Systems', 'PCB Design'],
-        avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
-        is_active: true,
-        created_at: new Date(Date.now() - 60 * 86400000).toISOString(),
-        updated_at: new Date().toISOString(),
-      },
-      {
-        id: '22222222-2222-2222-2222-222222222222',
-        email: 'maya.lin@bvsd.org',
-        full_name: 'Maya Lin',
-        grad_year: 2026,
-        role: 'officer',
-        skills: ['Project Management', 'Structural Analysis', 'FEA', 'Welding'],
-        avatar_url: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150',
-        is_active: true,
-        created_at: new Date(Date.now() - 50 * 86400000).toISOString(),
-        updated_at: new Date().toISOString(),
-      },
-      {
-        id: '33333333-3333-3333-3333-333333333333',
-        email: 'sam.rivera@bvsd.org',
-        full_name: 'Sam Rivera',
-        grad_year: 2027,
-        role: 'member',
-        skills: ['Autonomous Navigation', 'ROS2', 'Computer Vision', 'Python'],
-        avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
-        is_active: true,
-        created_at: new Date(Date.now() - 40 * 86400000).toISOString(),
-        updated_at: new Date().toISOString(),
-      },
-      {
-        id: '44444444-4444-4444-4444-444444444444',
-        email: 'jordan.chen@bvsd.org',
-        full_name: 'Jordan Chen',
-        grad_year: 2028,
-        role: 'member',
-        skills: ['Full-Stack Web', 'C++', 'Microcontrollers', 'Git'],
-        avatar_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150',
-        is_active: true,
-        created_at: new Date(Date.now() - 30 * 86400000).toISOString(),
-        updated_at: new Date().toISOString(),
-      },
-      {
-        id: '55555555-5555-5555-5555-555555555555',
-        email: 'taylor.swift@bvsd.org',
-        full_name: 'Taylor Kim',
-        grad_year: 2027,
-        role: 'member',
-        skills: ['Aerodynamics', 'CFD', 'Composites', '3D Printing'],
-        avatar_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
-        is_active: true,
-        created_at: new Date(Date.now() - 25 * 86400000).toISOString(),
-        updated_at: new Date().toISOString(),
-      },
-    ],
+    profiles: [],
     competitions: [
       {
         id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        slug: 'formula-sae-2027',
-        name: 'Formula SAE Electric 2027',
-        description: 'Design, build, and race a formula-style electric racecar. Teams are evaluated on engineering design, cost analysis, dynamic acceleration, autocross, and endurance.',
-        organizer: 'SAE International',
+        slug: 'first-robotics-2027',
+        name: 'FIRST Robotics Competition 2027',
+        description: 'The premier international high school robotics challenge. Teams design, CNC-machine, wire, and program industrial-grade 125-lb robots in an intensive build cycle to compete in the 2027 field game. Features advanced swerve drive, pneumatic actuators, machine vision tracking, and alliance tournament play.',
+        organizer: 'FIRST (For Inspiration & Recognition of Science & Technology)',
         status: 'active',
         season: '2026-27',
         registration_opens_at: new Date(Date.now() - 30 * 86400000).toISOString(),
@@ -127,9 +66,9 @@ export function getInitialMockData(): AppState {
         event_starts_at: new Date(Date.now() + 90 * 86400000).toISOString(),
         event_ends_at: new Date(Date.now() + 94 * 86400000).toISOString(),
         max_teams: 2,
-        max_team_size: 25,
-        entry_fee_cents: 250000,
-        external_url: 'https://www.fsaeonline.com',
+        max_team_size: 35,
+        entry_fee_cents: 600000,
+        external_url: 'https://www.firstinspires.org/robotics/frc',
         created_by: '22222222-2222-2222-2222-222222222222',
         created_at: new Date(Date.now() - 35 * 86400000).toISOString(),
         updated_at: new Date().toISOString(),
@@ -137,18 +76,18 @@ export function getInitialMockData(): AppState {
       {
         id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
         slug: 'nasa-rover-challenge',
-        name: 'NASA Human Exploration Rover Challenge',
-        description: 'Design, build, and test rovers capable of traversing simulated lunar and Martian terrain while completing scientific mission tasks.',
+        name: 'NASA Human Exploration Rover Challenge 2027',
+        description: 'Design, fabricate, and pilot a human-powered collapsible rover capable of traversing a rugged half-mile simulated lunar and Martian obstacle course at the U.S. Space & Rocket Center in Huntsville, AL. Teams complete real-time core sampling and equipment deployment while meeting strict telemetry and safety standards.',
         organizer: 'NASA Marshall Space Flight Center',
         status: 'active',
         season: '2026-27',
         registration_opens_at: new Date(Date.now() - 20 * 86400000).toISOString(),
         registration_closes_at: new Date(Date.now() + 15 * 86400000).toISOString(),
         event_starts_at: new Date(Date.now() + 120 * 86400000).toISOString(),
-        event_ends_at: new Date(Date.now() + 123 * 86400000).toISOString(),
-        max_teams: 3,
-        max_team_size: 10,
-        entry_fee_cents: 150000,
+        event_ends_at: new Date(Date.now() + 124 * 86400000).toISOString(),
+        max_teams: 2,
+        max_team_size: 8,
+        entry_fee_cents: 0,
         external_url: 'https://www.nasa.gov/roverchallenge',
         created_by: '11111111-1111-1111-1111-111111111111',
         created_at: new Date(Date.now() - 25 * 86400000).toISOString(),
@@ -156,22 +95,42 @@ export function getInitialMockData(): AppState {
       },
       {
         id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
-        slug: 'robomaster-university-league',
-        name: 'RoboMaster University League 2027',
-        description: 'Advanced robotic combat competition combining engineering, computer vision, automatic aiming, and tactical gameplay.',
-        organizer: 'DJI / RoboMaster',
+        slug: 'american-rocketry-2027',
+        name: 'American Rocketry Challenge 2027',
+        description: "The world's largest student aerospace contest. High school teams engineer and launch dual-stage or high-power model rockets carrying two raw Grade A eggs to exactly 800 feet with a flight duration of 37–40 seconds, returning payload and motor stages undamaged via dual-parachute recovery.",
+        organizer: 'Aerospace Industries Association & NAR',
         status: 'planned',
         season: '2026-27',
         registration_opens_at: new Date(Date.now() + 10 * 86400000).toISOString(),
         registration_closes_at: new Date(Date.now() + 60 * 86400000).toISOString(),
         event_starts_at: new Date(Date.now() + 180 * 86400000).toISOString(),
-        event_ends_at: new Date(Date.now() + 185 * 86400000).toISOString(),
-        max_teams: 1,
-        max_team_size: 20,
-        entry_fee_cents: 300000,
-        external_url: 'https://www.robomaster.com',
+        event_ends_at: new Date(Date.now() + 182 * 86400000).toISOString(),
+        max_teams: 3,
+        max_team_size: 10,
+        entry_fee_cents: 15000,
+        external_url: 'https://rocketrychallenge.org',
         created_by: '22222222-2222-2222-2222-222222222222',
         created_at: new Date(Date.now() - 10 * 86400000).toISOString(),
+        updated_at: new Date().toISOString(),
+      },
+      {
+        id: 'dddddddd-dddd-dddd-dddd-dddddddddddd',
+        slug: 'solar-car-challenge',
+        name: 'National Solar Car Challenge',
+        description: 'High school engineering teams design, build, and race full-scale roadworthy solar-electric vehicles. Squads engineer custom tubular steel roll cages, MPPT solar charging arrays, active lithium battery management systems (BMS), and composite aerodynamic fairings to race at the Texas Motor Speedway.',
+        organizer: 'Solar Car Challenge Foundation',
+        status: 'completed',
+        season: '2025-26',
+        registration_opens_at: new Date(Date.now() - 300 * 86400000).toISOString(),
+        registration_closes_at: new Date(Date.now() - 250 * 86400000).toISOString(),
+        event_starts_at: new Date(Date.now() - 100 * 86400000).toISOString(),
+        event_ends_at: new Date(Date.now() - 96 * 86400000).toISOString(),
+        max_teams: 1,
+        max_team_size: 15,
+        entry_fee_cents: 80000,
+        external_url: 'https://www.solarcarchallenge.org',
+        created_by: '22222222-2222-2222-2222-222222222222',
+        created_at: new Date(Date.now() - 310 * 86400000).toISOString(),
         updated_at: new Date().toISOString(),
       },
     ],
@@ -179,8 +138,8 @@ export function getInitialMockData(): AppState {
       {
         id: '10000001-1111-1111-1111-111111111111',
         competition_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        name: 'FHS Knights E-Racing Powertrain',
-        description: 'Developing the 400V battery pack, inverter cooling loops, and high-torque electric motor mounts.',
+        name: 'FHS Knights FRC Drivetrain & Chassis',
+        description: 'Precision swerve drive kinematics, CNC routed structural aluminum bellypan, and 125-lb competition chassis fabrication.',
         is_recruiting: true,
         created_by: '33333333-3333-3333-3333-333333333333',
         created_at: new Date(Date.now() - 25 * 86400000).toISOString(),
@@ -189,8 +148,8 @@ export function getInitialMockData(): AppState {
       {
         id: '10000002-2222-2222-2222-222222222222',
         competition_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        name: 'FHS Knights Aero & Chassis',
-        description: 'Carbon fiber monocoque design, front and rear wing aerodynamics, and composite layup manufacturing.',
+        name: 'FHS Knights FRC Intake & Manipulation',
+        description: 'Active roller intake mechanisms, pneumatic indexing systems, brushless flywheel velocity control, and machine vision targeting.',
         is_recruiting: true,
         created_by: '55555555-5555-5555-5555-555555555555',
         created_at: new Date(Date.now() - 22 * 86400000).toISOString(),
@@ -200,7 +159,7 @@ export function getInitialMockData(): AppState {
         id: '10000003-3333-3333-3333-333333333333',
         competition_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
         name: 'FHS Knights Lunar Rover Alpha',
-        description: 'Primary rover chassis and drivetrain team focused on lightweight titanium suspension and airless wheel tread.',
+        description: 'Primary rover chassis and drivetrain subteam focused on lightweight chromoly frame geometry, custom suspension linkage, and 3D-printed airless tire compliant treads.',
         is_recruiting: false,
         created_by: '11111111-1111-1111-1111-111111111111',
         created_at: new Date(Date.now() - 15 * 86400000).toISOString(),
@@ -432,8 +391,8 @@ export function getInitialMockData(): AppState {
         requested_by: '33333333-3333-3333-3333-333333333333',
         team_id: '10000001-1111-1111-1111-111111111111',
         competition_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        title: 'BMS Battery Management System ICs & High-Voltage Contactors',
-        justification: 'Critical safety interlocks required for tech inspection rules EV4.1 and EV4.2 at Formula SAE.',
+        title: 'SDS MK4i Swerve Drive Modules & Brushless Motors',
+        justification: 'High-precision omnidirectional swerve modules required for 125-lb FRC robot drivetrain compliance under 2027 rules.',
         amount_requested_cents: 48500,
         amount_approved_cents: null,
         status: 'pending',
@@ -449,8 +408,8 @@ export function getInitialMockData(): AppState {
         requested_by: '55555555-5555-5555-5555-555555555555',
         team_id: '10000002-2222-2222-2222-222222222222',
         competition_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        title: 'Twill Weave Carbon Fiber Fabric & Epoxy Resin Infusion Kit',
-        justification: 'Composite materials for front wing endplate mold manufacturing.',
+        title: 'Polycarbonate Sheet & Dual-Roller Compliance Intake Hardware',
+        justification: 'Impact-resistant intake structure and high-traction compliant wheels for competition game piece manipulation.',
         amount_requested_cents: 75000,
         amount_approved_cents: 75000,
         status: 'approved',
@@ -466,28 +425,28 @@ export function getInitialMockData(): AppState {
       {
         id: '01000001-1111-1111-1111-111111111111',
         funding_request_id: '70000001-1111-1111-1111-111111111111',
-        description: 'Gigavac GX14CA 400V 350A Contactor',
-        vendor: 'Mouser Electronics',
+        description: 'SDS MK4i Swerve Drive Inverted Module Kit',
+        vendor: 'WestCoast Products / AndyMark',
         unit_cost_cents: 18500,
         quantity: 2,
-        url: 'https://www.mouser.com/gigavac-gx14',
+        url: 'https://wcproducts.com/products/mk4i',
         created_at: new Date(Date.now() - 4 * 86400000).toISOString(),
       },
       {
         id: '01000002-2222-2222-2222-222222222222',
         funding_request_id: '70000001-1111-1111-1111-111111111111',
-        description: 'Texas Instruments BQ79616-Q1 BMS Monitor ICs',
-        vendor: 'DigiKey',
+        description: 'CANcoder High-Precision Magnetic Rotary Encoders',
+        vendor: 'Cross The Road Electronics',
         unit_cost_cents: 1150,
         quantity: 10,
-        url: 'https://www.digikey.com/ti-bms',
+        url: 'https://store.ctr-electronics.com/cancoder',
         created_at: new Date(Date.now() - 4 * 86400000).toISOString(),
       },
       {
         id: '01000003-3333-3333-3333-333333333333',
         funding_request_id: '70000002-2222-2222-2222-222222222222',
-        description: '3K 2x2 Twill Carbon Fiber Fabric (5 yards)',
-        vendor: 'Composite Envisions',
+        description: '1/4" Impact Polycarbonate Sheet (48" x 96")',
+        vendor: 'McMaster-Carr',
         unit_cost_cents: 12500,
         quantity: 4,
         url: 'https://compositeenvisions.com/carbon-fabric',
@@ -562,7 +521,7 @@ export function getInitialMockData(): AppState {
         icon: 'MessageSquare',
         sort_order: 1,
         is_active: true,
-        updated_by: '11111111-1111-1111-1111-111111111111',
+        updated_by: null,
         updated_at: new Date().toISOString(),
       },
       {
@@ -574,7 +533,7 @@ export function getInitialMockData(): AppState {
         icon: 'Key',
         sort_order: 2,
         is_active: true,
-        updated_by: '11111111-1111-1111-1111-111111111111',
+        updated_by: null,
         updated_at: new Date().toISOString(),
       },
       {
@@ -586,7 +545,7 @@ export function getInitialMockData(): AppState {
         icon: 'ShieldAlert',
         sort_order: 3,
         is_active: true,
-        updated_by: '11111111-1111-1111-1111-111111111111',
+        updated_by: null,
         updated_at: new Date().toISOString(),
       },
       {
@@ -598,7 +557,7 @@ export function getInitialMockData(): AppState {
         icon: 'Github',
         sort_order: 4,
         is_active: true,
-        updated_by: '11111111-1111-1111-1111-111111111111',
+        updated_by: null,
         updated_at: new Date().toISOString(),
       },
       {
@@ -610,7 +569,7 @@ export function getInitialMockData(): AppState {
         icon: 'Printer',
         sort_order: 5,
         is_active: true,
-        updated_by: '22222222-2222-2222-2222-222222222222',
+        updated_by: null,
         updated_at: new Date().toISOString(),
       },
       {
@@ -622,7 +581,7 @@ export function getInitialMockData(): AppState {
         icon: 'ShoppingBag',
         sort_order: 6,
         is_active: true,
-        updated_by: '22222222-2222-2222-2222-222222222222',
+        updated_by: null,
         updated_at: new Date().toISOString(),
       },
       {
@@ -634,7 +593,7 @@ export function getInitialMockData(): AppState {
         icon: 'Calendar',
         sort_order: 7,
         is_active: true,
-        updated_by: '22222222-2222-2222-2222-222222222222',
+        updated_by: null,
         updated_at: new Date().toISOString(),
       },
       {
@@ -646,7 +605,7 @@ export function getInitialMockData(): AppState {
         icon: 'FileText',
         sort_order: 8,
         is_active: true,
-        updated_by: '11111111-1111-1111-1111-111111111111',
+        updated_by: null,
         updated_at: new Date().toISOString(),
       },
       {
@@ -658,7 +617,7 @@ export function getInitialMockData(): AppState {
         icon: 'Compass',
         sort_order: 9,
         is_active: true,
-        updated_by: '11111111-1111-1111-1111-111111111111',
+        updated_by: null,
         updated_at: new Date().toISOString(),
       },
     ],
@@ -688,16 +647,30 @@ export function getInitialMockData(): AppState {
   };
 }
 
-let globalStore: AppState | null = null;
+// The store must live on globalThis: Next.js bundles this module separately per
+// route, so a module-level variable would give every page its own isolated copy
+// (breaking sessions and any cross-route state). globalThis is shared per process.
+const GLOBAL_STORE_KEY = '__fhs_engineering_app_state__';
+
+function readGlobalStore(): AppState | null {
+  return ((globalThis as any)[GLOBAL_STORE_KEY] as AppState | undefined) ?? null;
+}
+
+function writeGlobalStore(store: AppState) {
+  (globalThis as any)[GLOBAL_STORE_KEY] = store;
+}
 
 export function getDb(): AppState {
-  if (!globalStore) {
-    globalStore = getInitialMockData();
+  let store = readGlobalStore();
+  if (!store) {
+    store = getInitialMockData();
+    writeGlobalStore(store);
   }
-  return globalStore;
+  return store;
 }
 
 export function resetDb() {
-  globalStore = getInitialMockData();
-  return globalStore;
+  const store = getInitialMockData();
+  writeGlobalStore(store);
+  return store;
 }

@@ -12,6 +12,16 @@ export const profileUpdateSchema = z.object({
   avatar_url: z.string().url('Invalid avatar URL').nullable().optional().or(z.literal('')),
 });
 
+export const onboardingSchema = z.object({
+  full_name: z.string().min(2, 'Full name must be at least 2 characters').max(100),
+  grad_year: z.coerce.number().int().min(2024, 'Graduation year must be 2024 or later').max(2035),
+  skills: z.array(z.string().trim().min(1)).min(1, 'Please select at least one engineering discipline or interest'),
+  subteam_interest: z.string().optional().nullable(),
+  safety_pledge: z.boolean().refine((val) => val === true, {
+    message: 'You must review and accept the Room 604 makerspace safety guidelines',
+  }),
+});
+
 export const competitionSchema = z.object({
   slug: z.string().min(2).max(100).regex(/^[a-z0-9-]+$/, 'Slug must contain only lowercase letters, numbers, and hyphens'),
   name: z.string().min(3, 'Name must be at least 3 characters').max(150),

@@ -76,10 +76,10 @@ export function CompetitionManager({ competitions }: { competitions: CompRow[] }
       </div>
 
       {editingComp && (
-        <Card className="border-brand-300 dark:border-brand-800 shadow-md">
+        <Card className="border-zinc-200 dark:border-zinc-800 shadow-md">
           <form onSubmit={handleSave}>
             <CardHeader className="pb-3 flex flex-row items-center justify-between">
-              <CardTitle className="text-base font-bold">
+              <CardTitle className="text-base font-bold text-zinc-900 dark:text-white">
                 {editingComp.id ? 'Edit Competition' : 'Create New Competition'}
               </CardTitle>
               <Button
@@ -95,14 +95,14 @@ export function CompetitionManager({ competitions }: { competitions: CompRow[] }
 
             <CardContent className="space-y-4">
               {error && (
-                <div className="p-3 text-xs rounded bg-red-50 text-red-700 border border-red-200">
+                <div className="p-3 text-xs rounded-lg bg-red-50 dark:bg-red-950/80 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800">
                   {error}
                 </div>
               )}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Name *
                   </label>
                   <Input
@@ -112,12 +112,12 @@ export function CompetitionManager({ competitions }: { competitions: CompRow[] }
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Slug (URL Key) *
                   </label>
                   <Input
                     required
-                    placeholder="e.g. formula-sae-2027"
+                    placeholder="e.g. first-robotics-2027"
                     value={editingComp.slug || ''}
                     onChange={(e) => setEditingComp({ ...editingComp, slug: e.target.value })}
                   />
@@ -126,7 +126,7 @@ export function CompetitionManager({ competitions }: { competitions: CompRow[] }
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Status
                   </label>
                   <Select
@@ -141,7 +141,7 @@ export function CompetitionManager({ competitions }: { competitions: CompRow[] }
                   </Select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Season
                   </label>
                   <Input
@@ -150,7 +150,7 @@ export function CompetitionManager({ competitions }: { competitions: CompRow[] }
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Organizer
                   </label>
                   <Input
@@ -161,7 +161,7 @@ export function CompetitionManager({ competitions }: { competitions: CompRow[] }
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                   Description
                 </label>
                 <Textarea
@@ -171,7 +171,7 @@ export function CompetitionManager({ competitions }: { competitions: CompRow[] }
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t">
+              <div className="flex justify-end gap-2 pt-2 border-t border-zinc-100 dark:border-zinc-800">
                 <Button
                   type="button"
                   variant="ghost"
@@ -191,9 +191,9 @@ export function CompetitionManager({ competitions }: { competitions: CompRow[] }
       )}
 
       {/* Competitions Table */}
-      <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800">
+      <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
         <table className="w-full text-left text-xs">
-          <thead className="bg-slate-50 dark:bg-slate-900 border-b text-2xs uppercase text-slate-500 font-semibold">
+          <thead className="bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 text-2xs uppercase text-zinc-500 dark:text-zinc-400 font-semibold">
             <tr>
               <th className="py-3 px-4">Competition</th>
               <th className="py-3 px-4">Season</th>
@@ -202,18 +202,18 @@ export function CompetitionManager({ competitions }: { competitions: CompRow[] }
               <th className="py-3 px-4 text-right">Action</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-950">
+          <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800 bg-white dark:bg-zinc-950">
             {competitions.map((c) => (
-              <tr key={c.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50">
-                <td className="py-3 px-4 font-bold text-slate-900 dark:text-slate-100">
+              <tr key={c.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-colors">
+                <td className="py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">
                   {c.name}
-                  <div className="text-3xs font-mono text-slate-400">/{c.slug}</div>
+                  <div className="text-3xs font-mono text-zinc-400 dark:text-zinc-500">/{c.slug}</div>
                 </td>
-                <td className="py-3 px-4">{c.season || 'N/A'}</td>
+                <td className="py-3 px-4 text-zinc-600 dark:text-zinc-400">{c.season || 'N/A'}</td>
                 <td className="py-3 px-4">
                   <StatusBadge status={c.status} className="text-3xs" />
                 </td>
-                <td className="py-3 px-4 text-slate-500">{c.organizer || 'N/A'}</td>
+                <td className="py-3 px-4 text-zinc-500 dark:text-zinc-400">{c.organizer || 'N/A'}</td>
                 <td className="py-3 px-4 text-right">
                   <Button
                     size="sm"

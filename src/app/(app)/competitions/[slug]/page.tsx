@@ -91,7 +91,7 @@ export default async function CompetitionDetailPage({
       {/* Description & Key Details */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <Card className="bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-850">
+          <Card className="bg-white dark:bg-zinc-900/90 border-zinc-200/90 dark:border-zinc-800 shadow-sm">
             <CardHeader className="pb-3">
               <CardTitle className="text-base font-bold text-zinc-900 dark:text-white">About the Competition</CardTitle>
             </CardHeader>
@@ -130,7 +130,7 @@ export default async function CompetitionDetailPage({
                   const isUserMember = members.some((m: any) => m.user_id === user.id);
 
                   return (
-                    <Card key={team.id} className="flex flex-col justify-between hover:border-zinc-300 dark:hover:border-zinc-700 bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-850 shadow-2xs transition-all">
+                    <Card key={team.id} className="flex flex-col justify-between hover:border-zinc-300 dark:hover:border-zinc-700 bg-white dark:bg-zinc-900/90 border-zinc-200/90 dark:border-zinc-800 shadow-2xs transition-all">
                       <CardHeader className="pb-3">
                         <div className="flex items-center justify-between gap-2 mb-1">
                           {team.is_recruiting ? (
@@ -147,8 +147,8 @@ export default async function CompetitionDetailPage({
                           {team.description}
                         </CardDescription>
                       </CardHeader>
-                      <CardContent className="pt-0 flex items-center justify-between border-t border-zinc-100 dark:border-zinc-850 p-4 mt-2">
-                        <span className="text-xs text-zinc-500 font-medium">{members.length} member{members.length !== 1 ? 's' : ''}</span>
+                      <CardContent className="pt-0 flex items-center justify-between border-t border-zinc-100 dark:border-zinc-800 p-4 mt-2">
+                        <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">{members.length} member{members.length !== 1 ? 's' : ''}</span>
                         <Link href={`/teams/${team.id}`}>
                           <Button size="sm" variant="ghost" className="h-7 text-xs text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300">
                             Team Workspace →
@@ -185,27 +185,27 @@ export default async function CompetitionDetailPage({
           </Card>
 
           {/* Quick Specs Card */}
-          <Card className="bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-850">
+          <Card className="bg-white dark:bg-zinc-900/90 border-zinc-200/90 dark:border-zinc-800 shadow-sm">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-bold text-zinc-900 dark:text-white">Competition Specs</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-xs">
-              <div className="flex items-center justify-between py-1.5 border-b border-zinc-100 dark:border-zinc-850">
+              <div className="flex items-center justify-between py-1.5 border-b border-zinc-100 dark:border-zinc-800">
                 <span className="text-zinc-500 dark:text-zinc-400">Max Teams</span>
                 <span className="font-semibold text-zinc-800 dark:text-zinc-200">{comp.max_teams || 'Unlimited'}</span>
               </div>
-              <div className="flex items-center justify-between py-1.5 border-b border-zinc-100 dark:border-zinc-850">
+              <div className="flex items-center justify-between py-1.5 border-b border-zinc-100 dark:border-zinc-800">
                 <span className="text-zinc-500 dark:text-zinc-400">Max Team Size</span>
                 <span className="font-semibold text-zinc-800 dark:text-zinc-200">{comp.max_team_size || 'No limit'}</span>
               </div>
-              <div className="flex items-center justify-between py-1.5 border-b border-zinc-100 dark:border-zinc-850">
+              <div className="flex items-center justify-between py-1.5 border-b border-zinc-100 dark:border-zinc-800">
                 <span className="text-zinc-500 dark:text-zinc-400">Entry Fee</span>
                 <span className="font-semibold text-zinc-800 dark:text-zinc-200">
                   {comp.entry_fee_cents ? `$${(comp.entry_fee_cents / 100).toFixed(2)}` : 'Free'}
                 </span>
               </div>
               {comp.registration_closes_at && (
-                <div className="flex items-center justify-between py-1.5 border-b border-zinc-100 dark:border-zinc-850">
+                <div className="flex items-center justify-between py-1.5 border-b border-zinc-100 dark:border-zinc-800">
                   <span className="text-zinc-500 dark:text-zinc-400">Reg. Deadline</span>
                   <span className="font-semibold text-red-600 dark:text-red-400">
                     {new Date(comp.registration_closes_at).toLocaleDateString()}

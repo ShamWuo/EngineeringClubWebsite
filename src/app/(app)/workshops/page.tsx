@@ -83,7 +83,7 @@ export default async function WorkshopsPage() {
             const isRsvped = myRsvps.has(w.id);
 
             return (
-              <Card key={w.id} className="flex flex-col justify-between hover:border-zinc-300 dark:hover:border-zinc-700 bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-850 shadow-2xs transition-all border-l-4 border-l-red-600">
+              <Card key={w.id} className="flex flex-col justify-between hover:border-zinc-300 dark:hover:border-zinc-700 bg-white dark:bg-zinc-900/80 border-zinc-200/90 dark:border-zinc-800 shadow-xs hover:shadow-md transition-all border-l-4 border-l-red-600 rounded-2xl">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between gap-2 mb-1.5">
                     <Badge variant="info" className="text-3xs font-semibold">
@@ -102,7 +102,7 @@ export default async function WorkshopsPage() {
                 </CardHeader>
 
                 <CardContent className="pt-0 space-y-2 text-xs text-zinc-600 dark:text-zinc-400">
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 py-2 border-t border-zinc-100 dark:border-zinc-850">
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 py-2 border-t border-zinc-100 dark:border-zinc-800">
                     {w.starts_at && (
                       <span className="flex items-center gap-1 font-medium text-zinc-900 dark:text-zinc-200">
                         <Clock className="h-3.5 w-3.5 text-red-600 dark:text-red-500" />
@@ -123,7 +123,7 @@ export default async function WorkshopsPage() {
                   )}
                 </CardContent>
 
-                <CardFooter className="pt-2 border-t border-zinc-100 dark:border-zinc-850 flex items-center justify-between gap-3">
+                <CardFooter className="pt-2 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-3">
                   <Link href={`/workshops/${w.slug}`}>
                     <Button variant="ghost" size="sm" className="text-xs text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white">
                       Details & Syllabus →
@@ -143,18 +143,18 @@ export default async function WorkshopsPage() {
 
       {/* Past Workshops & Materials Archive */}
       {past.length > 0 && (
-        <section className="space-y-4 pt-4 border-t border-zinc-200 dark:border-zinc-850">
+        <section className="space-y-4 pt-4 border-t border-zinc-200 dark:border-zinc-800">
           <h2 className="text-lg font-bold text-zinc-900 dark:text-white">
             Past Workshop Materials & Recordings Archive
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {past.map((w) => (
-              <Card key={w.id} className="p-4 flex flex-col justify-between bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-850 shadow-2xs">
+              <Card key={w.id} className="p-4 flex flex-col justify-between bg-white dark:bg-zinc-900/90 border-zinc-200/90 dark:border-zinc-800 shadow-2xs">
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
                     <StatusBadge status="completed" className="text-3xs" />
                     {w.starts_at && (
-                      <span className="text-3xs text-zinc-400">
+                      <span className="text-3xs text-zinc-500 dark:text-zinc-400">
                         {new Date(w.starts_at).toLocaleDateString()}
                       </span>
                     )}
@@ -166,7 +166,7 @@ export default async function WorkshopsPage() {
                     {w.description}
                   </p>
                 </div>
-                <div className="flex items-center gap-2 pt-2 border-t border-zinc-100 dark:border-zinc-850">
+                <div className="flex items-center gap-2 pt-2 border-t border-zinc-100 dark:border-zinc-800">
                   {w.materials_url && (
                     <a href={w.materials_url} target="_blank" rel="noopener noreferrer" className="flex-1">
                       <Button size="sm" variant="outline" className="w-full h-7 text-2xs gap-1">

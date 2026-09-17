@@ -67,13 +67,13 @@ export function TeamRequestForm({
       <form onSubmit={handleSubmit}>
         <CardContent className="pt-6 space-y-4">
           {error && (
-            <div className="p-3 text-xs rounded bg-red-50 text-red-700 border border-red-200">
+            <div className="p-3 text-xs rounded-lg bg-red-50 dark:bg-red-950/80 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800">
               {error}
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
               Target Competition *
             </label>
             <Select
@@ -90,7 +90,7 @@ export function TeamRequestForm({
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
               Proposed Team Name *
             </label>
             <Input
@@ -102,7 +102,7 @@ export function TeamRequestForm({
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
               Subteam Mission, Objectives & Deliverables *
             </label>
             <Textarea
@@ -115,20 +115,20 @@ export function TeamRequestForm({
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
               Proposed Initial Members (Optional)
             </label>
-            <div className="max-h-40 overflow-y-auto rounded-lg border border-slate-200 dark:border-slate-800 p-2.5 space-y-1.5 bg-slate-50/50 dark:bg-slate-900/40">
+            <div className="max-h-40 overflow-y-auto rounded-lg border border-zinc-200 dark:border-zinc-800 p-2.5 space-y-1.5 bg-zinc-50 dark:bg-zinc-900/40">
               {members.map((m) => (
                 <label
                   key={m.id}
-                  className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded"
+                  className="flex items-center gap-2 text-xs text-zinc-700 dark:text-zinc-300 cursor-pointer p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded"
                 >
                   <input
                     type="checkbox"
                     checked={selectedMemberIds.includes(m.id)}
                     onChange={() => handleMemberToggle(m.id)}
-                    className="rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+                    className="rounded border-zinc-300 dark:border-zinc-700 text-red-600 focus:ring-red-500 bg-white dark:bg-zinc-900"
                   />
                   <span>
                     <strong className="font-semibold">{m.full_name || m.email}</strong> ({m.email})
@@ -144,15 +144,15 @@ export function TeamRequestForm({
               id="needs_funding"
               checked={needsFunding}
               onChange={(e) => setNeedsFunding(e.target.checked)}
-              className="rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+              className="rounded border-zinc-300 dark:border-zinc-700 text-red-600 focus:ring-red-500 bg-white dark:bg-zinc-900"
             />
-            <label htmlFor="needs_funding" className="text-xs text-slate-700 dark:text-slate-300 select-none">
+            <label htmlFor="needs_funding" className="text-xs text-zinc-700 dark:text-zinc-300 select-none cursor-pointer">
               This team will require dedicated club procurement / funding allocation.
             </label>
           </div>
         </CardContent>
 
-        <CardFooter className="pt-2 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
+        <CardFooter className="pt-2 border-t border-zinc-100 dark:border-zinc-800 flex justify-end gap-3">
           <Link href="/competitions">
             <Button type="button" variant="ghost" size="sm">
               Cancel

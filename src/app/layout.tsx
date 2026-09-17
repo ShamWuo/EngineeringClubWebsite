@@ -32,7 +32,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col bg-zinc-50 dark:bg-black font-sans text-zinc-900 dark:text-zinc-100 antialiased selection:bg-red-600 selection:text-white transition-colors duration-150">
+      <body className="min-h-full flex flex-col bg-zinc-50 dark:bg-zinc-950 font-sans text-zinc-900 dark:text-zinc-100 antialiased selection:bg-red-600 selection:text-white transition-colors duration-150">
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>

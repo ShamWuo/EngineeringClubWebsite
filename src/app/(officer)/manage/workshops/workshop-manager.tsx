@@ -102,10 +102,10 @@ export function WorkshopManager({
       </div>
 
       {editingWorkshop && (
-        <Card className="border-brand-300 dark:border-brand-800 shadow-md">
+        <Card className="border-zinc-200 dark:border-zinc-800 shadow-md">
           <form onSubmit={handleSave}>
             <CardHeader className="pb-3 flex flex-row items-center justify-between">
-              <CardTitle className="text-base font-bold">
+              <CardTitle className="text-base font-bold text-zinc-900 dark:text-white">
                 {editingWorkshop.id ? 'Edit Workshop' : 'Schedule Workshop'}
               </CardTitle>
               <Button
@@ -121,14 +121,14 @@ export function WorkshopManager({
 
             <CardContent className="space-y-4">
               {error && (
-                <div className="p-3 text-xs rounded bg-red-50 text-red-700 border border-red-200">
+                <div className="p-3 text-xs rounded-lg bg-red-50 dark:bg-red-950/80 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800">
                   {error}
                 </div>
               )}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Title *
                   </label>
                   <Input
@@ -138,7 +138,7 @@ export function WorkshopManager({
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Slug (URL Key) *
                   </label>
                   <Input
@@ -152,7 +152,7 @@ export function WorkshopManager({
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Status
                   </label>
                   <Select
@@ -166,7 +166,7 @@ export function WorkshopManager({
                   </Select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Instructor Name
                   </label>
                   <Input
@@ -175,7 +175,7 @@ export function WorkshopManager({
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Location
                   </label>
                   <Input
@@ -187,7 +187,7 @@ export function WorkshopManager({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Materials Download URL
                   </label>
                   <Input
@@ -198,7 +198,7 @@ export function WorkshopManager({
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Recording URL
                   </label>
                   <Input
@@ -210,7 +210,7 @@ export function WorkshopManager({
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t">
+              <div className="flex justify-end gap-2 pt-2 border-t border-zinc-100 dark:border-zinc-800">
                 <Button
                   type="button"
                   variant="ghost"
@@ -231,11 +231,11 @@ export function WorkshopManager({
 
       {/* Attendance Marking Modal */}
       {attendanceWorkshop && (
-        <Card className="border-purple-300 dark:border-purple-800 shadow-md">
+        <Card className="border-purple-200 dark:border-purple-900 shadow-md">
           <CardHeader className="pb-3 flex flex-row items-center justify-between">
             <div>
-              <CardTitle className="text-base font-bold flex items-center gap-2">
-                <UserCheck className="h-4 w-4 text-purple-600" />
+              <CardTitle className="text-base font-bold flex items-center gap-2 text-zinc-900 dark:text-white">
+                <UserCheck className="h-4 w-4 text-purple-600 dark:text-purple-400" />
                 Attendance Verification: {attendanceWorkshop.title}
               </CardTitle>
             </div>
@@ -258,13 +258,13 @@ export function WorkshopManager({
                   return (
                     <div
                       key={r.user_id}
-                      className="flex items-center justify-between p-2.5 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 text-xs"
+                      className="flex items-center justify-between p-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 text-xs"
                     >
                       <div>
-                        <div className="font-semibold text-slate-900 dark:text-slate-100">
+                        <div className="font-semibold text-zinc-900 dark:text-zinc-100">
                           {p?.full_name || p?.email}
                         </div>
-                        <div className="text-3xs text-slate-400">{p?.email}</div>
+                        <div className="text-3xs text-zinc-500 dark:text-zinc-400">{p?.email}</div>
                       </div>
 
                       <Button
@@ -273,7 +273,7 @@ export function WorkshopManager({
                         onClick={() => handleToggleAttendance(r.user_id, r.attended)}
                         disabled={isPending}
                         className={`h-7 text-2xs gap-1 font-bold ${
-                          r.attended ? 'bg-emerald-600 text-white' : ''
+                          r.attended ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : ''
                         }`}
                       >
                         <CheckCircle2 className="h-3 w-3" />
@@ -288,9 +288,9 @@ export function WorkshopManager({
       )}
 
       {/* Workshops List Table */}
-      <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800">
+      <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
         <table className="w-full text-left text-xs">
-          <thead className="bg-slate-50 dark:bg-slate-900 border-b text-2xs uppercase text-slate-500 font-semibold">
+          <thead className="bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 text-2xs uppercase text-zinc-500 dark:text-zinc-400 font-semibold">
             <tr>
               <th className="py-3 px-4">Workshop</th>
               <th className="py-3 px-4">Status</th>
@@ -299,21 +299,21 @@ export function WorkshopManager({
               <th className="py-3 px-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-950">
+          <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800 bg-white dark:bg-zinc-950">
             {workshops.map((w) => {
               const rsvpList = rsvps.filter((r) => r.workshop_id === w.id);
 
               return (
-                <tr key={w.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50">
-                  <td className="py-3 px-4 font-bold text-slate-900 dark:text-slate-100">
+                <tr key={w.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-colors">
+                  <td className="py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">
                     {w.title}
-                    <div className="text-3xs font-mono text-slate-400">/{w.slug}</div>
+                    <div className="text-3xs font-mono text-zinc-400 dark:text-zinc-500">/{w.slug}</div>
                   </td>
                   <td className="py-3 px-4">
                     <StatusBadge status={w.status} className="text-3xs" />
                   </td>
-                  <td className="py-3 px-4 text-slate-500">{w.instructor_name || 'N/A'}</td>
-                  <td className="py-3 px-4 font-semibold">{rsvpList.length}</td>
+                  <td className="py-3 px-4 text-zinc-500 dark:text-zinc-400">{w.instructor_name || 'N/A'}</td>
+                  <td className="py-3 px-4 font-semibold text-zinc-800 dark:text-zinc-200">{rsvpList.length}</td>
                   <td className="py-3 px-4 text-right space-x-2">
                     <Button
                       size="sm"

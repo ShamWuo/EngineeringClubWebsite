@@ -74,24 +74,10 @@ npm run build
 
 ---
 
-## 👥 Demo Personas
-
-On the login page (`/login`) or using the **Persona Switcher** in the top navigation bar, you can instantly test the system under each role:
-
-| Persona | Email | Role | Responsibilities |
-| :--- | :--- | :--- | :--- |
-| **Alex Vance** | `alex.vance@university.edu` | `admin` | Full club administrative governance, role promotion, budget ceiling adjustments. |
-| **Maya Lin** | `maya.lin@university.edu` | `officer` | Unified review queue approvals, workshop scheduling & attendance, funding approvals, links management. |
-| **Sam Rivera** | `sam.rivera@university.edu` | `member` (Lead) | Lead of *Apex E-Racing Powertrain*, team roster management, funding requests, work logs. |
-| **Jordan Chen** | `jordan.chen@university.edu` | `member` | Workshop RSVPs, topic upvotes, competition signups. |
-| **Taylor Kim** | `taylor.swift@university.edu` | `member` (Lead) | Lead of *Apex E-Racing Aero & Chassis*, CFD work logs, competition proposals. |
-
----
-
 ## 🗄️ Database Architecture (`supabase/`)
 
 - `migrations/00001_initial_schema.sql`: 7 enums, 19 tables, indexes, and `pending_requests` view.
 - `migrations/00002_rls_policies.sql`: Security definer functions and Row Level Security policies for all tables.
 - `migrations/00003_triggers_and_functions.sql`: Triggers for role/status protection and atomic approval RPCs.
 - `migrations/00004_storage_buckets.sql`: Storage bucket configuration and policies for procurement receipts.
-- `seed.sql`: Realistic seed data with 5 student personas, competitions, teams, workshops, requests, and links.
+- `seed.sql`: Clean seed data for club settings, competitions, teams, workshops, and links.

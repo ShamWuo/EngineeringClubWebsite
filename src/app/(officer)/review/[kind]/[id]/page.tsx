@@ -91,8 +91,8 @@ export default async function RequestReviewDetailPage({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left 2 Cols: Request Details */}
         <div className="lg:col-span-2 space-y-6">
-          <Card className="border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
-            <CardHeader className="pb-3 border-b border-zinc-100 dark:border-zinc-850">
+          <Card className="border-zinc-200/90 dark:border-zinc-800 bg-white dark:bg-zinc-900/90 shadow-sm">
+            <CardHeader className="pb-3 border-b border-zinc-100 dark:border-zinc-800">
               <CardTitle className="text-base font-bold text-zinc-900 dark:text-white">Proposal Details & Rationale</CardTitle>
             </CardHeader>
             <CardContent className="pt-4 space-y-4 text-sm leading-relaxed text-zinc-800 dark:text-zinc-200">
@@ -203,7 +203,7 @@ export default async function RequestReviewDetailPage({
                           <th className="py-2 px-3 text-right">Total</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-zinc-100 dark:divide-zinc-850">
+                      <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
                         {lineItems.map((item) => (
                           <tr key={item.id}>
                             <td className="py-2 px-3 font-medium text-zinc-900 dark:text-zinc-200">{item.description}</td>

@@ -49,16 +49,16 @@ export default function CompetitionRequestPage() {
       <div>
         <Link
           href="/competitions"
-          className="inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 mb-2"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-zinc-500 hover:text-zinc-900 dark:hover:text-white mb-2 transition-colors"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           Back to competitions
         </Link>
-        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-          <Trophy className="h-6 w-6 text-brand-600" />
+        <h1 className="text-2xl font-extrabold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+          <Trophy className="h-6 w-6 text-red-600 dark:text-red-500" />
           Propose a New Competition
         </h1>
-        <p className="text-xs text-slate-500 mt-1">
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
           Have an exciting engineering challenge you'd like the club to sponsor and enter? Submit a proposal for officer review.
         </p>
       </div>
@@ -67,13 +67,13 @@ export default function CompetitionRequestPage() {
         <form onSubmit={handleSubmit}>
           <CardContent className="pt-6 space-y-4">
             {error && (
-              <div className="p-3 text-xs rounded bg-red-50 text-red-700 border border-red-200">
+              <div className="p-3 text-xs rounded-lg bg-red-50 dark:bg-red-950/80 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800">
                 {error}
               </div>
             )}
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                 Competition Name *
               </label>
               <Input
@@ -86,7 +86,7 @@ export default function CompetitionRequestPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                   Organizing Body
                 </label>
                 <Input
@@ -96,7 +96,7 @@ export default function CompetitionRequestPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                   Official Website URL
                 </label>
                 <Input
@@ -109,7 +109,7 @@ export default function CompetitionRequestPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                 Why Should the Club Participate? (Rationale & Value) *
               </label>
               <Textarea
@@ -123,7 +123,7 @@ export default function CompetitionRequestPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                   Estimated Entry Budget ($)
                 </label>
                 <Input
@@ -136,7 +136,7 @@ export default function CompetitionRequestPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                   Target Team Size
                 </label>
                 <Input
@@ -147,7 +147,7 @@ export default function CompetitionRequestPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                   Registration Deadline
                 </label>
                 <Input
@@ -159,7 +159,7 @@ export default function CompetitionRequestPage() {
             </div>
           </CardContent>
 
-          <CardFooter className="pt-2 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
+          <CardFooter className="pt-2 border-t border-zinc-100 dark:border-zinc-800 flex justify-end gap-3">
             <Link href="/competitions">
               <Button type="button" variant="ghost" size="sm">
                 Cancel

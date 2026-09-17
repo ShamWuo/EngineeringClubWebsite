@@ -25,7 +25,7 @@ export function WorkshopVoteBoard({ requests }: { requests: WorkshopReq[] }) {
 
   if (requests.length === 0) {
     return (
-      <Card className="p-8 text-center text-xs text-zinc-500 bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-850">
+      <Card className="p-8 text-center text-xs text-zinc-500 bg-white dark:bg-zinc-900/90 border-zinc-200/90 dark:border-zinc-800">
         No active topic proposals yet. Be the first to suggest one!
       </Card>
     );
@@ -36,7 +36,7 @@ export function WorkshopVoteBoard({ requests }: { requests: WorkshopReq[] }) {
       {requests.map((req) => (
         <Card
           key={req.id}
-          className="p-4 flex items-start justify-between gap-4 bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-850 hover:border-zinc-300 dark:hover:border-zinc-700 shadow-2xs transition-colors"
+          className="p-4 flex items-start justify-between gap-4 bg-white dark:bg-zinc-900/90 border-zinc-200/90 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 shadow-2xs transition-colors"
         >
           <div className="space-y-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">

@@ -49,7 +49,7 @@ export function RequestCard({
   const formattedDate = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
 
   return (
-    <Card className="hover:border-zinc-400 dark:hover:border-zinc-700 bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 transition-all flex flex-col justify-between shadow-2xs hover:shadow-md">
+    <Card className="hover:border-zinc-400 dark:hover:border-zinc-700 bg-white dark:bg-zinc-900/90 border-zinc-200/90 dark:border-zinc-800 transition-all flex flex-col justify-between shadow-2xs hover:shadow-md">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between gap-2 mb-1.5">
           <div className="flex items-center gap-1.5 text-3xs font-mono font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
@@ -81,7 +81,7 @@ export function RequestCard({
         )}
       </CardContent>
 
-      <CardFooter className="pt-3 border-t border-zinc-100 dark:border-zinc-850 flex justify-between items-center text-xs">
+      <CardFooter className="pt-3 border-t border-zinc-100 dark:border-zinc-800 flex justify-between items-center text-xs">
         <span className="text-zinc-400 dark:text-zinc-600 text-3xs font-mono">{id.substring(0, 8)}...</span>
         {isOfficerReview ? (
           <Link href={`/review/${kind}/${id}`}>

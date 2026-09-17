@@ -17,13 +17,13 @@ export default function Error({
 
   return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center p-6 text-center space-y-4">
-      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 text-red-600 border border-red-200">
+      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 dark:bg-red-950/80 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800">
         <AlertTriangle className="h-7 w-7" />
       </div>
-      <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+      <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
         Something went wrong
       </h2>
-      <p className="text-xs text-slate-500 max-w-sm">
+      <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-sm">
         {error.message || 'An unexpected application error occurred while rendering this view.'}
       </p>
       <Button onClick={() => reset()} size="sm" className="gap-1.5 font-semibold">

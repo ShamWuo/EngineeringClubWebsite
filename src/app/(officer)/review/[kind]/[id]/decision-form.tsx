@@ -52,7 +52,7 @@ export function ReviewDecisionForm({
   };
 
   return (
-    <Card className="border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 sticky top-20 shadow-md">
+    <Card className="border-zinc-200/90 dark:border-zinc-800 bg-white dark:bg-zinc-900/90 sticky top-20 shadow-md">
       <form onSubmit={handleSubmit}>
         <CardHeader className="pb-3">
           <CardTitle className="text-base font-bold text-zinc-900 dark:text-zinc-100">

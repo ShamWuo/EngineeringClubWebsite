@@ -31,12 +31,12 @@ export default async function CompetitionsPage({
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-white flex items-center gap-2.5">
-            <Trophy className="h-6 w-6 text-red-500" />
+          <h1 className="text-2xl font-black text-zinc-900 dark:text-white flex items-center gap-2.5">
+            <Trophy className="h-6 w-6 text-red-600 dark:text-red-500" />
             Engineering Competitions
           </h1>
-          <p className="text-xs text-zinc-400 mt-1">
-            Browse active collegiate & high school challenges, join subteams, or request entry into a new competition.
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+            Browse active high school engineering challenges, join subteams, or propose a new competition.
           </p>
         </div>
 
@@ -51,7 +51,7 @@ export default async function CompetitionsPage({
       </div>
 
       {/* Status Filter Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-zinc-800">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-zinc-200 dark:border-zinc-800">
         {[
           { id: 'all', label: 'All Competitions' },
           { id: 'active', label: 'Active Season' },
@@ -64,7 +64,7 @@ export default async function CompetitionsPage({
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap ${
               statusFilter === tab.id
                 ? 'bg-red-600 text-white shadow-xs'
-                : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200'
+                : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-zinc-200'
             }`}
           >
             {tab.label}
@@ -81,44 +81,44 @@ export default async function CompetitionsPage({
           return (
             <Card
               key={comp.id}
-              className="flex flex-col justify-between hover:border-red-600/50 bg-zinc-950 border-zinc-850 transition-all shadow-md"
+              className="flex flex-col justify-between hover:border-red-500/50 dark:hover:border-red-600/50 bg-white dark:bg-zinc-900/80 border-zinc-200/90 dark:border-zinc-800 transition-all shadow-xs hover:shadow-md rounded-2xl"
             >
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between gap-2 mb-2">
-                  <Badge variant="outline" className="text-3xs font-mono bg-zinc-900 border-zinc-800 text-zinc-400">
+                  <Badge variant="outline" className="text-3xs font-mono">
                     {comp.season || '2026-27'}
                   </Badge>
                   <StatusBadge status={comp.status} />
                 </div>
-                <CardTitle className="text-lg font-bold line-clamp-1 leading-snug text-white">
+                <CardTitle className="text-lg font-bold line-clamp-1 leading-snug text-zinc-900 dark:text-white">
                   {comp.name}
                 </CardTitle>
                 {comp.organizer && (
-                  <span className="text-xs font-medium text-zinc-400">
+                  <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
                     Organizer: {comp.organizer}
                   </span>
                 )}
-                <CardDescription className="text-xs text-zinc-400 line-clamp-3 mt-2 leading-relaxed">
+                <CardDescription className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-3 mt-2 leading-relaxed">
                   {comp.description}
                 </CardDescription>
               </CardHeader>
 
-              <CardContent className="pt-0 space-y-2.5 text-xs text-zinc-400">
-                <div className="flex items-center justify-between border-t border-zinc-850 pt-2.5">
-                  <span className="flex items-center gap-1.5 font-medium text-zinc-300">
-                    <Users className="h-3.5 w-3.5 text-red-500" />
+              <CardContent className="pt-0 space-y-2.5 text-xs text-zinc-500 dark:text-zinc-400">
+                <div className="flex items-center justify-between border-t border-zinc-100 dark:border-zinc-800 pt-2.5">
+                  <span className="flex items-center gap-1.5 font-medium text-zinc-800 dark:text-zinc-300">
+                    <Users className="h-3.5 w-3.5 text-red-600 dark:text-red-500" />
                     {compTeams.length} Team{compTeams.length !== 1 ? 's' : ''} ({totalMembers} members)
                   </span>
                   {comp.event_starts_at && (
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-3.5 w-3.5 text-zinc-500" />
+                    <span className="flex items-center gap-1 text-zinc-500 dark:text-zinc-400">
+                      <Calendar className="h-3.5 w-3.5 text-zinc-400 dark:text-zinc-500" />
                       {new Date(comp.event_starts_at).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}
                     </span>
                   )}
                 </div>
               </CardContent>
 
-              <CardFooter className="pt-2 border-t border-zinc-850 flex justify-between items-center gap-2">
+              <CardFooter className="pt-2 border-t border-zinc-100 dark:border-zinc-800 flex justify-between items-center gap-2">
                 <Link href={`/competitions/${comp.slug}`} className="w-full">
                   <Button size="sm" className="w-full text-xs font-bold gap-1 bg-red-600 hover:bg-red-700 text-white">
                     View Subteams & Roster

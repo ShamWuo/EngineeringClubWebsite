@@ -31,20 +31,20 @@ describe('Validation Schemas', () => {
   describe('competitionSchema', () => {
     it('accepts valid competition payload with hyphenated slug', () => {
       const res = competitionSchema.safeParse({
-        slug: 'formula-sae-2027',
-        name: 'Formula SAE Electric 2027',
+        slug: 'first-robotics-2027',
+        name: 'FIRST Robotics Competition 2027',
         status: 'active',
-        entry_fee_cents: 250000,
+        entry_fee_cents: 600000,
         max_teams: 2,
-        max_team_size: 25,
+        max_team_size: 35,
       });
       expect(res.success).toBe(true);
     });
 
     it('rejects invalid slug with uppercase letters or spaces', () => {
       const res = competitionSchema.safeParse({
-        slug: 'Formula SAE 2027',
-        name: 'Formula SAE Electric 2027',
+        slug: 'FIRST Robotics 2027',
+        name: 'FIRST Robotics Competition 2027',
       });
       expect(res.success).toBe(false);
     });

@@ -26,16 +26,16 @@ export default async function TeamRequestPage({
       <div>
         <Link
           href="/competitions"
-          className="inline-flex items-center gap-1 text-xs font-semibold text-zinc-400 hover:text-white mb-2"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white mb-2 transition-colors"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           Back to competitions
         </Link>
-        <h1 className="text-2xl font-black text-white flex items-center gap-2">
-          <Users className="h-6 w-6 text-red-500" />
+        <h1 className="text-2xl font-black text-zinc-900 dark:text-white flex items-center gap-2">
+          <Users className="h-6 w-6 text-red-600 dark:text-red-500" />
           Submit Team Proposal Form
         </h1>
-        <p className="text-xs text-zinc-400 mt-1">
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
           Form a new student engineering subteam for an approved club competition. When approved by officers, the team is automatically created and you are designated as the Team Lead.
         </p>
       </div>

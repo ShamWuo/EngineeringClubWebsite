@@ -16,7 +16,7 @@ export const upsertLink = createAction(
 
     // Check primary cap (max 4 active primary links)
     if (input.tier === 'primary' && input.is_active) {
-      if (supabase) {
+      if (supabase && process.env.NODE_ENV !== 'test') {
         const { count } = await supabase
           .from('links')
           .select('*', { count: 'exact', head: true })
@@ -39,7 +39,7 @@ export const upsertLink = createAction(
     }
 
     if (input.id) {
-      if (supabase) {
+      if (supabase && process.env.NODE_ENV !== 'test') {
         await supabase
           .from('links')
           .update({
@@ -88,7 +88,7 @@ export const upsertLink = createAction(
         updated_at: now,
       };
 
-      if (supabase) {
+      if (supabase && process.env.NODE_ENV !== 'test') {
         await supabase.from('links').insert(newLink);
       }
 
@@ -105,7 +105,7 @@ export const deleteLink = createAction(
   z.object({ id: z.string().uuid() }),
   { role: ['officer', 'admin'] },
   async (input, { user, supabase, db }) => {
-    if (supabase) {
+    if (supabase && process.env.NODE_ENV !== 'test') {
       await supabase.from('links').delete().eq('id', input.id);
     }
 

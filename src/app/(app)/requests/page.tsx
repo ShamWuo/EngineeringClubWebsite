@@ -131,33 +131,36 @@ export default async function RequestsPage() {
   return (
     <div className="space-y-8 max-w-6xl mx-auto pb-12">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-red-900 via-zinc-900 to-black dark:from-zinc-900 dark:via-zinc-950 dark:to-black p-6 rounded-2xl border border-red-800/60 dark:border-zinc-800/80 shadow-xl shadow-red-950/10 text-white">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="h-2 w-2 rounded-full bg-red-400 dark:bg-red-500 animate-pulse" />
-            <span className="text-2xs font-mono uppercase tracking-widest text-red-300 dark:text-red-400 font-bold">
-              Engineering Club Hub
-            </span>
+      <div className="relative rounded-2xl overflow-hidden border border-zinc-200/90 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/90 shadow-sm p-6 sm:p-8 backdrop-blur-xl">
+        <div className="absolute inset-0 bg-grid-pattern opacity-30 pointer-events-none" />
+        <div className="absolute -top-12 -right-12 w-64 h-64 bg-red-600/10 dark:bg-red-600/15 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-red-50 dark:bg-red-950/80 border border-red-200 dark:border-red-900/60 text-red-700 dark:text-red-400 text-2xs font-mono font-bold">
+              <span className="h-1.5 w-1.5 rounded-full bg-red-600 animate-pulse" />
+              <span>ENGINEERING CLUB HUB</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-zinc-900 dark:text-white">
+              Request Center
+            </h1>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-xl leading-relaxed">
+              Propose new competitions, request hardware funding, form subteams, suggest workshops, or request lab equipment access.
+            </p>
           </div>
-          <h1 className="text-2xl font-black tracking-tight text-white">
-            Request Center
-          </h1>
-          <p className="text-xs text-zinc-300 dark:text-zinc-400 mt-1 max-w-xl">
-            Propose new competitions, request hardware funding, form subteams, suggest workshops, or request lab equipment access.
-          </p>
+          <Link href="/requests/new">
+            <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white font-bold gap-2 text-xs shadow-sm shadow-red-950/20 cursor-pointer h-9 px-4">
+              <Plus className="h-4 w-4" />
+              <span>New Request</span>
+            </Button>
+          </Link>
         </div>
-        <Link href="/requests/new">
-          <Button className="bg-red-600 hover:bg-red-700 text-white font-bold gap-2 text-xs shadow-lg shadow-red-950/50 cursor-pointer">
-            <Plus className="h-4 w-4" />
-            <span>New Request</span>
-          </Button>
-        </Link>
       </div>
 
       {/* Quick Category Action Cards */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         <Link href="/requests/new?type=competition" className="group">
-          <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-850 bg-white dark:bg-zinc-900/50 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:border-red-500/50 transition-all text-center space-y-2 cursor-pointer h-full flex flex-col items-center justify-center shadow-2xs">
+          <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:border-red-500/50 transition-all text-center space-y-2 cursor-pointer h-full flex flex-col items-center justify-center shadow-2xs">
             <div className="h-10 w-10 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50 flex items-center justify-center group-hover:scale-110 transition-transform">
               <Trophy className="h-5 w-5" />
             </div>
@@ -169,7 +172,7 @@ export default async function RequestsPage() {
         </Link>
 
         <Link href="/requests/new?type=funding" className="group">
-          <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-850 bg-white dark:bg-zinc-900/50 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:border-red-500/50 transition-all text-center space-y-2 cursor-pointer h-full flex flex-col items-center justify-center shadow-2xs">
+          <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:border-red-500/50 transition-all text-center space-y-2 cursor-pointer h-full flex flex-col items-center justify-center shadow-2xs">
             <div className="h-10 w-10 rounded-xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-800/50 flex items-center justify-center group-hover:scale-110 transition-transform">
               <DollarSign className="h-5 w-5" />
             </div>
@@ -181,7 +184,7 @@ export default async function RequestsPage() {
         </Link>
 
         <Link href="/requests/new?type=team" className="group">
-          <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-850 bg-white dark:bg-zinc-900/50 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:border-red-500/50 transition-all text-center space-y-2 cursor-pointer h-full flex flex-col items-center justify-center shadow-2xs">
+          <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:border-red-500/50 transition-all text-center space-y-2 cursor-pointer h-full flex flex-col items-center justify-center shadow-2xs">
             <div className="h-10 w-10 rounded-xl bg-red-50 dark:bg-red-950/50 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50 flex items-center justify-center group-hover:scale-110 transition-transform">
               <Users className="h-5 w-5" />
             </div>
@@ -193,7 +196,7 @@ export default async function RequestsPage() {
         </Link>
 
         <Link href="/requests/new?type=workshop" className="group">
-          <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-850 bg-white dark:bg-zinc-900/50 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:border-red-500/50 transition-all text-center space-y-2 cursor-pointer h-full flex flex-col items-center justify-center shadow-2xs">
+          <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:border-red-500/50 transition-all text-center space-y-2 cursor-pointer h-full flex flex-col items-center justify-center shadow-2xs">
             <div className="h-10 w-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 flex items-center justify-center group-hover:scale-110 transition-transform">
               <Lightbulb className="h-5 w-5" />
             </div>
@@ -205,7 +208,7 @@ export default async function RequestsPage() {
         </Link>
 
         <Link href="/requests/new?type=general" className="group col-span-2 md:col-span-1">
-          <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-850 bg-white dark:bg-zinc-900/50 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:border-red-500/50 transition-all text-center space-y-2 cursor-pointer h-full flex flex-col items-center justify-center shadow-2xs">
+          <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:border-red-500/50 transition-all text-center space-y-2 cursor-pointer h-full flex flex-col items-center justify-center shadow-2xs">
             <div className="h-10 w-10 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 flex items-center justify-center group-hover:scale-110 transition-transform">
               <HelpCircle className="h-5 w-5" />
             </div>
@@ -229,13 +232,13 @@ export default async function RequestsPage() {
         </div>
 
         {allRequests.length === 0 ? (
-          <Card className="border-dashed border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-950/40 text-center py-12">
+          <Card className="border-dashed border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 text-center py-12">
             <CardContent className="space-y-3">
               <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-zinc-100 dark:bg-zinc-900 text-zinc-400 dark:text-zinc-500 border border-zinc-200 dark:border-zinc-800">
                 <Send className="h-6 w-6" />
               </div>
               <h3 className="font-bold text-sm text-zinc-700 dark:text-zinc-300">No requests submitted yet</h3>
-              <p className="text-xs text-zinc-500 max-w-sm mx-auto">
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-sm mx-auto">
                 Have an idea for a project, need equipment, or want to launch a competition team? Submit your first request.
               </p>
               <Link href="/requests/new">
@@ -265,7 +268,7 @@ export default async function RequestsPage() {
                       <h3 className="font-bold text-sm text-zinc-900 dark:text-zinc-100">{req.title}</h3>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="text-3xs text-zinc-500 font-mono">
+                      <span className="text-3xs text-zinc-500 dark:text-zinc-400 font-mono">
                         {new Date(req.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                       </span>
                       <StatusBadge status={req.status as any} />
@@ -277,7 +280,7 @@ export default async function RequestsPage() {
                   </div>
 
                   {req.reviewNote && (
-                    <div className="p-2.5 rounded-lg bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-xs text-zinc-700 dark:text-zinc-300 flex items-start gap-2">
+                    <div className="p-2.5 rounded-lg bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800 text-xs text-zinc-700 dark:text-zinc-300 flex items-start gap-2">
                       <MessageSquare className="h-3.5 w-3.5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
                       <div>
                         <span className="font-semibold text-red-600 dark:text-red-400">Officer Note: </span>

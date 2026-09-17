@@ -1,6 +1,5 @@
 import React from 'react';
 import { requireUser } from '@/lib/auth/require-role';
-import { AppHeader } from '@/components/layout/app-header';
 import { AppSidebar } from '@/components/layout/app-sidebar';
 import { getDb } from '@/lib/db/mock-data';
 
@@ -23,24 +22,21 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     .sort((a, b) => a.sort_order - b.sort_order);
 
   return (
-    <div className="min-h-screen flex flex-col bg-zinc-50 dark:bg-zinc-950 transition-colors">
-      <AppHeader
+    <div className="min-h-screen flex flex-col md:flex-row bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors">
+      <AppSidebar
         currentUser={user}
         notifications={userNotifications}
         clubName={db.club_settings.club_name}
+        userRole={user.role}
+        pendingReviewCount={pendingReviewCount}
+        primaryLinks={primaryLinks}
       />
 
-      <div className="flex-1 flex max-w-[1600px] w-full mx-auto">
-        <AppSidebar
-          userRole={user.role}
-          pendingReviewCount={pendingReviewCount}
-          primaryLinks={primaryLinks}
-        />
-
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 min-w-0 overflow-y-auto max-w-7xl">
+      <main className="flex-1 p-4 sm:p-6 lg:p-8 min-w-0 overflow-y-auto w-full">
+        <div className="max-w-6xl w-full">
           {children}
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   );
 }

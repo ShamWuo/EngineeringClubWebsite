@@ -45,19 +45,19 @@ export function ClubSettingsEditor({ settings }: { settings: SettingsRow }) {
       <form onSubmit={handleSave}>
         <CardContent className="pt-6 space-y-4">
           {error && (
-            <div className="p-3 text-xs rounded bg-red-50 text-red-700 border border-red-200">
+            <div className="p-3 text-xs rounded-lg bg-red-50 dark:bg-red-950/80 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800">
               {error}
             </div>
           )}
           {success && (
-            <div className="p-3 text-xs rounded bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4" />
+            <div className="p-3 text-xs rounded-lg bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
               <span>Club settings updated successfully!</span>
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
               Club / Organization Name *
             </label>
             <Input
@@ -68,7 +68,7 @@ export function ClubSettingsEditor({ settings }: { settings: SettingsRow }) {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
               Allowed School Email Domain *
             </label>
             <Input
@@ -77,13 +77,13 @@ export function ClubSettingsEditor({ settings }: { settings: SettingsRow }) {
               value={domain}
               onChange={(e) => setDomain(e.target.value)}
             />
-            <span className="text-3xs text-slate-400 mt-1 block">
+            <span className="text-3xs text-zinc-500 dark:text-zinc-400 mt-1 block">
               Only student emails ending in @{domain} will be allowed to authenticate without admin invite.
             </span>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
               Annual Project Budget Ceiling ($) *
             </label>
             <Input
@@ -93,13 +93,13 @@ export function ClubSettingsEditor({ settings }: { settings: SettingsRow }) {
               value={budgetCeiling}
               onChange={(e) => setBudgetCeiling(e.target.value)}
             />
-            <span className="text-3xs text-slate-400 mt-1 block">
+            <span className="text-3xs text-zinc-500 dark:text-zinc-400 mt-1 block">
               Triggers a warning indicator in the officer portal if approved funding exceeds 80% of this limit.
             </span>
           </div>
         </CardContent>
 
-        <CardFooter className="pt-2 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+        <CardFooter className="pt-2 border-t border-zinc-100 dark:border-zinc-800 flex justify-end">
           <Button
             type="submit"
             disabled={isPending || !clubName.trim() || !domain.trim()}

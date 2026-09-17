@@ -74,7 +74,7 @@ export function CompetitionSignupButton({
           </Button>
         </div>
         {signup.note && (
-          <p className="text-2xs text-slate-500 italic">
+          <p className="text-2xs text-zinc-500 dark:text-zinc-400 italic">
             Note: "{signup.note}"
           </p>
         )}
@@ -85,8 +85,8 @@ export function CompetitionSignupButton({
   if (showNoteInput) {
     return (
       <form onSubmit={handleSignup} className="space-y-2.5">
-        {error && <div className="text-2xs text-red-600 font-medium">{error}</div>}
-        <label className="block text-2xs font-semibold text-slate-600 dark:text-slate-400">
+        {error && <div className="text-2xs text-red-600 dark:text-red-400 font-medium">{error}</div>}
+        <label className="block text-2xs font-semibold text-zinc-700 dark:text-zinc-300">
           Subsystem Interest & Skills Note (Optional)
         </label>
         <Textarea
