@@ -7,41 +7,18 @@ export function HeroCopy({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'relative z-20 flex flex-col items-center justify-start text-center px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto h-full pt-[5svh] sm:pt-[7svh] pb-0 pointer-events-none select-none',
+        'relative z-20 flex flex-col items-center justify-start text-center px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto h-full pt-[6svh] sm:pt-[9svh] pb-0 pointer-events-none select-none',
         className
       )}
     >
-      <div className="space-y-5 sm:space-y-6 flex flex-col items-center">
-        {/* Live Season Badge */}
-        <div
-          className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/85 dark:bg-zinc-900/85 border border-zinc-200/80 dark:border-zinc-800 shadow-xs backdrop-blur-md transition-all animate-rise pointer-events-auto"
-          style={
-            {
-              '--rise': '24px',
-              animationDelay: '400ms',
-              animationDuration: '900ms',
-            } as React.CSSProperties
-          }
-        >
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-red-600" />
-          </span>
-          <span className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">
-            Fairview High School • Innovation & Robotics
-          </span>
-          <span className="text-3xs font-mono font-bold px-1.5 py-0.5 rounded bg-red-50 text-red-700 dark:bg-red-950/90 dark:text-red-400 border border-red-200 dark:border-red-900/60">
-            2026-27
-          </span>
-        </div>
-
+      <div className="space-y-6 flex flex-col items-center">
         {/* Headline & Subhead */}
         <div
           className="space-y-4 animate-rise pointer-events-auto max-w-3xl"
           style={
             {
               '--rise': '24px',
-              animationDelay: '500ms',
+              animationDelay: '400ms',
               animationDuration: '1000ms',
             } as React.CSSProperties
           }
@@ -64,7 +41,7 @@ export function HeroCopy({ className }: { className?: string }) {
           style={
             {
               '--rise': '24px',
-              animationDelay: '600ms',
+              animationDelay: '500ms',
               animationDuration: '1100ms',
             } as React.CSSProperties
           }

@@ -11,10 +11,8 @@ import {
   BUILDING,
   FENCE,
   FOREGROUND_FIELD,
-  FOREGROUND_TREES,
   SUN,
   CLOUDS,
-  BIRDS,
   HILL_SHADE,
   BUILDING_ROOF_SHADES,
   BUILDING_SIDE_SHADES,
@@ -117,16 +115,6 @@ export function RidgeScene() {
               style={{ animationDelay: `${(i * 37) % 90}s` }}
             />
           ))}
-          {BIRDS.map((b, i) => (
-            <path
-              key={`bird-${i}`}
-              d={`M${b.x - 10 * b.s},${b.y} q${10 * b.s},${-7 * b.s} ${10 * b.s},0 q${10 * b.s},${7 * b.s} ${10 * b.s},0`}
-              stroke="var(--bird-stroke)"
-              strokeWidth={2.2 * b.s}
-              fill="none"
-              opacity={b.f ? 0.85 : 0.6}
-            />
-          ))}
         </RidgeLayer>
 
         <RidgeLayer spec={SPEC.mid}>
@@ -182,11 +170,6 @@ export function RidgeScene() {
 
         <RidgeLayer spec={SPEC.fore}>
           <path d={FOREGROUND_FIELD} fill="url(#ridge-fore)" className="ridge-crest" />
-          <g fill="var(--l-fore-top)">
-            {FOREGROUND_TREES.map((t) => (
-              <circle key={t.cx} cx={t.cx} cy={t.cy} r={t.r} />
-            ))}
-          </g>
         </RidgeLayer>
 
         {/* Horizon haze — sits on top of mid, under the building layer, brightens the seam */}
