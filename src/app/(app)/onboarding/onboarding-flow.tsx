@@ -12,8 +12,6 @@ import {
   Cpu,
   User,
   Wrench,
-  Compass,
-  ShieldCheck,
   ArrowRight,
   ArrowLeft,
   CheckCircle2,
@@ -45,37 +43,6 @@ const DISCIPLINES = [
   { id: 'Materials & Chemical Engineering', icon: Atom, desc: 'Advanced composites, metallurgy, polymers & synthesis' },
 ];
 
-const SQUADS = [
-  {
-    id: 'FIRST Robotics Competition (FRC)',
-    name: 'FIRST Robotics (FRC 2027)',
-    tagline: '125-lb industrial swerve drive robot & vision targeting',
-    season: '2026-27 Active',
-    badgeClass: 'text-red-600 bg-red-50 border-red-200 dark:bg-red-950/80 dark:text-red-400 dark:border-red-900/60',
-  },
-  {
-    id: 'NASA Human Exploration Rover',
-    name: 'NASA Lunar Rover Challenge',
-    tagline: 'Collapsible lunar terrain chassis & scientific sampling',
-    season: 'NASA Marshall MSFC',
-    badgeClass: 'text-blue-600 bg-blue-50 border-blue-200 dark:bg-blue-950/80 dark:text-blue-400 dark:border-blue-900/60',
-  },
-  {
-    id: 'American Rocketry Challenge (TARC)',
-    name: 'American Rocketry Challenge',
-    tagline: 'Dual-stage aerodynamic model rockets & egg payload recovery',
-    season: '2026-27 Season',
-    badgeClass: 'text-amber-600 bg-amber-50 border-amber-200 dark:bg-amber-950/80 dark:text-amber-400 dark:border-amber-900/60',
-  },
-  {
-    id: 'National Solar Car Challenge',
-    name: 'National Solar Car Challenge',
-    tagline: 'Roadworthy solar-electric endurance vehicle & MPPT array',
-    season: 'Texas Motor Speedway',
-    badgeClass: 'text-emerald-600 bg-emerald-50 border-emerald-200 dark:bg-emerald-950/80 dark:text-emerald-400 dark:border-emerald-900/60',
-  },
-];
-
 const GRAD_YEARS = [
   { year: 2025, label: 'Class of 2025', role: 'Senior' },
   { year: 2026, label: 'Class of 2026', role: 'Junior' },
@@ -104,8 +71,6 @@ export function OnboardingFlow({ currentUser, isRedo = false }: OnboardingFlowPr
       : ['Aerospace Engineering', 'Computer Engineering']
   );
   const [customSkill, setCustomSkill] = useState('');
-  const [selectedSquad, setSelectedSquad] = useState<string>('FIRST Robotics Competition (FRC)');
-  const [safetyPledge, setSafetyPledge] = useState<boolean>(isRedo);
 
   const toggleSkill = (skill: string) => {
     setSelectedSkills((prev) =>
@@ -124,8 +89,8 @@ export function OnboardingFlow({ currentUser, isRedo = false }: OnboardingFlowPr
 
   const handleComplete = () => {
     setError(null);
-    if (!safetyPledge) {
-      setError('You must read and agree to the Room 604 makerspace safety guidelines.');
+    if (selectedSkills.length === 0) {
+      setError('Please select at least one engineering discipline or interest.');
       return;
     }
 
@@ -134,8 +99,6 @@ export function OnboardingFlow({ currentUser, isRedo = false }: OnboardingFlowPr
         full_name: fullName.trim() || currentUser.full_name || 'Fairview Knight',
         grad_year: gradYear,
         skills: selectedSkills,
-        subteam_interest: selectedSquad,
-        safety_pledge: safetyPledge,
       });
 
       if (!res.ok) {
@@ -170,8 +133,8 @@ export function OnboardingFlow({ currentUser, isRedo = false }: OnboardingFlowPr
         </h1>
         <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 max-w-lg mx-auto">
           {isRedo
-            ? 'As a club administrator, you can run through orientation at any time to update your technical focus, verify onboarding flows, and refresh shop clearances.'
-            : 'Set up your engineering identity, select technical focus areas, and activate your Room 604 makerspace clearance.'}
+            ? 'As a club administrator, you can run through orientation at any time to update your technical focus and verify onboarding flows.'
+            : 'Set up your engineering identity and select your technical focus areas.'}
         </p>
 
         {isRedo && (
@@ -186,18 +149,16 @@ export function OnboardingFlow({ currentUser, isRedo = false }: OnboardingFlowPr
         )}
 
         {/* Stepper Dots & Progress */}
-        <div className="pt-4 flex items-center justify-center gap-2 max-w-md mx-auto">
+        <div className="pt-4 flex items-center justify-center gap-2 max-w-xs mx-auto">
           {[
             { n: 1, title: 'Identity' },
             { n: 2, title: 'Disciplines' },
-            { n: 3, title: 'Squads' },
-            { n: 4, title: 'Safety' },
           ].map((item) => (
             <div key={item.n} className="flex items-center gap-2 flex-1">
               <button
                 type="button"
                 onClick={() => !isSubmitted && setStep(item.n)}
-                className={`w-full py-1.5 px-2 rounded-lg text-xs font-bold font-mono transition-all flex items-center justify-center gap-1.5 border ${
+                className={`w-full py-1.5 px-2 rounded-lg text-xs font-bold font-mono transition-all flex items-center justify-center gap-1.5 border cursor-pointer ${
                   step === item.n
                     ? 'bg-red-600 text-white border-red-600 shadow-sm shadow-red-950/30'
                     : step > item.n
@@ -210,7 +171,7 @@ export function OnboardingFlow({ currentUser, isRedo = false }: OnboardingFlowPr
                 ) : (
                   <span>0{item.n}</span>
                 )}
-                <span className="hidden sm:inline">{item.title}</span>
+                <span>{item.title}</span>
               </button>
             </div>
           ))}
@@ -235,7 +196,7 @@ export function OnboardingFlow({ currentUser, isRedo = false }: OnboardingFlowPr
               {isRedo ? 'Orientation Updated! 🎉' : 'Orientation Complete! 🎉'}
             </h2>
             <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 max-w-sm mx-auto">
-              Your Fairview Engineering profile and preferences have been updated. Redirecting to dashboard...
+              Your Fairview Engineering profile and technical focus have been updated. Redirecting to dashboard...
             </p>
           </div>
         ) : (
@@ -259,7 +220,7 @@ export function OnboardingFlow({ currentUser, isRedo = false }: OnboardingFlowPr
                       Full Name
                     </label>
                     <Input
-                      placeholder="e.g. Alex Vance"
+                      placeholder="e.g. Jane Doe"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       className="h-10 text-sm bg-white dark:bg-zinc-950/80 border-zinc-200 dark:border-zinc-800 rounded-xl"
@@ -367,7 +328,7 @@ export function OnboardingFlow({ currentUser, isRedo = false }: OnboardingFlowPr
                     type="submit"
                     variant="outline"
                     size="sm"
-                    className="h-9 px-3 gap-1 text-xs border-zinc-200 dark:border-zinc-800 shrink-0"
+                    className="h-9 px-3 gap-1 text-xs border-zinc-200 dark:border-zinc-800 shrink-0 cursor-pointer"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     Add
@@ -390,124 +351,6 @@ export function OnboardingFlow({ currentUser, isRedo = false }: OnboardingFlowPr
               </div>
             )}
 
-            {/* STEP 3: Subteam & Squad Alignment */}
-            {step === 3 && (
-              <div className="space-y-6 animate-in fade-in duration-200">
-                <div className="space-y-1">
-                  <h3 className="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-                    <Compass className="h-5 w-5 text-red-600 dark:text-red-500" />
-                    Explore Active Engineering Squads
-                  </h3>
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                    Choose an initial squad interest. You can always cross-collaborate or switch teams after workshop trials.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                  {SQUADS.map((squad) => {
-                    const isSelected = selectedSquad === squad.id;
-
-                    return (
-                      <button
-                        key={squad.id}
-                        type="button"
-                        onClick={() => setSelectedSquad(squad.id)}
-                        className={`p-4 rounded-xl border text-left transition-all flex flex-col justify-between cursor-pointer ${
-                          isSelected
-                            ? 'border-red-600 bg-red-50/80 dark:bg-red-950/40 text-zinc-900 dark:text-white shadow-xs ring-1 ring-red-500/20'
-                            : 'border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 text-zinc-600 dark:text-zinc-400 hover:border-zinc-400 dark:hover:border-zinc-700'
-                        }`}
-                      >
-                        <div className="space-y-1.5">
-                          <div className="flex items-center justify-between gap-2">
-                            <span className={`text-3xs font-mono font-bold px-2 py-0.5 rounded border uppercase tracking-wider ${squad.badgeClass}`}>
-                              {squad.season}
-                            </span>
-                            {isSelected && (
-                              <CheckCircle2 className="h-4 w-4 text-red-600 dark:text-red-400 shrink-0" />
-                            )}
-                          </div>
-                          <h4 className="font-bold text-sm text-zinc-900 dark:text-white">
-                            {squad.name}
-                          </h4>
-                          <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                            {squad.tagline}
-                          </p>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* STEP 4: Makerspace Safety & Protocol */}
-            {step === 4 && (
-              <div className="space-y-6 animate-in fade-in duration-200">
-                <div className="space-y-1">
-                  <h3 className="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-                    <ShieldCheck className="h-5 w-5 text-red-600 dark:text-red-500" />
-                    Room 604 Makerspace Safety Protocols
-                  </h3>
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                    Fairview High School operates professional fabrication tools. Every member must pledge to follow our safety norms.
-                  </p>
-                </div>
-
-                <div className="space-y-3 bg-zinc-50 dark:bg-zinc-950/80 p-4 sm:p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-xs text-zinc-600 dark:text-zinc-300">
-                  <div className="flex items-start gap-3">
-                    <span className="text-base">🥽</span>
-                    <div>
-                      <strong className="text-zinc-900 dark:text-white block font-semibold">Eye Protection Mandatory</strong>
-                      Approved ANSI Z87.1 safety glasses must be worn whenever anyone is operating power tools or machines in Room 604.
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <span className="text-base">👥</span>
-                    <div>
-                      <strong className="text-zinc-900 dark:text-white block font-semibold">No Solo Machinery Operation</strong>
-                      Never operate the Tormach CNC mill, metal lathe, or bandsaw without an adult advisor or certified officer present.
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <span className="text-base">🧹</span>
-                    <div>
-                      <strong className="text-zinc-900 dark:text-white block font-semibold">10-Minute Bench Clean-up</strong>
-                      Every workstation, 3D printer bed, and soldering iron must be tidied, cleaned, and shut off before leaving.
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <span className="text-base">📅</span>
-                    <div>
-                      <strong className="text-zinc-900 dark:text-white block font-semibold">Weekly Meeting Schedule</strong>
-                      Official shop sessions take place every Tuesday & Thursday from 3:45 PM – 5:30 PM in Room 604.
-                    </div>
-                  </div>
-                </div>
-
-                {/* Safety Checkbox */}
-                <label className="flex items-start gap-3 p-4 rounded-xl border border-red-200 dark:border-red-900/60 bg-red-50/50 dark:bg-red-950/30 cursor-pointer transition-colors">
-                  <input
-                    type="checkbox"
-                    checked={safetyPledge}
-                    onChange={(e) => setSafetyPledge(e.target.checked)}
-                    className="mt-0.5 h-4 w-4 rounded border-zinc-300 text-red-600 focus:ring-red-500 shrink-0"
-                  />
-                  <div className="text-xs">
-                    <span className="font-bold text-zinc-900 dark:text-white block">
-                      I accept the Room 604 Safety Agreement
-                    </span>
-                    <span className="text-zinc-500 dark:text-zinc-400">
-                      I agree to prioritize shop safety, wear eye protection, report machine anomalies, and adhere to Fairview High School lab rules.
-                    </span>
-                  </div>
-                </label>
-              </div>
-            )}
-
             {/* Stepper Navigation Buttons */}
             <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
               {step > 1 ? (
@@ -525,11 +368,11 @@ export function OnboardingFlow({ currentUser, isRedo = false }: OnboardingFlowPr
                 <div />
               )}
 
-              {step < 4 ? (
+              {step === 1 ? (
                 <Button
                   type="button"
                   size="sm"
-                  onClick={() => setStep(step + 1)}
+                  onClick={() => setStep(2)}
                   className="bg-red-600 hover:bg-red-700 text-white font-bold text-xs gap-1.5 h-10 px-5 shadow-sm shadow-red-950/30 rounded-xl cursor-pointer"
                 >
                   <span>Continue</span>
@@ -539,7 +382,7 @@ export function OnboardingFlow({ currentUser, isRedo = false }: OnboardingFlowPr
                 <Button
                   type="button"
                   size="sm"
-                  disabled={isPending || !safetyPledge}
+                  disabled={isPending || selectedSkills.length === 0}
                   onClick={handleComplete}
                   className="bg-red-600 hover:bg-red-700 text-white font-bold text-xs gap-2 h-10 px-6 shadow-md shadow-red-950/30 rounded-xl cursor-pointer disabled:opacity-50"
                 >

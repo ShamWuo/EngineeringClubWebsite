@@ -13,8 +13,29 @@ describe('Server Actions & Atomic Side-Effects', () => {
   describe('Review Queue Workflow', () => {
     it('approving a team request atomically creates the team, designates lead, and links records', async () => {
       const db = getDb();
+      const testReqId = '30000001-1111-1111-1111-111111111111';
+      db.team_requests.push({
+        id: testReqId,
+        competition_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+        requested_by: '44444444-4444-4444-4444-444444444444',
+        proposed_name: 'FHS Knights Sentry Robotics',
+        purpose: 'Autonomous ground defense robot team with LIDAR mapping, armor plate impact sensing, and 3-axis turret gimbal.',
+        proposed_member_ids: [
+          '44444444-4444-4444-4444-444444444444',
+          '33333333-3333-3333-3333-333333333333',
+        ],
+        needs_funding: true,
+        status: 'pending',
+        reviewed_by: null,
+        reviewed_at: null,
+        review_note: null,
+        created_team_id: null,
+        created_at: new Date(Date.now() - 2 * 86400000).toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+
       const initialTeamCount = db.teams.length;
-      const initialPendingReq = db.team_requests.find((r) => r.id === '30000001-1111-1111-1111-111111111111')!;
+      const initialPendingReq = db.team_requests.find((r) => r.id === testReqId)!;
       expect(initialPendingReq.status).toBe('pending');
 
       const res = await reviewRequestAction({
@@ -47,7 +68,26 @@ describe('Server Actions & Atomic Side-Effects', () => {
 
     it('approving a funding request adjusts amount approved and sets status', async () => {
       const db = getDb();
-      const fundingReq = db.funding_requests.find((r) => r.id === '70000001-1111-1111-1111-111111111111')!;
+      const testFundingReqId = '70000001-1111-1111-1111-111111111111';
+      db.funding_requests.push({
+        id: testFundingReqId,
+        requested_by: '33333333-3333-3333-3333-333333333333',
+        team_id: '10000001-1111-1111-1111-111111111111',
+        competition_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        title: 'SDS MK4i Swerve Drive Modules & Brushless Motors',
+        justification: 'High-precision omnidirectional swerve modules required for 125-lb FRC robot drivetrain compliance under 2027 rules.',
+        amount_requested_cents: 48500,
+        amount_approved_cents: null,
+        status: 'pending',
+        reviewed_by: null,
+        reviewed_at: null,
+        review_note: null,
+        reimbursed_at: null,
+        created_at: new Date(Date.now() - 4 * 86400000).toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+
+      const fundingReq = db.funding_requests.find((r) => r.id === testFundingReqId)!;
       expect(fundingReq.status).toBe('pending');
 
       const res = await reviewRequestAction({
@@ -66,7 +106,22 @@ describe('Server Actions & Atomic Side-Effects', () => {
 
     it('approving a general equipment request updates status and records audit log', async () => {
       const db = getDb();
-      const genReq = db.general_requests[0];
+      const testGenReqId = 'b0000001-1111-1111-1111-111111111111';
+      db.general_requests.push({
+        id: testGenReqId,
+        requested_by: '44444444-4444-4444-4444-444444444444',
+        title: 'Formlabs Form 4 SLA Resin 3D Printer Access',
+        category: 'equipment',
+        description: 'Requesting permission and budget allocation for high-precision resin printing.',
+        urgency: 'medium',
+        status: 'pending',
+        reviewed_by: null,
+        reviewed_at: null,
+        review_note: null,
+        created_at: new Date(Date.now() - 3 * 86400000).toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+      const genReq = db.general_requests.find((r) => r.id === testGenReqId)!;
       expect(genReq.status).toBe('pending');
 
       const res = await reviewRequestAction({
@@ -136,24 +191,14 @@ describe('Server Actions & Atomic Side-Effects', () => {
   });
 
   describe('First-Time Member Onboarding Workflow', () => {
-    it('enforces safety pledge and skills selection during onboarding', async () => {
-      // Missing safety pledge
-      const res1 = await completeOnboarding({
-        full_name: 'Jordan Knight',
-        grad_year: 2027,
-        skills: ['Aerospace Engineering'],
-        safety_pledge: false,
-      });
-      expect(res1.ok).toBe(false);
-
+    it('enforces skills selection during onboarding', async () => {
       // Empty skills
-      const res2 = await completeOnboarding({
+      const res = await completeOnboarding({
         full_name: 'Jordan Knight',
         grad_year: 2027,
         skills: [],
-        safety_pledge: true,
       });
-      expect(res2.ok).toBe(false);
+      expect(res.ok).toBe(false);
     });
 
     it('completes onboarding, saves skills, and creates welcome notification', async () => {
@@ -164,8 +209,6 @@ describe('Server Actions & Atomic Side-Effects', () => {
         full_name: 'Alex Vance Knight',
         grad_year: 2026,
         skills: ['Aerospace Engineering', 'Computer Engineering', 'AI Engineering'],
-        subteam_interest: 'FIRST Robotics Competition (FRC)',
-        safety_pledge: true,
       });
 
       expect(res.ok).toBe(true);
@@ -184,7 +227,7 @@ describe('Server Actions & Atomic Side-Effects', () => {
       expect(db.notifications.length).toBe(initialNotifCount + 1);
       const welcomeNotif = db.notifications[0];
       expect(welcomeNotif.title).toContain('Welcome to Fairview');
-      expect(welcomeNotif.body).toContain('FIRST Robotics Competition (FRC)');
+      expect(welcomeNotif.body).toContain('Your profile is complete');
     });
   });
 
@@ -237,13 +280,11 @@ describe('Server Actions & Atomic Side-Effects', () => {
       const adminProfile = db.profiles.find((p) => p.id === adminId)!;
       expect(adminProfile.onboarding_completed).toBe(false);
 
-      // 2. Admin redoes onboarding with new skills and squads
+      // 2. Admin redoes onboarding with new skills
       const redoRes = await completeOnboarding({
         full_name: 'Alex Vance (Lead)',
         grad_year: 2026,
         skills: ['Robotics & Mechatronics', 'AI Engineering'],
-        subteam_interest: 'NASA Human Exploration Rover',
-        safety_pledge: true,
       });
 
       expect(redoRes.ok).toBe(true);

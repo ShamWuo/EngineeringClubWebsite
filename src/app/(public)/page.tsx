@@ -41,7 +41,7 @@ export default function LandingPage() {
       ...t,
       competition: comp,
       memberCount: members.length,
-      leadName: leadProfile?.full_name || 'Squad Lead',
+      leadName: leadProfile?.full_name || (leadMember ? 'Squad Lead' : 'Open'),
     };
   });
 
@@ -184,23 +184,22 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* How We Build — dark blueprint band with a connected pipeline rail */}
+        {/* How We Build — technical blueprint band with connected pipeline rail */}
         <section
           id="how-it-works"
-          className="relative mt-20 py-16 px-4 sm:px-6 lg:px-8 bg-zinc-950 border-y border-zinc-800 overflow-hidden"
+          className="relative mt-20 py-16 px-4 sm:px-6 lg:px-8 bg-zinc-100/70 dark:bg-zinc-900/50 border-y border-zinc-200/80 dark:border-zinc-800/80 overflow-hidden"
         >
-          <div className="absolute inset-0 bg-grid-pattern opacity-[0.15] pointer-events-none" />
-          <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-zinc-50 dark:from-zinc-950 to-transparent opacity-60 pointer-events-none dark:opacity-0" />
+          <div className="absolute inset-0 bg-grid-pattern opacity-40 dark:opacity-20 pointer-events-none" />
           <div className="relative max-w-7xl mx-auto space-y-10">
             <div className="text-center max-w-2xl mx-auto space-y-2">
-              <div className="inline-flex items-center gap-1.5 text-2xs font-mono font-bold uppercase tracking-widest text-red-500">
+              <div className="inline-flex items-center gap-1.5 text-2xs font-mono font-bold uppercase tracking-widest text-red-600 dark:text-red-400">
                 <Compass className="h-3.5 w-3.5" />
                 The Knight Innovation Pipeline
               </div>
-              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-zinc-900 dark:text-white">
                 How Fairview Knights Build
               </h2>
-              <p className="text-xs text-zinc-400">
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">
                 From whiteboard concept to regional podiums: a frictionless, student-driven workflow.
               </p>
             </div>
@@ -209,45 +208,45 @@ export default function LandingPage() {
               {/* Connector rail */}
               <div
                 aria-hidden="true"
-                className="hidden lg:block absolute top-5 left-[12.5%] right-[12.5%] h-px bg-gradient-to-r from-transparent via-red-600/40 to-transparent"
+                className="hidden lg:block absolute top-5 left-[12.5%] right-[12.5%] h-px bg-gradient-to-r from-transparent via-red-500/30 dark:via-red-600/40 to-transparent"
               />
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="relative p-6 rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-sm space-y-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-600/10 text-red-400 font-bold font-mono text-sm border border-red-900/60 ring-4 ring-zinc-950">
+                <div className="relative p-6 rounded-2xl border border-zinc-200/90 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 backdrop-blur-sm space-y-3 shadow-xs hover:border-red-500/40 transition-colors">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-600 dark:bg-red-950/60 dark:text-red-400 font-bold font-mono text-sm border border-red-200 dark:border-red-900/60 ring-4 ring-zinc-100/80 dark:ring-zinc-900/90">
                     01
                   </div>
-                  <h3 className="font-extrabold text-sm text-white">Propose & Form Squad</h3>
-                  <p className="text-xs text-zinc-400 leading-relaxed">
+                  <h3 className="font-extrabold text-sm text-zinc-900 dark:text-white">Propose & Form Squad</h3>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
                     Submit an entry for a new national challenge or assemble a subteam for an existing competition. Officers review weekly.
                   </p>
                 </div>
 
-                <div className="relative p-6 rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-sm space-y-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-600/10 text-red-400 font-bold font-mono text-sm border border-red-900/60 ring-4 ring-zinc-950">
+                <div className="relative p-6 rounded-2xl border border-zinc-200/90 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 backdrop-blur-sm space-y-3 shadow-xs hover:border-red-500/40 transition-colors">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-600 dark:bg-red-950/60 dark:text-red-400 font-bold font-mono text-sm border border-red-200 dark:border-red-900/60 ring-4 ring-zinc-100/80 dark:ring-zinc-900/90">
                     02
                   </div>
-                  <h3 className="font-extrabold text-sm text-white">Secure Grants & Parts</h3>
-                  <p className="text-xs text-zinc-400 leading-relaxed">
+                  <h3 className="font-extrabold text-sm text-zinc-900 dark:text-white">Secure Grants & Parts</h3>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
                     Itemize hardware budgets with vendor URLs. The club funds approved motors, sensors, microcontrollers, and raw materials.
                   </p>
                 </div>
 
-                <div className="relative p-6 rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-sm space-y-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-600/10 text-red-400 font-bold font-mono text-sm border border-red-900/60 ring-4 ring-zinc-950">
+                <div className="relative p-6 rounded-2xl border border-zinc-200/90 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 backdrop-blur-sm space-y-3 shadow-xs hover:border-red-500/40 transition-colors">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-600 dark:bg-red-950/60 dark:text-red-400 font-bold font-mono text-sm border border-red-200 dark:border-red-900/60 ring-4 ring-zinc-100/80 dark:ring-zinc-900/90">
                     03
                   </div>
-                  <h3 className="font-extrabold text-sm text-white">Build in Room 604</h3>
-                  <p className="text-xs text-zinc-400 leading-relaxed">
+                  <h3 className="font-extrabold text-sm text-zinc-900 dark:text-white">Build in Room 604</h3>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
                     Manufacture components in our dedicated makerspace using Bambu Lab 3D printers, CNC mills, and soldering benches.
                   </p>
                 </div>
 
-                <div className="relative p-6 rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-sm space-y-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-600/10 text-red-400 font-bold font-mono text-sm border border-red-900/60 ring-4 ring-zinc-950">
+                <div className="relative p-6 rounded-2xl border border-zinc-200/90 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/70 backdrop-blur-sm space-y-3 shadow-xs hover:border-red-500/40 transition-colors">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-600 dark:bg-red-950/60 dark:text-red-400 font-bold font-mono text-sm border border-red-200 dark:border-red-900/60 ring-4 ring-zinc-100/80 dark:ring-zinc-900/90">
                     04
                   </div>
-                  <h3 className="font-extrabold text-sm text-white">Compete & Showcase</h3>
-                  <p className="text-xs text-zinc-400 leading-relaxed">
+                  <h3 className="font-extrabold text-sm text-zinc-900 dark:text-white">Compete & Showcase</h3>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
                     Travel to regional competitions, publish technical work logs, and build an engineering portfolio for top collegiate STEM programs.
                   </p>
                 </div>
@@ -486,29 +485,29 @@ export default function LandingPage() {
         </section>
 
         {/* High-Impact Closing Call to Action */}
-        <section className="relative mx-4 sm:mx-6 lg:mx-8 mt-24 mb-4 rounded-3xl overflow-hidden border border-red-500/30 bg-gradient-to-br from-zinc-900 via-zinc-950 to-black text-white p-8 sm:p-14 text-center space-y-5 shadow-2xl shadow-red-950/30">
-          <div className="absolute inset-0 bg-grid-pattern opacity-15 pointer-events-none" />
-          <div className="absolute top-0 right-0 h-64 w-64 rounded-full bg-red-600/10 blur-3xl pointer-events-none" />
+        <section className="relative mx-4 sm:mx-6 lg:mx-8 mt-24 mb-4 rounded-3xl overflow-hidden border border-zinc-200/90 dark:border-red-500/30 bg-gradient-to-br from-red-50/40 via-white to-zinc-50 dark:from-zinc-900 dark:via-zinc-950 dark:to-black text-zinc-900 dark:text-white p-8 sm:p-14 text-center space-y-5 shadow-xl shadow-zinc-950/5 dark:shadow-2xl dark:shadow-red-950/30">
+          <div className="absolute inset-0 bg-grid-pattern opacity-30 dark:opacity-15 pointer-events-none" />
+          <div className="absolute top-0 right-0 h-64 w-64 rounded-full bg-red-500/10 dark:bg-red-600/15 blur-3xl pointer-events-none" />
           <div className="relative z-10 space-y-4 max-w-2xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-950/80 border border-red-800/80 text-red-400 text-2xs font-mono font-bold">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 border border-red-200 text-red-700 dark:bg-red-950/80 dark:border-red-800/80 dark:text-red-400 text-2xs font-mono font-bold">
               <CheckCircle2 className="h-3.5 w-3.5" />
               JOIN OVER {memberCount} FAIRVIEW BUILDERS
             </div>
-            <h2 className="text-3xl sm:text-4xl font-black tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-zinc-900 dark:text-white">
               Ready to engineer the future?
             </h2>
-            <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
+            <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
               Log in with your BVSD student account to join competition squads, submit hardware grant requests, and RSVP for technical workshops.
             </p>
             <div className="pt-3 flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link href="/login" className="w-full sm:w-auto">
-                <Button size="lg" className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-bold shadow-xl shadow-red-950/40 text-xs px-6 h-10 cursor-pointer">
+                <Button size="lg" className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-bold shadow-lg shadow-red-950/20 text-xs px-6 h-10 cursor-pointer">
                   <span>Sign In To Portal</span>
                   <ArrowRight className="h-4 w-4 ml-1.5" />
                 </Button>
               </Link>
               <Link href="/competitions" className="w-full sm:w-auto">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto text-xs font-semibold bg-white/10 hover:bg-white/15 border-white/20 text-white h-10 px-6 cursor-pointer">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto text-xs font-semibold bg-white/90 hover:bg-white border-zinc-300 text-zinc-800 shadow-xs dark:bg-white/10 dark:hover:bg-white/15 dark:border-white/20 dark:text-white h-10 px-6 cursor-pointer">
                   View Competitions
                 </Button>
               </Link>
