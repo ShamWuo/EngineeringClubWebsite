@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { loginWithEmail } from '@/actions/auth';
 import { createClient } from '@/lib/supabase/client';
-import { Cpu, Mail, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Mail, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
+import { ClubLogo } from '@/components/domain/club-logo';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -124,8 +125,8 @@ export default function LoginPage() {
 
       <div className="relative z-10 w-full max-w-md space-y-6">
         <div className="text-center space-y-2">
-          <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-red-600 text-white shadow-lg shadow-red-950/30 mb-2 border border-red-500/80">
-            <Cpu className="h-6 w-6" />
+          <div className="flex justify-center mb-2">
+            <ClubLogo className="h-16 w-16" size={64} priority />
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-zinc-900 dark:text-white tracking-tight">
             Knights Member Portal

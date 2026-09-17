@@ -64,16 +64,18 @@ export interface AuthUser {
 export async function getCurrentUser(): Promise<AuthUser | null> {
   // Test suite fallback
   if (process.env.NODE_ENV === 'test') {
+    const db = getDb();
+    const profile = db.profiles.find((p) => p.id === '11111111-1111-1111-1111-111111111111');
     return {
       id: '11111111-1111-1111-1111-111111111111',
-      email: 'alex.vance@bvsd.org',
-      full_name: 'Alex Vance',
-      role: 'admin',
-      avatar_url: null,
-      grad_year: 2026,
-      skills: ['Robotics', 'CAD', 'Embedded Systems'],
-      is_active: true,
-      onboarding_completed: true,
+      email: profile?.email ?? 'alex.vance@bvsd.org',
+      full_name: profile?.full_name ?? 'Alex Vance',
+      role: (profile?.role as UserRole) ?? 'admin',
+      avatar_url: profile?.avatar_url ?? null,
+      grad_year: profile?.grad_year ?? 2026,
+      skills: profile?.skills ?? ['Robotics', 'CAD', 'Embedded Systems'],
+      is_active: profile?.is_active ?? true,
+      onboarding_completed: profile?.onboarding_completed ?? true,
     };
   }
 

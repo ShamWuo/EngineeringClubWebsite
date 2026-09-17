@@ -209,6 +209,11 @@ export const completeOnboarding = createAction(
   async (input, { user, supabase, db }) => {
     const now = new Date().toISOString();
 
+    const notificationTitle = 'Welcome to Fairview High School Engineering! 🚀';
+    const notificationBody = input.subteam_interest
+      ? `Your profile is complete with interest in ${input.subteam_interest}. Join us in Room 604 on Tuesdays & Thursdays after school!`
+      : 'Your profile is complete. Explore active competitions, submit requests, and RSVP for workshops.';
+
     if (supabase) {
       try {
         await (supabase.from('profiles') as any)
@@ -221,14 +226,12 @@ export const completeOnboarding = createAction(
           })
           .eq('id', user.id);
 
-        // Insert welcome notification into remote Supabase
+        // Insert welcome/update notification into remote Supabase
         await (supabase.from('notifications') as any).insert({
           user_id: user.id,
           kind: 'welcome',
-          title: 'Welcome to Fairview High School Engineering! 🚀',
-          body: input.subteam_interest
-            ? `Your profile is complete with interest in ${input.subteam_interest}. Join us in Room 604 on Tuesdays & Thursdays after school!`
-            : 'Your profile is complete. Explore active competitions, submit requests, and RSVP for workshops.',
+          title: notificationTitle,
+          body: notificationBody,
           href: '/dashboard',
         });
       } catch (err) {
@@ -260,15 +263,13 @@ export const completeOnboarding = createAction(
       profile.updated_at = now;
     }
 
-    // Insert welcome notification in mock db
+    // Insert notification in mock db
     db.notifications.unshift({
       id: crypto.randomUUID(),
       user_id: user.id,
       kind: 'welcome',
-      title: 'Welcome to Fairview High School Engineering! 🚀',
-      body: input.subteam_interest
-        ? `Your profile is complete with interest in ${input.subteam_interest}. Join us in Room 604 on Tuesdays & Thursdays after school!`
-        : 'Your profile is complete. Explore active competitions, submit requests, and RSVP for workshops.',
+      title: notificationTitle,
+      body: notificationBody,
       href: '/dashboard',
       read_at: null,
       created_at: now,
@@ -276,6 +277,8 @@ export const completeOnboarding = createAction(
 
     safeRevalidatePath('/', 'layout');
     safeRevalidatePath('/dashboard');
+    safeRevalidatePath('/onboarding');
+    safeRevalidatePath('/admin/members');
     return { success: true, onboardingCompleted: true };
   }
 );
