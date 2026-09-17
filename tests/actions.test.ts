@@ -72,7 +72,7 @@ describe('Server Actions & Atomic Side-Effects', () => {
       db.funding_requests.push({
         id: testFundingReqId,
         requested_by: '33333333-3333-3333-3333-333333333333',
-        team_id: '10000001-1111-1111-1111-111111111111',
+        team_id: null,
         competition_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
         title: 'SDS MK4i Swerve Drive Modules & Brushless Motors',
         justification: 'High-precision omnidirectional swerve modules required for 125-lb FRC robot drivetrain compliance under 2027 rules.',

@@ -14,13 +14,6 @@ values
   ('dddddddd-dddd-dddd-dddd-dddddddddddd', 'solar-car-challenge', 'National Solar Car Challenge', 'High school engineering teams design, build, and race full-scale roadworthy solar-electric vehicles. Squads engineer custom tubular steel roll cages, MPPT solar charging arrays, active lithium battery management systems (BMS), and composite aerodynamic fairings to race at the Texas Motor Speedway.', 'Solar Car Challenge Foundation', 'completed', '2025-26', now() - interval '300 days', now() - interval '250 days', now() - interval '100 days', now() - interval '96 days', 1, 15, 80000, 'https://www.solarcarchallenge.org', null)
 on conflict (id) do nothing;
 
--- 3. Teams
-insert into teams (id, competition_id, name, description, is_recruiting, created_by)
-values
-  ('10000001-1111-1111-1111-111111111111', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'FHS Knights FRC Drivetrain & Chassis', 'Precision swerve drive kinematics, CNC routed structural aluminum bellypan, and 125-lb competition chassis fabrication.', true, null),
-  ('10000002-2222-2222-2222-222222222222', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'FHS Knights FRC Intake & Manipulation', 'Active roller intake mechanisms, pneumatic indexing systems, brushless flywheel velocity control, and machine vision targeting.', true, null),
-  ('10000003-3333-3333-3333-333333333333', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'FHS Knights Lunar Rover Alpha', 'Primary rover chassis and drivetrain subteam focused on lightweight chromoly frame geometry, custom suspension linkage, and 3D-printed airless tire compliant treads.', false, null)
-on conflict (id) do nothing;
 
 -- 4. Workshops
 insert into workshops (id, slug, title, description, instructor_id, instructor_name, status, starts_at, ends_at, location, capacity, skill_level, materials_url, recording_url, created_by)
