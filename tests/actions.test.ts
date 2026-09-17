@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { getDb, resetDb } from '@/lib/db/mock-data';
 import { reviewRequestAction } from '@/actions/review';
 import { upsertLink } from '@/actions/links';
-import { updateMemberRole } from '@/actions/admin';
+import { updateMemberRole, resetMemberOnboarding } from '@/actions/admin';
 import { completeOnboarding } from '@/actions/auth';
 
 describe('Server Actions & Atomic Side-Effects', () => {
@@ -141,7 +141,7 @@ describe('Server Actions & Atomic Side-Effects', () => {
       const res1 = await completeOnboarding({
         full_name: 'Jordan Knight',
         grad_year: 2027,
-        skills: ['CAD & 3D Modeling'],
+        skills: ['Aerospace Engineering'],
         safety_pledge: false,
       });
       expect(res1.ok).toBe(false);
@@ -163,7 +163,7 @@ describe('Server Actions & Atomic Side-Effects', () => {
       const res = await completeOnboarding({
         full_name: 'Alex Vance Knight',
         grad_year: 2026,
-        skills: ['CAD & 3D Modeling', 'Robotics & Automation'],
+        skills: ['Aerospace Engineering', 'Computer Engineering', 'AI Engineering'],
         subteam_interest: 'FIRST Robotics Competition (FRC)',
         safety_pledge: true,
       });
@@ -178,7 +178,7 @@ describe('Server Actions & Atomic Side-Effects', () => {
       expect(profile).toBeDefined();
       expect(profile?.onboarding_completed).toBe(true);
       expect(profile?.full_name).toBe('Alex Vance Knight');
-      expect(profile?.skills).toContain('Robotics & Automation');
+      expect(profile?.skills).toContain('Computer Engineering');
 
       // Check notification created
       expect(db.notifications.length).toBe(initialNotifCount + 1);
@@ -187,4 +187,71 @@ describe('Server Actions & Atomic Side-Effects', () => {
       expect(welcomeNotif.body).toContain('FIRST Robotics Competition (FRC)');
     });
   });
+
+  describe('Admin Redo & Reset Onboarding Workflow', () => {
+    it('allows admin to reset a member onboarding status to incomplete', async () => {
+      const db = getDb();
+      const memberId = '22222222-2222-2222-2222-222222222222';
+      db.profiles.push({
+        id: memberId,
+        email: 'sam.member@bvsd.org',
+        full_name: 'Sam Member',
+        grad_year: 2027,
+        role: 'member',
+        skills: ['Mechanical Engineering'],
+        avatar_url: null,
+        is_active: true,
+        onboarding_completed: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+
+      const member = db.profiles.find((p) => p.id === memberId)!;
+      expect(member.onboarding_completed).toBe(true);
+
+      const res = await resetMemberOnboarding({ user_id: memberId });
+      expect(res.ok).toBe(true);
+      expect(member.onboarding_completed).toBe(false);
+    });
+
+    it('allows admin to reset their own onboarding and redo the flow while preserving admin role', async () => {
+      const db = getDb();
+      const adminId = '11111111-1111-1111-1111-111111111111';
+      db.profiles.push({
+        id: adminId,
+        email: 'alex.vance@bvsd.org',
+        full_name: 'Alex Vance',
+        grad_year: 2026,
+        role: 'admin',
+        skills: ['Robotics'],
+        avatar_url: null,
+        is_active: true,
+        onboarding_completed: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+
+      // 1. Admin resets their onboarding
+      const resetRes = await resetMemberOnboarding({ user_id: adminId });
+      expect(resetRes.ok).toBe(true);
+      const adminProfile = db.profiles.find((p) => p.id === adminId)!;
+      expect(adminProfile.onboarding_completed).toBe(false);
+
+      // 2. Admin redoes onboarding with new skills and squads
+      const redoRes = await completeOnboarding({
+        full_name: 'Alex Vance (Lead)',
+        grad_year: 2026,
+        skills: ['Robotics & Mechatronics', 'AI Engineering'],
+        subteam_interest: 'NASA Human Exploration Rover',
+        safety_pledge: true,
+      });
+
+      expect(redoRes.ok).toBe(true);
+      expect(adminProfile.onboarding_completed).toBe(true);
+      expect(adminProfile.role).toBe('admin'); // Role must be preserved
+      expect(adminProfile.full_name).toBe('Alex Vance (Lead)');
+      expect(adminProfile.skills).toEqual(['Robotics & Mechatronics', 'AI Engineering']);
+    });
+  });
 });
+

@@ -9,6 +9,7 @@ import { StatusBadge } from '@/components/domain/status-badge';
 import { NotificationBell } from '@/components/layout/notification-bell';
 import { ThemeToggle } from '@/components/theme/theme-toggle';
 import { UserMenu } from '@/components/layout/user-menu';
+import { ClubLogo } from '@/components/domain/club-logo';
 import {
   LayoutDashboard,
   Trophy,
@@ -23,6 +24,7 @@ import {
   Cpu,
   Menu,
   X,
+  RotateCcw,
 } from 'lucide-react';
 import type { UserRole, Database } from '@/lib/db/types';
 import type { AuthUser } from '@/lib/supabase/server';
@@ -77,6 +79,7 @@ export function AppSidebar({
   const adminNav = [
     { href: '/admin/members', label: 'Member Roles', icon: Shield },
     { href: '/admin/settings', label: 'Club Settings', icon: Settings },
+    { href: '/onboarding', label: 'Redo Onboarding', icon: RotateCcw },
   ];
 
   const sidebarNavContent = (
@@ -90,9 +93,7 @@ export function AppSidebar({
             onClick={() => setIsMobileOpen(false)}
             className="flex items-center gap-2.5 group min-w-0"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-600 text-white shadow-md shadow-red-950/40 border border-red-500 group-hover:scale-105 transition-transform shrink-0">
-              <Cpu className="h-4.5 w-4.5" />
-            </div>
+            <ClubLogo className="h-8 w-8 group-hover:scale-105 transition-transform" />
             <div className="flex flex-col min-w-0">
               <span className="font-black text-sm leading-tight text-zinc-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors truncate">
                 {clubName || 'Fairview High School Engineering'}
@@ -315,9 +316,7 @@ export function AppSidebar({
             {isMobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
           <Link href="/dashboard" className="flex items-center gap-2 min-w-0">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-600 text-white font-bold text-xs shrink-0">
-              <Cpu className="h-4 w-4" />
-            </div>
+            <ClubLogo className="h-7 w-7" />
             <span className="font-bold text-xs text-zinc-900 dark:text-white truncate max-w-[180px]">
               {clubName || 'Fairview High School Engineering'}
             </span>

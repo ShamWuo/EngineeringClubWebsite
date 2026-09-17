@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState, useTransition } from 'react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { StatusBadge } from '@/components/domain/status-badge';
-import { updateMemberRole } from '@/actions/admin';
-import { CheckCircle2 } from 'lucide-react';
+import { updateMemberRole, resetMemberOnboarding } from '@/actions/admin';
+import { CheckCircle2, RotateCcw } from 'lucide-react';
 import type { Database, UserRole } from '@/lib/db/types';
 
 type ProfileRow = Database['public']['Tables']['profiles']['Row'];
@@ -59,6 +60,18 @@ export function MemberRoleManager({
     });
   };
 
+  const handleResetOnboarding = (userId: string, email: string) => {
+    setMessage(null);
+    startTransition(async () => {
+      const res = await resetMemberOnboarding({ user_id: userId });
+      if (!res.ok) {
+        alert(res.error);
+      } else {
+        setMessage(`Onboarding status reset to incomplete for ${email}.`);
+      }
+    });
+  };
+
   return (
     <div className="space-y-4">
       {message && (
@@ -76,6 +89,7 @@ export function MemberRoleManager({
               <th className="py-3 px-4">Grad Year</th>
               <th className="py-3 px-4">Assigned Role</th>
               <th className="py-3 px-4">Status</th>
+              <th className="py-3 px-4">Onboarding</th>
               <th className="py-3 px-4 text-right">Account State</th>
             </tr>
           </thead>
@@ -129,6 +143,49 @@ export function MemberRoleManager({
 
                   <td className="py-3 px-4">
                     <StatusBadge status={p.role} className="text-3xs" />
+                  </td>
+
+                  <td className="py-3 px-4">
+                    <div className="flex items-center gap-2">
+                      {p.onboarding_completed ? (
+                        <span className="inline-flex items-center gap-1 text-3xs font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-900/60 px-2 py-0.5 rounded">
+                          <CheckCircle2 className="h-3 w-3" />
+                          Done
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-3xs font-mono font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-900/60 px-2 py-0.5 rounded">
+                          Pending
+                        </span>
+                      )}
+
+                      {isSelf ? (
+                        <Link href="/onboarding">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-6 px-1.5 text-3xs font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/50 gap-1 cursor-pointer"
+                            title="Redo onboarding as admin"
+                          >
+                            <RotateCcw className="h-3 w-3" />
+                            Redo
+                          </Button>
+                        </Link>
+                      ) : (
+                        p.onboarding_completed && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            disabled={isPending}
+                            onClick={() => handleResetOnboarding(p.id, p.email)}
+                            className="h-6 px-1.5 text-3xs font-semibold text-zinc-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50 gap-1 cursor-pointer"
+                            title="Reset member onboarding"
+                          >
+                            <RotateCcw className="h-3 w-3" />
+                            Reset
+                          </Button>
+                        )
+                      )}
+                    </div>
                   </td>
 
                   <td className="py-3 px-4 text-right">

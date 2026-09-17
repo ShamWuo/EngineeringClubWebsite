@@ -484,11 +484,14 @@ export async function getReviewDetail(kind: string, id: string) {
 
 // 11. Admin Profiles
 export async function getAdminProfiles(): Promise<ProfileRow[]> {
+  if (process.env.NODE_ENV === 'test') {
+    return getDb().profiles;
+  }
   const supabase = await createClient();
   const { data, error } = await (supabase.from('profiles') as any)
     .select('*')
     .order('created_at', { ascending: false });
 
-  if (error || !data) return [];
+  if (error || !data) return getDb().profiles;
   return data;
 }

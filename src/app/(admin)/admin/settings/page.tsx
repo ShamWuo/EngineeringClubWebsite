@@ -2,10 +2,11 @@ import React from 'react';
 import { requireRole } from '@/lib/auth/require-role';
 import { getClubSettings } from '@/lib/db/queries';
 import { ClubSettingsEditor } from './settings-editor';
+import { AdminOnboardingCard } from './admin-onboarding-card';
 import { Settings } from 'lucide-react';
 
 export default async function AdminSettingsPage() {
-  await requireRole(['admin']);
+  const adminUser = await requireRole(['admin']);
   const settings = await getClubSettings();
 
   return (
@@ -21,6 +22,8 @@ export default async function AdminSettingsPage() {
       </div>
 
       <ClubSettingsEditor settings={settings} />
+
+      <AdminOnboardingCard currentAdminId={adminUser.id} />
     </div>
   );
 }

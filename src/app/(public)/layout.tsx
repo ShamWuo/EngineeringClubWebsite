@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme/theme-toggle';
 import { Cpu, ArrowRight, User, Shield, MapPin, Clock, ExternalLink } from 'lucide-react';
+import { ClubLogo } from '@/components/domain/club-logo';
 import { getClubSettings } from '@/lib/db/queries';
 import { getCurrentUser } from '@/lib/supabase/server';
 import { PublicHeaderShell } from '@/components/landing/public-header-shell';
@@ -21,9 +22,7 @@ export default async function PublicLayout({ children }: { children: React.React
       <PublicHeaderShell>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-600 text-white font-bold shadow-md shadow-red-950/30 border border-red-500/80 group-hover:scale-105 transition-transform">
-              <Cpu className="h-5 w-5" />
-            </div>
+            <ClubLogo className="h-9 w-9 group-hover:scale-105 transition-transform" priority />
             <div className="flex flex-col">
               <span className="font-extrabold text-sm sm:text-base text-zinc-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors leading-tight">
                 {clubName}
@@ -74,9 +73,7 @@ export default async function PublicLayout({ children }: { children: React.React
             {/* Col 1: Club Brand & Affiliation */}
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-md bg-red-600 text-white font-bold text-xs shadow-xs">
-                  <Cpu className="h-4 w-4" />
-                </div>
+                <ClubLogo className="h-7 w-7" />
                 <span className="font-black text-sm text-zinc-900 dark:text-white">
                   FHS Knights Engineering
                 </span>

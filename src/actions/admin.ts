@@ -72,3 +72,38 @@ export const updateClubSettings = createAction(
     return { success: true };
   }
 );
+
+export const resetMemberOnboarding = createAction(
+  z.object({
+    user_id: z.string().uuid(),
+  }),
+  { role: 'admin' },
+  async (input, { supabase, db }) => {
+    const now = new Date().toISOString();
+
+    if (supabase) {
+      try {
+        await (supabase.from('profiles') as any)
+          .update({
+            onboarding_completed: false,
+            updated_at: now,
+          })
+          .eq('id', input.user_id);
+      } catch (err) {
+        console.error('resetMemberOnboarding Supabase sync error:', err);
+      }
+    }
+
+    const member = db.profiles.find((p) => p.id === input.user_id);
+    if (member) {
+      member.onboarding_completed = false;
+      member.updated_at = now;
+    }
+
+    safeRevalidatePath('/admin/members');
+    safeRevalidatePath('/dashboard');
+    safeRevalidatePath('/onboarding');
+    return { success: true, user_id: input.user_id };
+  }
+);
+

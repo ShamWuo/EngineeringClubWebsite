@@ -6,7 +6,7 @@ import { UserMenu } from './user-menu';
 import { NotificationBell } from './notification-bell';
 import { ThemeToggle } from '@/components/theme/theme-toggle';
 import { StatusBadge } from '@/components/domain/status-badge';
-import { Cpu } from 'lucide-react';
+import { ClubLogo } from '@/components/domain/club-logo';
 import type { AuthUser } from '@/lib/supabase/server';
 import type { Database } from '@/lib/db/types';
 
@@ -21,9 +21,7 @@ export function AppHeader({ currentUser, notifications, clubName }: AppHeaderPro
     <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-zinc-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md px-4 sm:px-6 transition-colors">
       <div className="flex items-center gap-3">
         <Link href="/dashboard" className="flex items-center gap-2.5 group">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-600 text-white shadow-md shadow-red-950/40 border border-red-500 group-hover:scale-105 transition-transform">
-            <Cpu className="h-5 w-5" />
-          </div>
+          <ClubLogo className="h-9 w-9 group-hover:scale-105 transition-transform" />
           <div className="flex flex-col">
             <span className="font-black text-sm leading-tight text-zinc-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">
               {clubName || 'Fairview High School Engineering'}
