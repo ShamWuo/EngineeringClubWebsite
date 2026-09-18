@@ -139,19 +139,60 @@ export function CompetitionFilters({
         </div>
       </div>
 
-      {/* Active filter counter & clear action */}
+      {/* Active filter counter & chips */}
       {hasActiveFilters && (
         <div className="flex items-center justify-between gap-2 flex-wrap pt-1">
-          <p className="text-2xs text-zinc-500 dark:text-zinc-400">
-            Showing <span className="font-semibold text-zinc-900 dark:text-white">{filteredCount}</span> of {totalCount} open competitions
-          </p>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <p className="text-2xs text-zinc-500 dark:text-zinc-400 mr-1">
+              Showing <span className="font-semibold text-zinc-900 dark:text-white">{filteredCount}</span> of {totalCount} open competitions:
+            </p>
+            {currentImpact && currentImpact !== 'all' && (
+              <span className="inline-flex items-center gap-1 text-3xs font-medium px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200/80 dark:border-zinc-700/80">
+                {currentImpact === 'world' ? '🌍 World' : currentImpact === 'national' ? '⭐ National' : currentImpact === 'regional' ? '📍 Regional' : '🏠 Local'}
+                <button
+                  type="button"
+                  onClick={() => updateFilters({ impact: 'all' })}
+                  className="hover:text-red-600 dark:hover:text-red-400 transition-colors ml-0.5 cursor-pointer"
+                  aria-label="Remove impact filter"
+                >
+                  <X className="h-2.5 w-2.5" />
+                </button>
+              </span>
+            )}
+            {currentDiscipline && currentDiscipline !== 'all' && (
+              <span className="inline-flex items-center gap-1 text-3xs font-medium px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200/80 dark:border-zinc-700/80">
+                {currentDiscipline}
+                <button
+                  type="button"
+                  onClick={() => updateFilters({ discipline: 'all' })}
+                  className="hover:text-red-600 dark:hover:text-red-400 transition-colors ml-0.5 cursor-pointer"
+                  aria-label="Remove discipline filter"
+                >
+                  <X className="h-2.5 w-2.5" />
+                </button>
+              </span>
+            )}
+            {currentQuery && (
+              <span className="inline-flex items-center gap-1 text-3xs font-medium px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200/80 dark:border-zinc-700/80">
+                &ldquo;{currentQuery}&rdquo;
+                <button
+                  type="button"
+                  onClick={() => updateFilters({ q: null })}
+                  className="hover:text-red-600 dark:hover:text-red-400 transition-colors ml-0.5 cursor-pointer"
+                  aria-label="Remove search filter"
+                >
+                  <X className="h-2.5 w-2.5" />
+                </button>
+              </span>
+            )}
+          </div>
           <button
             type="button"
             onClick={handleClearAll}
-            className="inline-flex items-center gap-1 text-2xs font-semibold text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors"
+            className="inline-flex items-center gap-1 text-2xs font-semibold text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors cursor-pointer"
           >
             <X className="h-3 w-3" />
-            Clear all filters
+            Clear all
           </button>
         </div>
       )}

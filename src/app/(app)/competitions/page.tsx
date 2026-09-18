@@ -4,7 +4,6 @@ import { requireUser } from '@/lib/auth/require-role';
 import { getCompetitions, getTeams } from '@/lib/db/queries';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { ImpactBadge, IMPACT_LABEL, IMPACT_DESCRIPTION, IMPACT_ORDER } from '@/components/domain/impact-badge';
 import { CompetitionFilters } from '@/components/domain/competition-filters';
 import { getCompetitionDisciplines } from '@/lib/constants/competitions';
@@ -238,18 +237,17 @@ export default async function CompetitionsPage({
 
                   {/* Discipline tags */}
                   {disciplines.length > 0 && (
-                    <div className="flex flex-wrap gap-1 pt-2">
+                    <div className="flex flex-wrap items-center gap-1.5 pt-2">
                       {disciplines.slice(0, 3).map((disc) => (
-                        <Badge
+                        <span
                           key={disc}
-                          variant="outline"
-                          className="text-4xs px-1.5 py-0 font-normal text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-800/60"
+                          className="inline-flex items-center text-3xs font-medium px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200/70 dark:border-zinc-700/70"
                         >
                           {disc}
-                        </Badge>
+                        </span>
                       ))}
                       {disciplines.length > 3 && (
-                        <span className="text-4xs text-zinc-400 self-center">
+                        <span className="text-3xs font-medium text-zinc-400 dark:text-zinc-500 self-center">
                           +{disciplines.length - 3} more
                         </span>
                       )}

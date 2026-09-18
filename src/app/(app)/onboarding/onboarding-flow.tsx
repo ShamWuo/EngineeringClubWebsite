@@ -586,9 +586,9 @@ export function OnboardingFlow({
                         >
                           <div className="min-w-0 flex-1 space-y-1.5">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <ImpactBadge level={comp.impact_level} className="text-4xs" />
+                              <ImpactBadge level={comp.impact_level} className="text-3xs" />
                               {comp.season && (
-                                <Badge variant="outline" className="text-4xs font-mono">
+                                <Badge variant="outline" className="text-3xs font-mono">
                                   {comp.season}
                                 </Badge>
                               )}
@@ -597,7 +597,7 @@ export function OnboardingFlow({
                                   href={comp.external_url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-4xs text-zinc-400 hover:text-red-600 inline-flex items-center gap-0.5"
+                                  className="text-3xs text-zinc-400 hover:text-red-600 inline-flex items-center gap-0.5"
                                 >
                                   <span>Site</span>
                                   <ExternalLink className="h-2.5 w-2.5" />
@@ -624,16 +624,16 @@ export function OnboardingFlow({
 
                             {/* Discipline tags */}
                             {disciplines.length > 0 && (
-                              <div className="flex flex-wrap gap-1 pt-1">
+                              <div className="flex flex-wrap gap-1.5 pt-1">
                                 {disciplines.map((d) => {
                                   const isUserDiscipline = selectedSkills.includes(d);
                                   return (
                                     <span
                                       key={d}
-                                      className={`text-4xs px-2 py-0.5 rounded-md font-medium ${
+                                      className={`text-3xs px-2 py-0.5 rounded-full font-medium ${
                                         isUserDiscipline
                                           ? 'bg-red-100 dark:bg-red-950/60 text-red-700 dark:text-red-300 font-bold border border-red-200 dark:border-red-900/50'
-                                          : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700'
+                                          : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200/70 dark:border-zinc-700/70'
                                       }`}
                                     >
                                       {isUserDiscipline && '✓ '}

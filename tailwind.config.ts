@@ -12,6 +12,7 @@ const config: Config = {
       fontSize: {
         '2xs': '0.6875rem',
         '3xs': '0.625rem',
+        '4xs': '0.5625rem',
       },
       spacing: {
         '0.2': '0.05rem',
