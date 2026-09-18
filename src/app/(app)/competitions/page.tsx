@@ -218,7 +218,6 @@ export default async function CompetitionsPage({
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 text-2xs font-semibold text-zinc-500 hover:text-red-600 dark:text-zinc-400 dark:hover:text-red-400 transition-colors"
-                        onClick={(e) => e.stopPropagation()}
                       >
                         <span>View Site</span>
                         <ExternalLink className="h-3 w-3" />
