@@ -78,11 +78,6 @@ export const COMPETITION_DISCIPLINES_MAP: Record<string, EngineeringDiscipline[]
     'Biomedical Engineering',
     'Electrical Engineering',
   ],
-  'fhs-maker-sprint-fall-2026': [
-    'Mechanical Engineering',
-    'Electrical Engineering',
-    'Robotics & Mechatronics',
-  ],
   'denver-metro-engineering-expo-2027': [
     'Aerospace Engineering',
     'Mechanical Engineering',
