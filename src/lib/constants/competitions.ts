@@ -88,6 +88,61 @@ export const COMPETITION_DISCIPLINES_MAP: Record<string, EngineeringDiscipline[]
     'Mechanical Engineering',
     'Civil & Environmental Engineering',
   ],
+  'congressional-app-challenge-2026': [
+    'Software Engineering',
+    'AI Engineering',
+    'Computer Engineering',
+  ],
+  'imagine-cup-junior-2027': [
+    'AI Engineering',
+    'Software Engineering',
+  ],
+  'nasa-space-apps-2026': [
+    'Software Engineering',
+    'Aerospace Engineering',
+    'AI Engineering',
+  ],
+  'picoctf-2027': [
+    'Software Engineering',
+    'Computer Engineering',
+  ],
+  'lemelson-mit-inventeams-2027': [
+    'Mechanical Engineering',
+    'Electrical Engineering',
+    'Biomedical Engineering',
+  ],
+  'sourceamerica-design-challenge-2027': [
+    'Biomedical Engineering',
+    'Mechanical Engineering',
+    'Electrical Engineering',
+  ],
+  'conrad-challenge-2027': [
+    'Aerospace Engineering',
+    'AI Engineering',
+    'Biomedical Engineering',
+    'Civil & Environmental Engineering',
+  ],
+  'nrl-colorado-combat-robotics-2027': [
+    'Robotics & Mechatronics',
+    'Mechanical Engineering',
+    'Materials & Chemical Engineering',
+  ],
+  'cubes-in-space-2027': [
+    'Aerospace Engineering',
+    'Electrical Engineering',
+    'Materials & Chemical Engineering',
+  ],
+  'm3-challenge-2027': [
+    'Software Engineering',
+    'AI Engineering',
+    'Civil & Environmental Engineering',
+  ],
+  'cserf-isef-pipeline-2027': [
+    'Robotics & Mechatronics',
+    'Biomedical Engineering',
+    'Electrical Engineering',
+    'Mechanical Engineering',
+  ],
 };
 
 /**
