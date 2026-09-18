@@ -21,6 +21,7 @@ import {
   Sparkles,
   HelpCircle,
 } from 'lucide-react';
+import { HeroParallax } from '@/components/landing/hero-parallax';
 import { RidgeScene } from '@/components/landing/ridge-scene';
 import { HeroCopy } from '@/components/landing/hero-copy';
 import { CountUp } from '@/components/landing/count-up';
@@ -47,11 +48,12 @@ export default function LandingPage() {
 
   return (
     <>
-      {/* Full-bleed Vector Ridge Hero */}
-      <section className="relative isolate h-[calc(100svh-4rem)] min-h-[580px] max-h-[920px] overflow-hidden">
+      {/* Full-bleed Vector Ridge Hero — motion vars live on the section so
+          scene layers and copy share one parallax source */}
+      <HeroParallax className="ridge-hero relative isolate h-[calc(100svh-4rem)] min-h-[580px] max-h-[920px] overflow-hidden">
         <RidgeScene />
         <HeroCopy className="relative z-20" />
-      </section>
+      </HeroParallax>
 
       {/* Floating stats panel — bridges the hero and the content below */}
       <div className="relative z-30 -mt-12 px-4 sm:px-6 lg:px-8">

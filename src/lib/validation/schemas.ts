@@ -26,6 +26,7 @@ export const competitionSchema = z.object({
   description: z.string().optional().nullable(),
   organizer: z.string().optional().nullable(),
   status: z.enum(['idea', 'planned', 'active', 'completed', 'cancelled']).default('planned'),
+  impact_level: z.enum(['world', 'national', 'regional', 'local']).default('national'),
   season: z.string().optional().nullable(),
   registration_opens_at: z.string().optional().nullable(),
   registration_closes_at: z.string().optional().nullable(),

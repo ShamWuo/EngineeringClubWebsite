@@ -26,7 +26,17 @@ export function RidgeLayer({
     >
       <div
         className="ridge-parallax absolute inset-0"
-        style={{ '--lag': spec.lag, '--drift': spec.drift } as React.CSSProperties}
+        style={
+          {
+            '--lag': spec.lag,
+            '--drift': spec.drift,
+            ...(spec.blur > 0 || spec.sat > 0
+              ? {
+                  filter: `blur(${spec.blur}px) saturate(${100 - spec.sat}%)`,
+                }
+              : {}),
+          } as React.CSSProperties
+        }
       >
         <svg
           viewBox={VIEW_BOX}

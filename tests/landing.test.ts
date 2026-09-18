@@ -46,6 +46,16 @@ describe('layer depth invariants', () => {
     }
   });
 
+  it('aerial perspective fades with nearness (far hazy, near crisp)', () => {
+    const terrain = LAYERS.filter((l) => l.id !== 'sun'); // the sun is a light source, not haze-shaded terrain
+    for (let i = 1; i < terrain.length; i++) {
+      expect(terrain[i].blur).toBeLessThanOrEqual(terrain[i - 1].blur);
+      expect(terrain[i].sat).toBeLessThanOrEqual(terrain[i - 1].sat);
+    }
+    expect(terrain[terrain.length - 1].blur).toBe(0); // foreground fully crisp
+    expect(terrain[terrain.length - 1].sat).toBe(0);
+  });
+
   it('sun is the most distant layer', () => {
     const sun = SPEC.sun;
     expect(sun.lag).toBeGreaterThan(SPEC.far.lag);

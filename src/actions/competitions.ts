@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { createAction } from '@/lib/actions/action-wrapper';
 import { safeRevalidatePath } from '@/lib/actions/safe-revalidate';
 import { competitionSchema, competitionRequestSchema, competitionSignupSchema } from '@/lib/validation/schemas';
-import type { CompStatus } from '@/lib/db/types';
+import type { CompStatus, ImpactLevel } from '@/lib/db/types';
 
 export const upsertCompetition = createAction(
   competitionSchema.extend({
@@ -24,6 +24,7 @@ export const upsertCompetition = createAction(
             description: input.description || null,
             organizer: input.organizer || null,
             status: input.status as CompStatus,
+            impact_level: input.impact_level as ImpactLevel,
             season: input.season || null,
             registration_opens_at: input.registration_opens_at || null,
             registration_closes_at: input.registration_closes_at || null,
@@ -45,6 +46,7 @@ export const upsertCompetition = createAction(
         comp.description = input.description || null;
         comp.organizer = input.organizer || null;
         comp.status = input.status as CompStatus;
+        comp.impact_level = input.impact_level as ImpactLevel;
         comp.season = input.season || null;
         comp.updated_at = now;
       }
@@ -62,6 +64,7 @@ export const upsertCompetition = createAction(
         description: input.description || null,
         organizer: input.organizer || null,
         status: input.status as CompStatus,
+        impact_level: input.impact_level as ImpactLevel,
         season: input.season || '2026-27',
         registration_opens_at: input.registration_opens_at || null,
         registration_closes_at: input.registration_closes_at || null,

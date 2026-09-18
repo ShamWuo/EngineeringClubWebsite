@@ -3,7 +3,6 @@
 import React from 'react';
 import { RidgeLayer } from './ridge-layer';
 import { SPEC } from './layers/config';
-import { useParallax } from './use-parallax';
 import {
   FAR_RIDGE,
   MID_RIDGE,
@@ -13,16 +12,18 @@ import {
   FOREGROUND_FIELD,
   SUN,
   CLOUDS,
+  BIRDS,
   HILL_SHADE,
   BUILDING_ROOF_SHADES,
   BUILDING_SIDE_SHADES,
 } from './layers/geometry';
 
-export function RidgeScene() {
-  const ref = useParallax<HTMLDivElement>();
+/** Sun position as viewport percentages — shared by the halo, god rays, and light direction. */
+const SUN_POS = { x: '63%', y: '38%' } as const;
 
+export function RidgeScene() {
   return (
-    <div ref={ref} className="ridge-scene pointer-events-none absolute inset-0 overflow-hidden">
+    <div className="ridge-scene pointer-events-none absolute inset-0 overflow-hidden">
       {/* Gradients & atmosphere definitions */}
       <svg width="0" height="0" className="absolute" aria-hidden="true" focusable="false">
         <defs>
@@ -60,27 +61,58 @@ export function RidgeScene() {
             <stop offset="0%" stopColor="var(--l-building-top)" />
             <stop offset="100%" stopColor="var(--l-building-bot)" />
           </linearGradient>
+          <filter id="ridge-glow" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="7" />
+          </filter>
         </defs>
       </svg>
 
-      {/* Sky fills the entire hero */}
+      {/* Sky fills the entire hero; the horizon band lightens toward the ridge line */}
       <div
         className="absolute inset-0 z-0"
-        style={{ background: 'linear-gradient(to bottom, var(--sky-top), var(--sky-mid) 62%, var(--sky-bottom))' }}
+        style={{
+          background:
+            'linear-gradient(to bottom, var(--sky-top) 0%, var(--sky-mid) 42%, var(--sky-horizon) 78%, var(--sky-bottom) 100%)',
+        }}
+      />
+
+      {/* Stars + moon — night sky only */}
+      <div aria-hidden="true" className="ridge-stars absolute inset-0 z-0 hidden dark:block" />
+      <div
+        aria-hidden="true"
+        className="absolute z-0 hidden dark:block"
+        style={{
+          left: '76%',
+          top: '11%',
+          width: 54,
+          height: 54,
+          borderRadius: '50%',
+          transform: 'translate(-50%, -50%)',
+          background: 'radial-gradient(circle at 36% 34%, #f8fafc 0%, #e2e8f0 58%, #cbd5e1 100%)',
+          boxShadow:
+            '0 0 44px 10px rgb(226 232 240 / 0.14), 0 0 120px 30px rgb(148 163 184 / 0.10)',
+        }}
+      />
+
+      {/* Crepuscular god rays sweeping slowly from the sun (daylight only) */}
+      <div
+        aria-hidden="true"
+        className="ridge-rays absolute inset-0 z-0 hidden dark:hidden lg:block"
       />
 
       {/* Warm halo around the sun position (behind ridges) */}
       <div
-        className="absolute z-0 pointer-events-none"
+        className="ridge-sun-pulse absolute z-0 pointer-events-none"
         style={{
-          left: '63%',
-          top: '38%',
+          left: SUN_POS.x,
+          top: SUN_POS.y,
           width: '52vw',
           height: '52vw',
           maxWidth: 820,
           maxHeight: 820,
           transform: 'translate(-50%, -50%)',
-          background: 'radial-gradient(circle, var(--sun-halo-a) 0%, var(--sun-halo-b) 38%, transparent 68%)',
+          background:
+            'radial-gradient(circle, var(--sun-halo-a) 0%, var(--sun-halo-b) 38%, transparent 68%)',
         }}
       />
 
@@ -119,6 +151,22 @@ export function RidgeScene() {
 
         <RidgeLayer spec={SPEC.mid}>
           <path d={MID_RIDGE} fill="url(#ridge-mid)" className="ridge-crest" />
+          {/* Birds — a kettle riding the thermal above the Flatirons */}
+          {BIRDS.map((b, i) => (
+            <path
+              key={i}
+              d={`M${b.x - 9 * b.s},${b.y} Q${b.x - 4.5 * b.s},${b.y - 6 * b.s} ${b.x},${b.y} Q${
+                b.x + 4.5 * b.s
+              },${b.y - 6 * b.s} ${b.x + 9 * b.s},${b.y}`}
+              fill="none"
+              stroke="var(--bird-stroke)"
+              strokeWidth={1.6 * b.s}
+              strokeLinecap="round"
+              opacity={b.f ? 0.85 : 0.6}
+              className="ridge-bird"
+              style={{ animationDelay: `${i * 1.7}s` }}
+            />
+          ))}
         </RidgeLayer>
 
         <RidgeLayer spec={SPEC.hills}>
@@ -150,6 +198,25 @@ export function RidgeScene() {
               <rect key={`s-${i}`} x={s.x} y={s.y} width={s.w} height={s.h} opacity="0.5" />
             ))}
           </g>
+          {/* Interior glow bloom — night only, behind the crisp window rects */}
+          <g
+            className="hidden dark:inline"
+            filter="url(#ridge-glow)"
+            fill="var(--l-window)"
+            opacity="0.4"
+          >
+            {BUILDING.windows.map((w, i) => (
+              <rect
+                key={`g-${w.x}`}
+                x={w.x - 2}
+                y={w.y - 2}
+                width={w.w + 4}
+                height={w.h + 4}
+                className="ridge-window-glow"
+                style={{ animationDelay: `${i * 2.3}s` }}
+              />
+            ))}
+          </g>
           <g fill="var(--l-window)" opacity="0.9">
             {BUILDING.windows.map((w) => (
               <rect key={w.x} x={w.x} y={w.y} width={w.w} height={w.h} />
@@ -178,7 +245,8 @@ export function RidgeScene() {
           style={{
             top: '58%',
             height: '26%',
-            background: 'linear-gradient(to bottom, transparent, var(--haze) 45%, var(--haze) 62%, transparent)',
+            background:
+              'linear-gradient(to bottom, transparent, var(--haze) 45%, var(--haze) 62%, transparent)',
           }}
         />
       </div>
@@ -192,7 +260,10 @@ export function RidgeScene() {
       {/* Vignette + film grain */}
       <div
         className="absolute inset-0 z-30 pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse 120% 90% at 50% 40%, transparent 55%, var(--vignette) 100%)' }}
+        style={{
+          background:
+            'radial-gradient(ellipse 120% 90% at 50% 40%, transparent 55%, var(--vignette) 100%)',
+        }}
       />
       <div className="absolute inset-0 z-30 ridge-grain pointer-events-none" />
     </div>

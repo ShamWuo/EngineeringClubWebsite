@@ -5,9 +5,10 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input, Textarea, Select } from '@/components/ui/input';
 import { StatusBadge } from '@/components/domain/status-badge';
+import { ImpactBadge } from '@/components/domain/impact-badge';
 import { upsertCompetition } from '@/actions/competitions';
 import { Plus, Edit, X, Save } from 'lucide-react';
-import type { Database, CompStatus } from '@/lib/db/types';
+import type { Database, CompStatus, ImpactLevel } from '@/lib/db/types';
 
 type CompRow = Database['public']['Tables']['competitions']['Row'];
 
@@ -24,6 +25,7 @@ export function CompetitionManager({ competitions }: { competitions: CompRow[] }
       description: '',
       organizer: '',
       status: 'planned',
+      impact_level: 'national',
       season: '2026-27',
       entry_fee_cents: 0,
       max_teams: 2,
@@ -51,6 +53,7 @@ export function CompetitionManager({ competitions }: { competitions: CompRow[] }
         description: editingComp.description || null,
         organizer: editingComp.organizer || null,
         status: (editingComp.status as CompStatus) || 'planned',
+        impact_level: (editingComp.impact_level as ImpactLevel) || 'national',
         season: editingComp.season || '2026-27',
         entry_fee_cents: editingComp.entry_fee_cents || 0,
         max_teams: editingComp.max_teams || null,
@@ -142,6 +145,20 @@ export function CompetitionManager({ competitions }: { competitions: CompRow[] }
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                    Impact Level
+                  </label>
+                  <Select
+                    value={editingComp.impact_level || 'national'}
+                    onChange={(e) => setEditingComp({ ...editingComp, impact_level: e.target.value as ImpactLevel })}
+                  >
+                    <option value="world">🌍 World Championship</option>
+                    <option value="national">⭐ National</option>
+                    <option value="regional">📍 Regional</option>
+                    <option value="local">🏠 Local / In-House</option>
+                  </Select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                     Season
                   </label>
                   <Input
@@ -198,6 +215,7 @@ export function CompetitionManager({ competitions }: { competitions: CompRow[] }
               <th className="py-3 px-4">Competition</th>
               <th className="py-3 px-4">Season</th>
               <th className="py-3 px-4">Status</th>
+              <th className="py-3 px-4">Impact</th>
               <th className="py-3 px-4">Organizer</th>
               <th className="py-3 px-4 text-right">Action</th>
             </tr>
@@ -212,6 +230,9 @@ export function CompetitionManager({ competitions }: { competitions: CompRow[] }
                 <td className="py-3 px-4 text-zinc-600 dark:text-zinc-400">{c.season || 'N/A'}</td>
                 <td className="py-3 px-4">
                   <StatusBadge status={c.status} className="text-3xs" />
+                </td>
+                <td className="py-3 px-4">
+                  <ImpactBadge level={c.impact_level} className="text-3xs" />
                 </td>
                 <td className="py-3 px-4 text-zinc-500 dark:text-zinc-400">{c.organizer || 'N/A'}</td>
                 <td className="py-3 px-4 text-right">

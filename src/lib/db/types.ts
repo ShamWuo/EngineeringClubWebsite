@@ -9,6 +9,7 @@ export type Json =
 export type UserRole = 'member' | 'officer' | 'admin';
 export type RequestStatus = 'pending' | 'approved' | 'rejected' | 'changes_requested' | 'withdrawn';
 export type CompStatus = 'idea' | 'planned' | 'active' | 'completed' | 'cancelled';
+export type ImpactLevel = 'world' | 'national' | 'regional' | 'local';
 export type WorkshopStatus = 'proposed' | 'scheduled' | 'completed' | 'cancelled';
 export type TeamRole = 'lead' | 'member';
 export type FundingStatus = 'pending' | 'approved' | 'partially_approved' | 'rejected' | 'reimbursed';
@@ -67,6 +68,7 @@ export interface Database {
           description: string | null;
           organizer: string | null;
           status: CompStatus;
+          impact_level: ImpactLevel;
           season: string | null;
           registration_opens_at: string | null;
           registration_closes_at: string | null;
@@ -87,6 +89,7 @@ export interface Database {
           description?: string | null;
           organizer?: string | null;
           status?: CompStatus;
+          impact_level?: ImpactLevel;
           season?: string | null;
           registration_opens_at?: string | null;
           registration_closes_at?: string | null;
@@ -107,6 +110,7 @@ export interface Database {
           description?: string | null;
           organizer?: string | null;
           status?: CompStatus;
+          impact_level?: ImpactLevel;
           season?: string | null;
           registration_opens_at?: string | null;
           registration_closes_at?: string | null;

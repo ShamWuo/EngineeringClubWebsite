@@ -48,6 +48,36 @@ describe('Validation Schemas', () => {
       });
       expect(res.success).toBe(false);
     });
+
+    it('accepts impact_level taxonomy and defaults to national', () => {
+      const world = competitionSchema.safeParse({
+        slug: 'vex-override-2026-27',
+        name: 'VEX V5 Robotics Competition — Override',
+        impact_level: 'world',
+      });
+      expect(world.success).toBe(true);
+      if (world.success) {
+        expect(world.data.impact_level).toBe('world');
+      }
+
+      const defaulted = competitionSchema.safeParse({
+        slug: 'local-sprint',
+        name: 'Local Design Sprint',
+      });
+      expect(defaulted.success).toBe(true);
+      if (defaulted.success) {
+        expect(defaulted.data.impact_level).toBe('national');
+      }
+    });
+
+    it('rejects invalid impact levels', () => {
+      const res = competitionSchema.safeParse({
+        slug: 'bad-impact',
+        name: 'Bad Impact Competition',
+        impact_level: 'galactic',
+      });
+      expect(res.success).toBe(false);
+    });
   });
 
   describe('teamRequestSchema', () => {
