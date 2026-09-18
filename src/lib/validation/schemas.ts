@@ -62,6 +62,19 @@ export const teamRequestSchema = z.object({
   needs_funding: z.boolean().default(false),
 });
 
+export const createTeamSchema = z.object({
+  competition_id: z.string().uuid('Invalid competition ID'),
+  name: z.string().min(3, 'Team name must be at least 3 characters'),
+  description: z.string().min(5, 'Please describe your team objectives and focus areas').optional().nullable(),
+  member_ids: z.array(z.string().uuid()).default([]),
+  needs_funding: z.boolean().default(false),
+});
+
+export const verifyTeamSchema = z.object({
+  team_id: z.string().uuid('Invalid team ID'),
+  note: z.string().max(1000).optional().nullable(),
+});
+
 export const teamRosterUpdateSchema = z.object({
   team_id: z.string().uuid(),
   user_id: z.string().uuid(),

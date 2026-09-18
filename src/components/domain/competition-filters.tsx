@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useTransition } from 'react';
-import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Search, Filter, Layers, ArrowUpDown, X } from 'lucide-react';
 import { ENGINEERING_DISCIPLINES } from '@/lib/constants/competitions';
 
@@ -24,19 +24,20 @@ export function CompetitionFilters({
 }: CompetitionFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
   const updateFilters = (updates: Record<string, string | null>) => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams();
 
-    Object.entries(updates).forEach(([key, value]) => {
-      if (!value || value === 'all' || (key === 'sort' && value === 'people')) {
-        params.delete(key);
-      } else {
-        params.set(key, value);
-      }
-    });
+    const nextImpact = updates.impact !== undefined ? updates.impact : currentImpact;
+    const nextDiscipline = updates.discipline !== undefined ? updates.discipline : currentDiscipline;
+    const nextSort = updates.sort !== undefined ? updates.sort : currentSort;
+    const nextQ = updates.q !== undefined ? updates.q : currentQuery;
+
+    if (nextImpact && nextImpact !== 'all') params.set('impact', nextImpact);
+    if (nextDiscipline && nextDiscipline !== 'all') params.set('discipline', nextDiscipline);
+    if (nextSort && nextSort !== 'people') params.set('sort', nextSort);
+    if (nextQ && nextQ.trim()) params.set('q', nextQ.trim());
 
     const qs = params.toString();
     startTransition(() => {

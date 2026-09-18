@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import Link from 'next/link';
 import { requireUser } from '@/lib/auth/require-role';
 import { getCompetitions, getTeams } from '@/lib/db/queries';
@@ -16,15 +16,16 @@ type CompetitionWithTeams = Awaited<ReturnType<typeof getCompetitions>>[number];
 export default async function CompetitionsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ impact?: string; discipline?: string; q?: string; sort?: string }>;
+  searchParams?: Promise<{ impact?: string; discipline?: string; q?: string; sort?: string }>;
 }) {
   await requireUser();
-  const [competitionsData, teamsData, params] = await Promise.all([
+  const [competitionsData, teamsData, resolvedParams] = await Promise.all([
     getCompetitions(),
     getTeams(),
-    searchParams,
+    searchParams ? searchParams : Promise.resolve({} as { impact?: string; discipline?: string; q?: string; sort?: string }),
   ]);
 
+  const params = resolvedParams || {};
   const impactFilter = (params.impact || 'all') as ImpactLevel | 'all';
   const disciplineFilter = params.discipline || 'all';
   const searchQuery = (params.q || '').trim().toLowerCase();
@@ -96,13 +97,17 @@ export default async function CompetitionsPage({
       if (countB !== countA) return countB - countA;
 
       // Secondary: impact ascending (world first), then event date
-      const impactDelta = IMPACT_ORDER[a.impact_level] - IMPACT_ORDER[b.impact_level];
+      const deltaA = IMPACT_ORDER[a.impact_level] ?? 99;
+      const deltaB = IMPACT_ORDER[b.impact_level] ?? 99;
+      const impactDelta = deltaA - deltaB;
       if (impactDelta !== 0) return impactDelta;
       return (new Date(a.event_starts_at || '2999-01-01').getTime()) - (new Date(b.event_starts_at || '2999-01-01').getTime());
     }
     if (sortMode === 'impact') {
       // Primary: impact ascending (world first), secondary: event date ascending
-      const impactDelta = IMPACT_ORDER[a.impact_level] - IMPACT_ORDER[b.impact_level];
+      const deltaA = IMPACT_ORDER[a.impact_level] ?? 99;
+      const deltaB = IMPACT_ORDER[b.impact_level] ?? 99;
+      const impactDelta = deltaA - deltaB;
       if (impactDelta !== 0) return impactDelta;
       return (new Date(a.event_starts_at || '2999-01-01').getTime()) - (new Date(b.event_starts_at || '2999-01-01').getTime());
     }
@@ -139,7 +144,7 @@ export default async function CompetitionsPage({
           <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
             {impactFilter === 'all'
               ? 'Active and upcoming engineering challenges, sorted by student participation.'
-              : IMPACT_DESCRIPTION[impactFilter]}
+              : (IMPACT_DESCRIPTION[impactFilter] || 'Competitions filtered by level.')}
           </p>
         </div>
 
@@ -154,14 +159,16 @@ export default async function CompetitionsPage({
       </div>
 
       {/* Filter Toolbar: Impact Level, Engineering Discipline, Search & Sort */}
-      <CompetitionFilters
-        currentImpact={impactFilter}
-        currentDiscipline={disciplineFilter}
-        currentSort={sortMode}
-        currentQuery={params.q || ''}
-        totalCount={openCompetitions.length}
-        filteredCount={sorted.length}
-      />
+      <Suspense fallback={<div className="h-9 w-full rounded-lg bg-zinc-100 dark:bg-zinc-800 animate-pulse" />}>
+        <CompetitionFilters
+          currentImpact={impactFilter}
+          currentDiscipline={disciplineFilter}
+          currentSort={sortMode}
+          currentQuery={params.q || ''}
+          totalCount={openCompetitions.length}
+          filteredCount={sorted.length}
+        />
+      </Suspense>
 
       {/* Competitions Grid */}
       {sorted.length === 0 ? (

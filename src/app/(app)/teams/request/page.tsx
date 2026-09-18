@@ -33,10 +33,10 @@ export default async function TeamRequestPage({
         </Link>
         <h1 className="text-2xl font-black text-zinc-900 dark:text-white flex items-center gap-2">
           <Users className="h-6 w-6 text-red-600 dark:text-red-500" />
-          Submit Team Proposal Form
+          Create a Team
         </h1>
         <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-          Form a new student engineering team for an approved club competition. When approved by officers, the team is automatically created and you are designated as the Team Lead.
+          Form a new student engineering team for an approved club competition. Your team is created immediately so you can begin organizing, and will be verified by club officers.
         </p>
       </div>
 

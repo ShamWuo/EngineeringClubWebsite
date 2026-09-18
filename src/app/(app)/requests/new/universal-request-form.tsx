@@ -7,19 +7,23 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { submitCompetitionRequest } from '@/actions/competitions';
 import { submitFundingRequest } from '@/actions/funding';
-import { submitTeamRequest } from '@/actions/teams';
+import { submitTeamRequest, createTeam } from '@/actions/teams';
 import { submitWorkshopRequest } from '@/actions/workshops';
 import { submitGeneralRequest } from '@/actions/general-requests';
+import { MemberSearchMultiSelect } from '@/components/domain/member-search-multi-select';
 import { Trophy, DollarSign, Users, Lightbulb, HelpCircle, Plus, Trash2, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
+import type { Database } from '@/lib/db/types';
 
 type RequestType = 'competition' | 'funding' | 'team' | 'workshop' | 'general';
+type ProfileRow = Database['public']['Tables']['profiles']['Row'];
 
 interface UniversalRequestFormProps {
   competitions: { id: string; name: string }[];
   teams: { id: string; name: string; competitionName: string }[];
+  members?: ProfileRow[];
 }
 
-export function UniversalRequestForm({ competitions, teams }: UniversalRequestFormProps) {
+export function UniversalRequestForm({ competitions, teams, members = [] }: UniversalRequestFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const paramType = (searchParams.get('type') as RequestType) || 'general';
@@ -53,6 +57,7 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
   const [teamCompId, setTeamCompId] = useState(competitions[0]?.id || '');
   const [teamProposedName, setTeamProposedName] = useState('');
   const [teamPurpose, setTeamPurpose] = useState('');
+  const [teamMemberIds, setTeamMemberIds] = useState<string[]>([]);
   const [teamNeedsFunding, setTeamNeedsFunding] = useState(false);
 
   // 4. Workshop Form State
@@ -132,14 +137,17 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
           setSuccess('Funding & procurement request submitted successfully!');
         } else if (activeType === 'team') {
           if (!teamCompId) throw new Error('Please select a parent competition.');
-          const res = await submitTeamRequest({
+          if (!teamProposedName.trim()) throw new Error('Please enter a team name.');
+          const res = await createTeam({
             competition_id: teamCompId,
-            proposed_name: teamProposedName.trim(),
-            purpose: teamPurpose.trim(),
+            name: teamProposedName.trim(),
+            description: teamPurpose.trim(),
+            member_ids: teamMemberIds,
             needs_funding: teamNeedsFunding,
           });
           if (!res.ok) throw new Error(res.error);
-          setSuccess('Team proposal submitted to officers!');
+          setSuccess(`Team "${res.data.team.name}" created! Redirecting to workspace...`);
+          router.push(`/teams/${res.data.team.id}`);
         } else if (activeType === 'workshop') {
           const res = await submitWorkshopRequest({
             topic: workshopTopic.trim(),
@@ -521,7 +529,7 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-                      Proposed Team Name *
+                      Team Name *
                     </label>
                     <Input
                       required
@@ -534,15 +542,25 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
 
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-                    Team Mission & Subsystem Focus *
+                    Team Mission & Subsystem Focus
                   </label>
                   <textarea
-                    required
                     rows={4}
                     placeholder="Describe engineering scope, subsystem boundaries, CAD/PCB tools to be used, and goals..."
                     value={teamPurpose}
                     onChange={(e) => setTeamPurpose(e.target.value)}
                     className="w-full text-xs rounded-lg bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 p-3 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <MemberSearchMultiSelect
+                    availableMembers={members}
+                    selectedMemberIds={teamMemberIds}
+                    onSelectionChange={setTeamMemberIds}
+                    label="Add Team Members"
+                    helperText="Search registered club members by name or email. Added members will join your team roster."
+                    placeholder="Type to search members by name, email, or discipline..."
                   />
                 </div>
 
@@ -701,7 +719,15 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
               disabled={isPending}
               className="bg-red-600 hover:bg-red-700 text-white font-bold gap-2 text-xs shadow-lg shadow-red-950/40"
             >
-              <span>{isPending ? 'Submitting to Officers...' : 'Submit Request'}</span>
+              <span>
+                {isPending
+                  ? activeType === 'team'
+                    ? 'Creating Team...'
+                    : 'Submitting to Officers...'
+                  : activeType === 'team'
+                  ? 'Create Team'
+                  : 'Submit Request'}
+              </span>
               <ArrowRight className="h-4 w-4" />
             </Button>
           </CardFooter>

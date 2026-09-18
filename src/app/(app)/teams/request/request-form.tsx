@@ -6,8 +6,9 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input, Textarea, Select } from '@/components/ui/input';
-import { submitTeamRequest } from '@/actions/teams';
-import { Send, Users } from 'lucide-react';
+import { createTeam } from '@/actions/teams';
+import { MemberSearchMultiSelect } from '@/components/domain/member-search-multi-select';
+import { Users, Plus } from 'lucide-react';
 import type { Database } from '@/lib/db/types';
 
 type CompRow = Database['public']['Tables']['competitions']['Row'];
@@ -33,31 +34,28 @@ export function TeamRequestForm({
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const handleMemberToggle = (id: string) => {
-    if (selectedMemberIds.includes(id)) {
-      setSelectedMemberIds(selectedMemberIds.filter((m) => m !== id));
-    } else {
-      setSelectedMemberIds([...selectedMemberIds, id]);
-    }
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
+    if (!proposedName.trim()) {
+      setError('Team name is required.');
+      return;
+    }
+
     startTransition(async () => {
-      const res = await submitTeamRequest({
+      const res = await createTeam({
         competition_id: competitionId,
-        proposed_name: proposedName.trim(),
-        purpose: purpose.trim(),
-        proposed_member_ids: selectedMemberIds,
+        name: proposedName.trim(),
+        description: purpose.trim(),
+        member_ids: selectedMemberIds,
         needs_funding: needsFunding,
       });
 
       if (!res.ok) {
         setError(res.error);
       } else {
-        router.push('/dashboard');
+        router.push(`/teams/${res.data.team.id}`);
       }
     });
   };
@@ -91,7 +89,7 @@ export function TeamRequestForm({
 
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-              Proposed Team Name *
+              Team Name *
             </label>
             <Input
               required
@@ -103,10 +101,9 @@ export function TeamRequestForm({
 
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-              Team Mission, Objectives & Deliverables *
+              Team Mission, Objectives & Deliverables
             </label>
             <Textarea
-              required
               rows={4}
               placeholder="Detail what technical modules your team will design, manufacture, and test..."
               value={purpose}
@@ -115,27 +112,14 @@ export function TeamRequestForm({
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
-              Proposed Initial Members (Optional)
-            </label>
-            <div className="max-h-40 overflow-y-auto rounded-lg border border-zinc-200 dark:border-zinc-800 p-2.5 space-y-1.5 bg-zinc-50 dark:bg-zinc-900/40">
-              {members.map((m) => (
-                <label
-                  key={m.id}
-                  className="flex items-center gap-2 text-xs text-zinc-700 dark:text-zinc-300 cursor-pointer p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded"
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedMemberIds.includes(m.id)}
-                    onChange={() => handleMemberToggle(m.id)}
-                    className="rounded border-zinc-300 dark:border-zinc-700 text-red-600 focus:ring-red-500 bg-white dark:bg-zinc-900"
-                  />
-                  <span>
-                    <strong className="font-semibold">{m.full_name || m.email}</strong> ({m.email})
-                  </span>
-                </label>
-              ))}
-            </div>
+            <MemberSearchMultiSelect
+              availableMembers={members}
+              selectedMemberIds={selectedMemberIds}
+              onSelectionChange={setSelectedMemberIds}
+              label="Add Team Members"
+              helperText="Search registered club members by name or email. Added members will join your team roster."
+              placeholder="Type to search members by name, email, or discipline..."
+            />
           </div>
 
           <div className="flex items-center gap-2 pt-1">
@@ -160,11 +144,11 @@ export function TeamRequestForm({
           </Link>
           <Button
             type="submit"
-            disabled={isPending || !proposedName.trim() || !purpose.trim()}
+            disabled={isPending || !proposedName.trim()}
             className="font-semibold gap-1.5"
           >
-            <Send className="h-4 w-4" />
-            {isPending ? 'Submitting...' : 'Submit Team Proposal'}
+            <Plus className="h-4 w-4" />
+            {isPending ? 'Creating Team...' : 'Create Team'}
           </Button>
         </CardFooter>
       </form>

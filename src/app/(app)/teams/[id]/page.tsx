@@ -12,8 +12,11 @@ import {
   DollarSign,
   ArrowLeft,
   Crown,
+  ShieldCheck,
+  Clock,
 } from 'lucide-react';
 import { TeamMembershipButtons } from './membership-buttons';
+import { VerifyTeamButton } from './verify-button';
 
 export default async function TeamWorkspacePage({
   params,
@@ -59,10 +62,21 @@ export default async function TeamWorkspacePage({
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 mb-1.5">
+            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
               <Badge variant="outline" className="text-3xs font-mono">
                 {comp?.name || 'Competition Team'}
               </Badge>
+              {team.is_verified ? (
+                <Badge variant="success" className="text-3xs flex items-center gap-1">
+                  <ShieldCheck className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
+                  Verified Squad
+                </Badge>
+              ) : (
+                <Badge variant="warning" className="text-3xs flex items-center gap-1">
+                  <Clock className="h-3 w-3 text-amber-600 dark:text-amber-400" />
+                  Verification Pending
+                </Badge>
+              )}
               {team.is_recruiting ? (
                 <Badge variant="success" className="text-3xs">Recruiting Members</Badge>
               ) : (
@@ -84,6 +98,27 @@ export default async function TeamWorkspacePage({
           </div>
         </div>
       </div>
+
+      {!team.is_verified && (
+        <div className="p-4 rounded-xl border border-amber-200 dark:border-amber-900/60 bg-amber-50/80 dark:bg-amber-950/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+          <div className="flex items-start gap-3">
+            <Clock className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+            <div>
+              <h3 className="text-xs font-bold text-amber-900 dark:text-amber-200">
+                Team Pending Officer Verification
+              </h3>
+              <p className="text-2xs text-amber-700 dark:text-amber-400 mt-0.5">
+                This team has been formed and collaboration is unlocked. Officers verify roster sizes, safety plans, and competition guidelines.
+              </p>
+            </div>
+          </div>
+          {isOfficer && (
+            <div className="shrink-0 pl-8 sm:pl-0">
+              <VerifyTeamButton teamId={team.id} />
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Description & Workspace Overview */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

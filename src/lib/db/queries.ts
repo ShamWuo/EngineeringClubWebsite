@@ -18,6 +18,7 @@ export type WorkshopRequestRow = Database['public']['Tables']['workshop_requests
 export type FundingRequestRow = Database['public']['Tables']['funding_requests']['Row'];
 export type FundingLineItemRow = Database['public']['Tables']['funding_line_items']['Row'];
 export type FundingAttachmentRow = Database['public']['Tables']['funding_attachments']['Row'];
+export type CompetitionSignupRow = Database['public']['Tables']['competition_signups']['Row'];
 
 // 1. Club Settings
 export async function getClubSettings(): Promise<ClubSettingsRow> {
@@ -44,16 +45,43 @@ export async function getClubSettings(): Promise<ClubSettingsRow> {
 
 // 2. Competitions
 export async function getCompetitions(): Promise<CompetitionRow[]> {
-  const supabase = await createClient();
-  const { data, error } = await (supabase.from('competitions') as any)
-    .select('*')
-    .order('created_at', { ascending: false });
-
-  if (error || !data) {
-    console.error('Error fetching competitions:', error);
-    return [];
+  if (process.env.NODE_ENV === 'test') {
+    return getDb().competitions;
   }
-  return data;
+  try {
+    const supabase = await createClient();
+    const { data, error } = await (supabase.from('competitions') as any)
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error || !data || data.length === 0) {
+      if (error) console.error('Error fetching competitions:', error);
+      return getDb().competitions;
+    }
+    return data;
+  } catch (err) {
+    console.error('getCompetitions error:', err);
+    return getDb().competitions;
+  }
+}
+
+export async function getUserCompetitionSignups(userId: string): Promise<CompetitionSignupRow[]> {
+  if (process.env.NODE_ENV === 'test') {
+    return getDb().competition_signups.filter((s) => s.user_id === userId);
+  }
+  try {
+    const supabase = await createClient();
+    const { data, error } = await (supabase.from('competition_signups') as any)
+      .select('*')
+      .eq('user_id', userId);
+
+    if (error || !data) {
+      return getDb().competition_signups.filter((s) => s.user_id === userId);
+    }
+    return data;
+  } catch (err) {
+    return getDb().competition_signups.filter((s) => s.user_id === userId);
+  }
 }
 
 export async function getCompetitionBySlug(slug: string): Promise<{ comp: CompetitionRow; teams: any[] } | null> {

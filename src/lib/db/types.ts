@@ -132,6 +132,7 @@ export interface Database {
           name: string;
           description: string | null;
           is_recruiting: boolean;
+          is_verified: boolean;
           created_by: string | null;
           created_at: string;
           updated_at: string;
@@ -142,6 +143,7 @@ export interface Database {
           name: string;
           description?: string | null;
           is_recruiting?: boolean;
+          is_verified?: boolean;
           created_by?: string | null;
           created_at?: string;
           updated_at?: string;
@@ -152,6 +154,7 @@ export interface Database {
           name?: string;
           description?: string | null;
           is_recruiting?: boolean;
+          is_verified?: boolean;
           created_by?: string | null;
           created_at?: string;
           updated_at?: string;

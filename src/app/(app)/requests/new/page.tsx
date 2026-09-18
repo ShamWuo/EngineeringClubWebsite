@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import { requireRole } from '@/lib/auth/require-role';
-import { getDb } from '@/lib/db/mock-data';
+import { getCompetitions, getAdminProfiles, getTeams } from '@/lib/db/queries';
 import { UniversalRequestForm } from './universal-request-form';
 
 export const metadata = {
@@ -10,20 +10,24 @@ export const metadata = {
 
 export default async function NewRequestPage() {
   const user = await requireRole(['member', 'officer', 'admin']);
-  const db = getDb();
 
-  const competitions = db.competitions
+  const [competitionsData, profilesData, teamsData] = await Promise.all([
+    getCompetitions(),
+    getAdminProfiles(),
+    getTeams(),
+  ]);
+
+  const competitions = competitionsData
     .filter((c) => c.status === 'active' || c.status === 'planned')
     .map((c) => ({ id: c.id, name: c.name }));
 
-  const userTeams = db.teams.map((t) => {
-    const comp = db.competitions.find((c) => c.id === t.competition_id);
-    return {
-      id: t.id,
-      name: t.name,
-      competitionName: comp?.name || 'General',
-    };
-  });
+  const userTeams = teamsData.map((t) => ({
+    id: t.id,
+    name: t.name,
+    competitionName: t.competition?.name || 'General',
+  }));
+
+  const members = profilesData.filter((p) => p.is_active && p.id !== user.id);
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-12">
@@ -37,7 +41,11 @@ export default async function NewRequestPage() {
       </div>
 
       <Suspense fallback={<div className="p-8 text-center text-xs text-zinc-500">Loading request builder...</div>}>
-        <UniversalRequestForm competitions={competitions} teams={userTeams} />
+        <UniversalRequestForm
+          competitions={competitions}
+          teams={userTeams}
+          members={members}
+        />
       </Suspense>
     </div>
   );

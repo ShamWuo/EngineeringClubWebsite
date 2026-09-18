@@ -21,11 +21,40 @@ export const reviewRequestAction = createAction(
       try {
         if (decision === 'approve') {
           if (kind === 'team') {
-            await supabase.rpc('approve_team_request', {
-              p_request_id: requestId,
-              p_reviewer_id: user.id,
-              p_note: note || null,
-            });
+            const { data: existingReq } = await (supabase.from('team_requests') as any)
+              .select('created_team_id, requested_by, proposed_name')
+              .eq('id', requestId)
+              .single();
+
+            if (existingReq?.created_team_id) {
+              await (supabase.from('teams') as any)
+                .update({ is_verified: true, updated_at: now })
+                .eq('id', existingReq.created_team_id);
+
+              await (supabase.from('team_requests') as any)
+                .update({
+                  status: 'approved',
+                  reviewed_by: user.id,
+                  reviewed_at: now,
+                  review_note: note || null,
+                  updated_at: now,
+                })
+                .eq('id', requestId);
+
+              await (supabase.from('notifications') as any).insert({
+                user_id: existingReq.requested_by,
+                kind: 'team_approved',
+                title: 'Team Verified! 🎉',
+                body: `Your team "${existingReq.proposed_name}" has been officially verified by officers.`,
+                href: `/teams/${existingReq.created_team_id}`,
+              });
+            } else {
+              await supabase.rpc('approve_team_request', {
+                p_request_id: requestId,
+                p_reviewer_id: user.id,
+                p_note: note || null,
+              });
+            }
           } else if (kind === 'competition') {
             await supabase.rpc('approve_competition_request', {
               p_request_id: requestId,
@@ -90,6 +119,20 @@ export const reviewRequestAction = createAction(
       } else if (kind === 'team') {
         const req = db.team_requests.find((r) => r.id === requestId);
         if (req) {
+          if (req.created_team_id) {
+            const existingTeam = db.teams.find((t) => t.id === req.created_team_id);
+            if (existingTeam) {
+              existingTeam.is_verified = true;
+              existingTeam.updated_at = now;
+            }
+            req.status = 'approved';
+            req.reviewed_by = user.id;
+            req.reviewed_at = now;
+            req.review_note = note || null;
+            req.updated_at = now;
+            return { createdEntityId: req.created_team_id };
+          }
+
           const teamId = crypto.randomUUID();
           db.teams.push({
             id: teamId,
@@ -97,6 +140,7 @@ export const reviewRequestAction = createAction(
             name: req.proposed_name,
             description: req.purpose,
             is_recruiting: true,
+            is_verified: true,
             created_by: req.requested_by,
             created_at: now,
             updated_at: now,
@@ -117,7 +161,8 @@ export const reviewRequestAction = createAction(
           req.updated_at = now;
           return { createdEntityId: teamId };
         }
-      } else if (kind === 'funding') {
+      }
+ else if (kind === 'funding') {
         const req = db.funding_requests.find((r) => r.id === requestId);
         if (req) {
           const approvedCents = input.fundingApprovedAmountCents ?? req.amount_requested_cents;

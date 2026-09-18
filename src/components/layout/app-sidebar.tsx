@@ -274,17 +274,17 @@ export function AppSidebar({
       </div>
 
       {/* User Profile & Sign Out Footer */}
-      <div className="p-3 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50 shrink-0">
+      <div className="p-2.5 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50 shrink-0">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
             {currentUser.avatar_url ? (
               <img
                 src={currentUser.avatar_url}
                 alt={currentUser.full_name || 'User'}
-                className="h-7.5 w-7.5 rounded-full object-cover border border-zinc-200 dark:border-zinc-700 shrink-0"
+                className="h-7 w-7 rounded-full object-cover border border-zinc-200 dark:border-zinc-700 shrink-0"
               />
             ) : (
-              <div className="flex h-7.5 w-7.5 items-center justify-center rounded-full bg-red-600 text-white font-bold text-2xs shadow-xs shrink-0">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 font-bold text-2xs shrink-0">
                 {(currentUser.full_name || currentUser.email || 'U').substring(0, 2).toUpperCase()}
               </div>
             )}

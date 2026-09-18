@@ -99,7 +99,34 @@
    a sibling of the scene — resolves the same palette (scrim, glow). */
 .ridge-scene,
 .photo-scene,
+.sunset-scene,
 .ridge-hero {
+  /* Sky gradient: rich twilight to fiery sunset gold */
+  --sky-zenith: #120e28;
+  --sky-twilight: #4a154b;
+  --sky-crimson: #9f1239;
+  --sky-amber: #ea580c;
+  --sky-horizon-glow: #fbbf24;
+
+  /* 3D Mountain & Terrain Tones */
+  --peaks-far-top: #581c40;
+  --peaks-far-bot: #291834;
+  --peaks-shadow-facet: #1c142b;
+  --peaks-lit-facet: #e11d48;
+  --sun-rim-highlight: #fed7aa;
+
+  --ridge-mid-top: #1e1b4b;
+  --ridge-mid-bot: #0f172a;
+  --slab-highlight: #f43f5e;
+  --mid-crest-highlight: #fca5a5;
+  --pine-mid-fill: #090e1a;
+
+  --fore-top: #0a0d14;
+  --fore-bot: #030712;
+  --fore-shelf: #05080f;
+  --pine-fore-fill: #020408;
+  --bird-silhouette: #311428;
+
   --sky-top: #f8fafc;
   --sky-mid: #eef2f7;
   --sky-horizon: #e7ecf3;
@@ -135,7 +162,32 @@
 
 .dark .ridge-scene,
 .dark .photo-scene,
+.dark .sunset-scene,
 .dark .ridge-hero {
+  --sky-zenith: #070512;
+  --sky-twilight: #2d0d33;
+  --sky-crimson: #700c28;
+  --sky-amber: #c2410c;
+  --sky-horizon-glow: #d97706;
+
+  --peaks-far-top: #3d142c;
+  --peaks-far-bot: #1b1022;
+  --peaks-shadow-facet: #120b1c;
+  --peaks-lit-facet: #be123c;
+  --sun-rim-highlight: #fb923c;
+
+  --ridge-mid-top: #151336;
+  --ridge-mid-bot: #090d1a;
+  --slab-highlight: #e11d48;
+  --mid-crest-highlight: #f87171;
+  --pine-mid-fill: #05070f;
+
+  --fore-top: #06080d;
+  --fore-bot: #020306;
+  --fore-shelf: #030408;
+  --pine-fore-fill: #010204;
+  --bird-silhouette: #1f0b1a;
+
   --sky-top: #09090b;
   --sky-mid: #0b0e14;
   --sky-horizon: #10131c;
@@ -190,6 +242,40 @@
     calc(var(--scroll-s, var(--scroll, 0)) * var(--lag) * 1px + var(--py, 0) * var(--vdrift, 0.05) * 1px),
     0
   );
+}
+
+.vector-parallax-plane {
+  will-change: transform;
+  transform: translate3d(
+    calc(var(--px, 0) * var(--drift, 0.2) * 1px),
+    calc(var(--py, 0) * var(--vdrift, 0.1) * 1px + var(--scroll-s, 0) * var(--lag, 0) * 1px),
+    0
+  );
+}
+
+.sunset-god-rays {
+  background: conic-gradient(
+    from 225deg at 67% 61%,
+    rgba(254, 240, 138, 0.18) 0deg,
+    transparent 9deg,
+    rgba(251, 146, 60, 0.14) 18deg,
+    transparent 28deg,
+    rgba(254, 240, 138, 0.22) 38deg,
+    transparent 50deg,
+    rgba(251, 146, 60, 0.12) 62deg,
+    transparent 74deg,
+    rgba(254, 240, 138, 0.16) 86deg,
+    transparent 102deg,
+    transparent 360deg
+  );
+  mask-image: radial-gradient(circle at 67% 61%, black 0%, transparent 72%);
+  -webkit-mask-image: radial-gradient(circle at 67% 61%, black 0%, transparent 72%);
+  animation: sunset-rays-breathe 11s ease-in-out infinite alternate;
+}
+
+@keyframes sunset-rays-breathe {
+  from { opacity: 0.55; }
+  to   { opacity: 0.95; }
 }
 
 /* Copy rides its own channel — eases downward as the page scrolls up (a
@@ -332,12 +418,14 @@
   }
   .ridge-parallax,
   .photo-parallax-plane,
+  .vector-parallax-plane,
   .hero-copy-drift {
     transform: none !important;
   }
   .ridge-cloud,
   .ridge-stars,
   .ridge-rays,
+  .sunset-god-rays,
   .ridge-sun-pulse,
   .ridge-window-glow,
   .ridge-bird,

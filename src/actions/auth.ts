@@ -210,9 +210,13 @@ export const completeOnboarding = createAction(
     const now = new Date().toISOString();
 
     const notificationTitle = 'Welcome to Fairview High School Engineering! 🚀';
-    const notificationBody = input.subteam_interest
-      ? `Your profile is complete with interest in ${input.subteam_interest}. Join us in Room 604 on Tuesdays & Thursdays after school!`
-      : 'Your profile is complete. Explore active competitions, submit requests, and RSVP for workshops.';
+    const compCount = input.interested_competition_ids?.length || 0;
+    let notificationBody = 'Your profile is complete. Explore active competitions, submit requests, and RSVP for workshops.';
+    if (input.subteam_interest) {
+      notificationBody = `Your profile is complete with interest in ${input.subteam_interest}. Join us in Room 604 on Tuesdays & Thursdays after school!`;
+    } else if (compCount > 0) {
+      notificationBody = `Your profile is complete with ${input.skills.length} engineering disciplines and interest in ${compCount} upcoming competition${compCount > 1 ? 's' : ''}. Welcome aboard!`;
+    }
 
     if (supabase) {
       try {
@@ -226,6 +230,29 @@ export const completeOnboarding = createAction(
           })
           .eq('id', user.id);
 
+        // Record competition interest signups in Supabase
+        if (input.interested_competition_ids && input.interested_competition_ids.length > 0) {
+          for (const compId of input.interested_competition_ids) {
+            const { data: existing } = await (supabase.from('competition_signups') as any)
+              .select('id')
+              .eq('competition_id', compId)
+              .eq('user_id', user.id)
+              .single();
+
+            if (!existing) {
+              await (supabase.from('competition_signups') as any).insert({
+                id: crypto.randomUUID(),
+                competition_id: compId,
+                user_id: user.id,
+                note: 'Expressed interest during onboarding',
+                status: 'pending',
+                created_at: now,
+                updated_at: now,
+              });
+            }
+          }
+        }
+
         // Insert welcome/update notification into remote Supabase
         await (supabase.from('notifications') as any).insert({
           user_id: user.id,
@@ -236,6 +263,26 @@ export const completeOnboarding = createAction(
         });
       } catch (err) {
         console.error('completeOnboarding Supabase sync error:', err);
+      }
+    }
+
+    // Record signups in mock db
+    if (input.interested_competition_ids && input.interested_competition_ids.length > 0) {
+      for (const compId of input.interested_competition_ids) {
+        const existingSignup = db.competition_signups.find(
+          (s) => s.competition_id === compId && s.user_id === user.id
+        );
+        if (!existingSignup) {
+          db.competition_signups.push({
+            id: crypto.randomUUID(),
+            competition_id: compId,
+            user_id: user.id,
+            note: 'Expressed interest during onboarding',
+            status: 'pending',
+            created_at: now,
+            updated_at: now,
+          });
+        }
       }
     }
 
@@ -278,6 +325,7 @@ export const completeOnboarding = createAction(
     safeRevalidatePath('/', 'layout');
     safeRevalidatePath('/dashboard');
     safeRevalidatePath('/onboarding');
+    safeRevalidatePath('/competitions');
     safeRevalidatePath('/admin/members');
     return { success: true, onboardingCompleted: true };
   }

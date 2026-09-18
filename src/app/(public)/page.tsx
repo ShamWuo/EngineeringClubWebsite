@@ -22,7 +22,7 @@ import {
   HelpCircle,
 } from 'lucide-react';
 import { HeroParallax } from '@/components/landing/hero-parallax';
-import { PhotoScene } from '@/components/landing/photo-scene';
+import { SunsetVectorScene } from '@/components/landing/sunset-vector-scene';
 import { HeroCopy } from '@/components/landing/hero-copy';
 import { CountUp } from '@/components/landing/count-up';
 
@@ -48,68 +48,14 @@ export default function LandingPage() {
 
   return (
     <>
-      {/* Full-bleed Photographic Parallax Hero — motion vars live on the section so
-          scene layers and copy share one parallax source */}
-      <HeroParallax className="ridge-hero relative isolate h-[calc(100svh-4rem)] min-h-[580px] max-h-[920px] overflow-hidden">
-        <PhotoScene />
+      {/* 3D Vector Painting Sunset Hero — expansive sunset sky with curated color harmony */}
+      <HeroParallax className="ridge-hero relative isolate h-screen min-h-[640px] overflow-hidden">
+        <SunsetVectorScene />
         <HeroCopy className="relative z-20" />
       </HeroParallax>
 
-      {/* Floating stats panel — bridges the hero and the content below */}
-      <div className="relative z-30 -mt-12 px-4 sm:px-6 lg:px-8">
-        <section className="max-w-6xl mx-auto rounded-3xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white/85 dark:bg-zinc-900/80 backdrop-blur-xl shadow-xl shadow-zinc-950/5 dark:shadow-black/40 p-5 sm:p-7">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-            <div className="p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-950/40 hover:border-red-500/40 transition-colors">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-2xs font-mono font-bold uppercase tracking-wider text-zinc-500">Challenges</span>
-                <Trophy className="h-4 w-4 text-red-600 dark:text-red-500" />
-              </div>
-              <div className="text-3xl font-black tracking-tight text-zinc-900 dark:text-white">
-                <CountUp to={competitions.length}>{competitions.length}</CountUp>
-              </div>
-              <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Collegiate & High School Leagues</div>
-            </div>
-
-            <div className="p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-950/40 hover:border-red-500/40 transition-colors">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-2xs font-mono font-bold uppercase tracking-wider text-zinc-500">Teams</span>
-                <Users className="h-4 w-4 text-zinc-500" />
-              </div>
-              <div className="text-3xl font-black tracking-tight text-zinc-900 dark:text-white">
-                <CountUp to={teamCount}>{teamCount}</CountUp>
-              </div>
-              <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Active Hardware Squads</div>
-            </div>
-
-            <div className="p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-950/40 hover:border-red-500/40 transition-colors">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-2xs font-mono font-bold uppercase tracking-wider text-zinc-500">Project Grants</span>
-                <DollarSign className="h-4 w-4 text-red-600 dark:text-red-400" />
-              </div>
-              <div className="text-3xl font-black tracking-tight text-zinc-900 dark:text-white">
-                <CountUp to={db.club_settings.budget_ceiling_cents / 100} prefix="$">
-                  ${(db.club_settings.budget_ceiling_cents / 100).toLocaleString()}
-                </CountUp>
-              </div>
-              <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Annual Prototyping Ceiling</div>
-            </div>
-
-            <div className="p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-950/40 hover:border-red-500/40 transition-colors">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-2xs font-mono font-bold uppercase tracking-wider text-zinc-500">Engineers</span>
-                <Cpu className="h-4 w-4 text-zinc-500" />
-              </div>
-              <div className="text-3xl font-black tracking-tight text-zinc-900 dark:text-white">
-                <CountUp to={memberCount}>{memberCount}</CountUp>
-              </div>
-              <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Registered Student Members</div>
-            </div>
-          </div>
-        </section>
-      </div>
-
       {/* Main Page Content */}
-      <div className="pb-12 pt-20 max-w-7xl mx-auto">
+      <div className="pb-16 pt-16 max-w-7xl mx-auto">
         {/* Teams Showcase — light framed panel */}
         <section id="teams" className="space-y-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
