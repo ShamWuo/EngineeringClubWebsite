@@ -73,7 +73,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
       role: (profile?.role as UserRole) ?? 'admin',
       avatar_url: profile?.avatar_url ?? null,
       grad_year: profile?.grad_year ?? 2026,
-      skills: profile?.skills ?? ['Robotics', 'CAD', 'Embedded Systems'],
+      skills: profile?.skills ?? ['Robotics & Mechatronics', 'Computer Engineering'],
       is_active: profile?.is_active ?? true,
       onboarding_completed: profile?.onboarding_completed ?? true,
     };

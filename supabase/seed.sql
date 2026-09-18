@@ -30,10 +30,22 @@ on conflict (id) do nothing;
 -- 4. Workshops
 insert into workshops (id, slug, title, description, instructor_id, instructor_name, status, starts_at, ends_at, location, capacity, skill_level, materials_url, recording_url, created_by)
 values
-  ('50000001-1111-1111-1111-111111111111', 'solidworks-advanced-surfacing', 'Mastering Surface Modeling in SolidWorks', 'Deep dive into complex boundary surfaces, lofts, tangency curvature continuity (G2), and ergonomic handheld enclosures.', null, 'Staff Instructor', 'scheduled', now() + interval '3 days' + interval '2 hours', now() + interval '3 days' + interval '4 hours', 'FHS Makerspace & Zoom', 30, 'Intermediate', 'https://github.com/fhs-engineering/solidworks-workshop', null, null),
-  ('50000002-2222-2222-2222-222222222222', 'kicad-pcb-design-crashcourse', 'From Schematic to 4-Layer PCB in KiCad', 'Learn component footprint selection, differential pair routing, ground planes, impedance matching, and Gerber export.', null, 'Electronics Lead', 'scheduled', now() + interval '7 days' + interval '3 hours', now() + interval '7 days' + interval '5 hours', 'FHS Electronics Lab', 20, 'Beginner to Intermediate', 'https://github.com/fhs-engineering/kicad-templates', null, null),
-  ('50000003-3333-3333-3333-333333333333', 'intro-to-lathe-and-cnc-mill', 'Shop Safety: CNC Mill & Manual Lathe Certification', 'Hands-on safety protocol, feeds & speeds, tooling offset zeroing, and emergency stop operational training.', null, 'Shop Supervisor', 'completed', now() - interval '14 days', now() - interval '14 days' + interval '3 hours', 'FHS Machine Shop', 15, 'All Levels', 'https://fhs-engineering.org/safety-docs', 'https://youtube.com/watch?v=mock-cnc-recording', null)
-on conflict (id) do nothing;
+  ('50000001-1111-1111-1111-111111111111', 'solidworks-advanced-surfacing', 'Mastering Surface Modeling in SolidWorks', 'Deep dive into complex boundary surfaces, lofts, tangency curvature continuity (G2), and ergonomic handheld enclosures.', null, 'Staff Instructor', 'scheduled', date_trunc('day', now()) + interval '5 days' + interval '22 hours', date_trunc('day', now()) + interval '5 days' + interval '24 hours', 'FHS Makerspace Room 604 & Zoom', 30, 'Intermediate', 'https://github.com/fhs-engineering/solidworks-workshop', null, null),
+  ('50000002-2222-2222-2222-222222222222', 'kicad-pcb-design-crashcourse', 'From Schematic to 4-Layer PCB in KiCad', 'Learn component footprint selection, differential pair routing, ground planes, impedance matching, and Gerber export.', null, 'Electronics Lead', 'scheduled', date_trunc('day', now()) + interval '8 days' + interval '21 hours 30 minutes', date_trunc('day', now()) + interval '8 days' + interval '23 hours 30 minutes', 'FHS Electronics Bay 102', 20, 'Beginner to Intermediate', 'https://github.com/fhs-engineering/kicad-templates', null, null),
+  ('50000004-4444-4444-4444-444444444444', 'bambu-3d-printing-certification', 'Bambu Lab X1-Carbon & Markforged Onyx Slicing Clearance', 'Hands-on training for high-temp CF filament slicing, multi-color AMS setup, tolerance tuning, and makerspace print queue clearance.', null, 'Makerspace Lead', 'scheduled', date_trunc('day', now()) + interval '12 days' + interval '22 hours', date_trunc('day', now()) + interval '12 days' + interval '24 hours', 'Room 604 Rapid Prototyping Bay', 25, 'All Levels', 'https://fhs-engineering.org/3dprint-guide', null, null),
+  ('50000005-5555-5555-5555-555555555555', 'frc-swerve-vision-lab', 'FRC 2027 Swerve Drive Kinematics & Vision Targeting Lab', 'Practical tuning of SDS MK4i swerve modules, PID feedback loops, and AprilTag pose estimation with PhotonVision.', null, 'FRC Software Captain', 'scheduled', date_trunc('day', now()) + interval '18 days' + interval '22 hours 30 minutes', date_trunc('day', now()) + interval '18 days' + interval '24 hours 30 minutes', 'Robotics Arena / FHS Shop', 35, 'Advanced', 'https://github.com/fhs-engineering/frc-swerve-2027', null, null),
+  ('50000003-3333-3333-3333-333333333333', 'intro-to-lathe-and-cnc-mill', 'Shop Safety: CNC Mill & Manual Lathe Certification', 'Hands-on safety protocol, feeds & speeds, tooling offset zeroing, and emergency stop operational training.', null, 'Shop Supervisor', 'completed', date_trunc('day', now()) - interval '14 days' + interval '22 hours', date_trunc('day', now()) - interval '14 days' + interval '25 hours', 'FHS Machine Shop', 15, 'All Levels', 'https://fhs-engineering.org/safety-docs', 'https://youtube.com/watch?v=mock-cnc-recording', null)
+on conflict (id) do update set
+  title = excluded.title,
+  description = excluded.description,
+  instructor_name = excluded.instructor_name,
+  status = excluded.status,
+  starts_at = excluded.starts_at,
+  ends_at = excluded.ends_at,
+  location = excluded.location,
+  capacity = excluded.capacity,
+  skill_level = excluded.skill_level,
+  materials_url = excluded.materials_url;
 
 -- 5. Links
 insert into links (id, label, url, description, tier, icon, sort_order, is_active)

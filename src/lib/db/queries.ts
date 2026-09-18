@@ -177,77 +177,152 @@ export async function getNotifications(userId: string): Promise<NotificationRow[
   return data;
 }
 
+export interface MemberDashboardData {
+  teams: {
+    team: TeamRow;
+    comp?: CompetitionRow | null;
+    role: TeamMemberRow['role'];
+    memberCount: number;
+  }[];
+  competitions: CompetitionRow[];
+  workshops: WorkshopRow[];
+  userRsvps: Set<string>;
+  primaryLinks: LinkRow[];
+  allRequests: {
+    kind: string;
+    id: string;
+    title: string;
+    status: string;
+    date: string;
+  }[];
+}
+
 // 7. Member Dashboard Queries
-export async function getMemberDashboardData(userId: string) {
-  const supabase = await createClient();
+export async function getMemberDashboardData(userId: string): Promise<MemberDashboardData> {
+  if (process.env.NODE_ENV === 'test') {
+    const db = getDb();
+    const myTeamMemberships = db.team_members.filter((m) => m.user_id === userId);
+    const teams = myTeamMemberships
+      .map((m) => {
+        const team = db.teams.find((t) => t.id === m.team_id);
+        const comp = team ? db.competitions.find((c) => c.id === team.competition_id) : null;
+        const memberCount = db.team_members.filter((tm) => tm.team_id === m.team_id).length;
+        return {
+          team,
+          comp,
+          role: m.role,
+          memberCount,
+        };
+      })
+      .filter((t): t is { team: TeamRow; comp: CompetitionRow | null; role: TeamMemberRow['role']; memberCount: number } => Boolean(t.team));
 
-  const [
-    { data: teamMemberships },
-    { data: competitions },
-    { data: workshops },
-    { data: userRsvps },
-    { data: links },
-    { data: teamReqs },
-    { data: compReqs },
-    { data: workshopReqs },
-    { data: fundingReqs },
-    { data: genReqs },
-  ] = await Promise.all([
-    (supabase.from('team_members') as any)
-      .select('*, teams(*, competitions(*))')
-      .eq('user_id', userId),
-    (supabase.from('competitions') as any)
-      .select('*')
-      .order('created_at', { ascending: false }),
-    (supabase.from('workshops') as any)
-      .select('*')
-      .order('starts_at', { ascending: true }),
-    (supabase.from('workshop_rsvps') as any)
-      .select('*')
-      .eq('user_id', userId),
-    (supabase.from('links') as any)
-      .select('*')
-      .eq('is_active', true)
-      .order('sort_order', { ascending: true }),
-    (supabase.from('team_requests') as any)
-      .select('*')
-      .eq('requested_by', userId),
-    (supabase.from('competition_requests') as any)
-      .select('*')
-      .eq('requested_by', userId),
-    (supabase.from('workshop_requests') as any)
-      .select('*')
-      .eq('requested_by', userId),
-    (supabase.from('funding_requests') as any)
-      .select('*')
-      .eq('requested_by', userId),
-    (supabase.from('general_requests') as any)
-      .select('*')
-      .eq('requested_by', userId),
-  ]);
+    const myTeamReqs = db.team_requests.filter((r) => r.requested_by === userId);
+    const myCompReqs = db.competition_requests.filter((r) => r.requested_by === userId);
+    const myWorkshopReqs = db.workshop_requests.filter((r) => r.requested_by === userId);
+    const myFundingReqs = db.funding_requests.filter((r) => r.requested_by === userId);
+    const myGenReqs = (db.general_requests || []).filter((r) => r.requested_by === userId);
 
-  const teams = (teamMemberships || []).map((m: any) => ({
-    team: m.teams,
-    comp: m.teams?.competitions,
-    role: m.role,
-  }));
+    const allRequests = [
+      ...myTeamReqs.map((r) => ({ kind: 'team', id: r.id, title: r.proposed_name, status: r.status, date: r.created_at })),
+      ...myCompReqs.map((r) => ({ kind: 'competition', id: r.id, title: r.name, status: r.status, date: r.created_at })),
+      ...myWorkshopReqs.map((r) => ({ kind: 'workshop', id: r.id, title: r.topic, status: r.status, date: r.created_at })),
+      ...myFundingReqs.map((r) => ({ kind: 'funding', id: r.id, title: r.title, status: r.status, date: r.created_at })),
+      ...myGenReqs.map((r) => ({ kind: 'general', id: r.id, title: r.title, status: r.status, date: r.created_at })),
+    ].sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-  const allRequests = [
-    ...(teamReqs || []).map((r: any) => ({ kind: 'team', id: r.id, title: r.proposed_name, status: r.status, date: r.created_at })),
-    ...(compReqs || []).map((r: any) => ({ kind: 'competition', id: r.id, title: r.name, status: r.status, date: r.created_at })),
-    ...(workshopReqs || []).map((r: any) => ({ kind: 'workshop', id: r.id, title: r.topic, status: r.status, date: r.created_at })),
-    ...(fundingReqs || []).map((r: any) => ({ kind: 'funding', id: r.id, title: r.title, status: r.status, date: r.created_at })),
-    ...(genReqs || []).map((r: any) => ({ kind: 'general', id: r.id, title: r.title, status: r.status, date: r.created_at })),
-  ].sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    return {
+      teams,
+      competitions: db.competitions || [],
+      workshops: db.workshops || [],
+      userRsvps: new Set<string>(),
+      primaryLinks: (db.links || []).filter((l) => l.tier === 'primary'),
+      allRequests,
+    };
+  }
 
-  return {
-    teams,
-    competitions: competitions || [],
-    workshops: workshops || [],
-    userRsvps: new Set((userRsvps || []).map((r: any) => r.workshop_id)),
-    primaryLinks: (links || []).filter((l: any) => l.tier === 'primary'),
-    allRequests,
-  };
+  try {
+    const supabase = await createClient();
+
+    const [
+      { data: teamMemberships },
+      { data: competitions },
+      { data: workshops },
+      { data: userRsvps },
+      { data: links },
+      { data: teamReqs },
+      { data: compReqs },
+      { data: workshopReqs },
+      { data: fundingReqs },
+      { data: genReqs },
+    ] = await Promise.all([
+      (supabase.from('team_members') as any)
+        .select('*, teams(*, competitions(*), team_members(user_id))')
+        .eq('user_id', userId),
+      (supabase.from('competitions') as any)
+        .select('*')
+        .order('created_at', { ascending: false }),
+      (supabase.from('workshops') as any)
+        .select('*')
+        .order('starts_at', { ascending: true }),
+      (supabase.from('workshop_rsvps') as any)
+        .select('*')
+        .eq('user_id', userId),
+      (supabase.from('links') as any)
+        .select('*')
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true }),
+      (supabase.from('team_requests') as any)
+        .select('*')
+        .eq('requested_by', userId),
+      (supabase.from('competition_requests') as any)
+        .select('*')
+        .eq('requested_by', userId),
+      (supabase.from('workshop_requests') as any)
+        .select('*')
+        .eq('requested_by', userId),
+      (supabase.from('funding_requests') as any)
+        .select('*')
+        .eq('requested_by', userId),
+      (supabase.from('general_requests') as any)
+        .select('*')
+        .eq('requested_by', userId),
+    ]);
+
+    const teams = (teamMemberships || []).map((m: any) => ({
+      team: m.teams,
+      comp: m.teams?.competitions,
+      role: m.role,
+      memberCount: m.teams?.team_members?.length || 1,
+    }));
+
+    const allRequests = [
+      ...(teamReqs || []).map((r: any) => ({ kind: 'team', id: r.id, title: r.proposed_name, status: r.status, date: r.created_at })),
+      ...(compReqs || []).map((r: any) => ({ kind: 'competition', id: r.id, title: r.name, status: r.status, date: r.created_at })),
+      ...(workshopReqs || []).map((r: any) => ({ kind: 'workshop', id: r.id, title: r.topic, status: r.status, date: r.created_at })),
+      ...(fundingReqs || []).map((r: any) => ({ kind: 'funding', id: r.id, title: r.title, status: r.status, date: r.created_at })),
+      ...(genReqs || []).map((r: any) => ({ kind: 'general', id: r.id, title: r.title, status: r.status, date: r.created_at })),
+    ].sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+    return {
+      teams,
+      competitions: competitions || [],
+      workshops: workshops || [],
+      userRsvps: new Set((userRsvps || []).map((r: any) => r.workshop_id)),
+      primaryLinks: (links || []).filter((l: any) => l.tier === 'primary'),
+      allRequests,
+    };
+  } catch (err) {
+    console.error('getMemberDashboardData error:', err);
+    const db = getDb();
+    return {
+      teams: [],
+      competitions: db.competitions || [],
+      workshops: db.workshops || [],
+      userRsvps: new Set<string>(),
+      primaryLinks: (db.links || []).filter((l) => l.tier === 'primary'),
+      allRequests: [],
+    };
+  }
 }
 
 // 8. User Requests Page

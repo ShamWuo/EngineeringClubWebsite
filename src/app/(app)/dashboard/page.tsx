@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { requireUser } from '@/lib/auth/require-role';
-import { getDb } from '@/lib/db/mock-data';
+import { getMemberDashboardData } from '@/lib/db/queries';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -24,41 +24,12 @@ import {
 
 export default async function DashboardPage() {
   const user = await requireUser();
-  const db = getDb();
-
-  // 1. My Teams
-  const myTeamMemberships = db.team_members.filter((m) => m.user_id === user.id);
-  const myTeams = myTeamMemberships
-    .map((m) => {
-      const team = db.teams.find((t) => t.id === m.team_id);
-      const comp = team ? db.competitions.find((c) => c.id === team.competition_id) : null;
-      const memberCount = db.team_members.filter((tm) => tm.team_id === m.team_id).length;
-      return {
-        team,
-        comp,
-        role: m.role,
-        memberCount,
-      };
-    })
-    .filter((t) => t.team !== undefined);
-
-  // 2. Competitions (for Timeline & Calendar)
-  const competitions = db.competitions;
-
-  // 3. My Open Requests
-  const myTeamReqs = db.team_requests.filter((r) => r.requested_by === user.id);
-  const myCompReqs = db.competition_requests.filter((r) => r.requested_by === user.id);
-  const myWorkshopReqs = db.workshop_requests.filter((r) => r.requested_by === user.id);
-  const myFundingReqs = db.funding_requests.filter((r) => r.requested_by === user.id);
-  const myGenReqs = (db.general_requests || []).filter((r) => r.requested_by === user.id);
-
-  const allMyRequests = [
-    ...myTeamReqs.map((r) => ({ kind: 'team', id: r.id, title: r.proposed_name, status: r.status, date: r.created_at })),
-    ...myCompReqs.map((r) => ({ kind: 'competition', id: r.id, title: r.name, status: r.status, date: r.created_at })),
-    ...myWorkshopReqs.map((r) => ({ kind: 'workshop', id: r.id, title: r.topic, status: r.status, date: r.created_at })),
-    ...myFundingReqs.map((r) => ({ kind: 'funding', id: r.id, title: r.title, status: r.status, date: r.created_at })),
-    ...myGenReqs.map((r) => ({ kind: 'general', id: r.id, title: r.title, status: r.status, date: r.created_at })),
-  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  const {
+    teams: myTeams,
+    competitions,
+    workshops,
+    allRequests: allMyRequests,
+  } = await getMemberDashboardData(user.id);
 
   return (
     <div className="w-full space-y-8 pb-12">
@@ -212,7 +183,7 @@ export default async function DashboardPage() {
         {/* Right Column (Upcoming Events, Requests Tracker, Quick Action) */}
         <div className="lg:col-span-5 xl:col-span-4 space-y-8 min-w-0">
           {/* Upcoming Events List */}
-          <UpcomingEventsList competitions={competitions} />
+          <UpcomingEventsList competitions={competitions} workshops={workshops} />
 
           {/* My Open Requests Tracker */}
           <section className="space-y-4">

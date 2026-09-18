@@ -98,6 +98,7 @@
 /* Vars live on the hero section (.ridge-hero) AND the scene so the copy —
    a sibling of the scene — resolves the same palette (scrim, glow). */
 .ridge-scene,
+.photo-scene,
 .ridge-hero {
   --sky-top: #f8fafc;
   --sky-mid: #eef2f7;
@@ -133,7 +134,7 @@
 }
 
 .dark .ridge-scene,
-.dark .ridge-scene,
+.dark .photo-scene,
 .dark .ridge-hero {
   --sky-top: #09090b;
   --sky-mid: #0b0e14;
@@ -178,6 +179,15 @@
   transform: translate3d(
     calc(var(--px, 0) * var(--drift) * 1px),
     calc(var(--scroll-s, var(--scroll, 0)) * var(--lag) * 1px),
+    0
+  );
+}
+
+.photo-parallax-plane {
+  will-change: transform;
+  transform: translate3d(
+    calc(var(--px, 0) * var(--drift) * 1px),
+    calc(var(--scroll-s, var(--scroll, 0)) * var(--lag) * 1px + var(--py, 0) * var(--vdrift, 0.05) * 1px),
     0
   );
 }
@@ -321,6 +331,7 @@
     animation: ridge-fade 400ms ease-out both !important;
   }
   .ridge-parallax,
+  .photo-parallax-plane,
   .hero-copy-drift {
     transform: none !important;
   }

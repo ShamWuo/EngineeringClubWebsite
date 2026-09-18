@@ -22,7 +22,7 @@ import {
   HelpCircle,
 } from 'lucide-react';
 import { HeroParallax } from '@/components/landing/hero-parallax';
-import { RidgeScene } from '@/components/landing/ridge-scene';
+import { PhotoScene } from '@/components/landing/photo-scene';
 import { HeroCopy } from '@/components/landing/hero-copy';
 import { CountUp } from '@/components/landing/count-up';
 
@@ -48,10 +48,10 @@ export default function LandingPage() {
 
   return (
     <>
-      {/* Full-bleed Vector Ridge Hero — motion vars live on the section so
+      {/* Full-bleed Photographic Parallax Hero — motion vars live on the section so
           scene layers and copy share one parallax source */}
       <HeroParallax className="ridge-hero relative isolate h-[calc(100svh-4rem)] min-h-[580px] max-h-[920px] overflow-hidden">
-        <RidgeScene />
+        <PhotoScene />
         <HeroCopy className="relative z-20" />
       </HeroParallax>
 

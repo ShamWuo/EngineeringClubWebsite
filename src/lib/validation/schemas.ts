@@ -18,6 +18,7 @@ export const onboardingSchema = z.object({
   skills: z.array(z.string().trim().min(1)).min(1, 'Please select at least one engineering discipline or interest'),
   subteam_interest: z.string().optional().nullable(),
   safety_pledge: z.boolean().optional().nullable(),
+  interested_competition_ids: z.array(z.string().uuid()).optional(),
 });
 
 export const competitionSchema = z.object({
