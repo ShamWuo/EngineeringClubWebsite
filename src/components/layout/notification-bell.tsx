@@ -58,7 +58,7 @@ export function NotificationBell({ notifications }: { notifications: Notificatio
                   Notifications
                 </span>
                 {unreadCount > 0 && (
-                  <span className="text-2xs bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300 font-bold px-1.5 py-0.5 rounded-full border border-red-200 dark:border-red-900">
+                  <span className="text-2xs bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100 font-bold px-1.5 py-0.5 rounded-md border border-red-200 dark:border-red-800">
                     {unreadCount} new
                   </span>
                 )}

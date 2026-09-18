@@ -36,7 +36,7 @@ export default async function CompetitionsPage({
             Engineering Competitions
           </h1>
           <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-            Browse active high school engineering challenges, join subteams, or propose a new competition.
+            Browse active high school engineering challenges, join teams, or propose a new competition.
           </p>
         </div>
 
@@ -121,7 +121,7 @@ export default async function CompetitionsPage({
               <CardFooter className="pt-2 border-t border-zinc-100 dark:border-zinc-800 flex justify-between items-center gap-2">
                 <Link href={`/competitions/${comp.slug}`} className="w-full">
                   <Button size="sm" className="w-full text-xs font-bold gap-1 bg-red-600 hover:bg-red-700 text-white">
-                    View Subteams & Roster
+                    View Teams & Roster
                     <ArrowRight className="h-3.5 w-3.5" />
                   </Button>
                 </Link>

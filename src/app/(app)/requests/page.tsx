@@ -103,7 +103,7 @@ export default async function RequestsPage() {
         };
       case 'team':
         return {
-          label: 'Subteam',
+          label: 'Team',
           icon: Users,
           bg: 'bg-red-50 text-red-700 border-red-200 dark:bg-red-950/60 dark:text-red-400 dark:border-red-800',
         };
@@ -131,25 +131,21 @@ export default async function RequestsPage() {
   return (
     <div className="space-y-8 max-w-6xl mx-auto pb-12">
       {/* Header Banner */}
-      <div className="relative rounded-2xl overflow-hidden border border-zinc-200/90 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/90 shadow-sm p-6 sm:p-8 backdrop-blur-xl">
-        <div className="absolute inset-0 bg-grid-pattern opacity-30 pointer-events-none" />
-        <div className="absolute -top-12 -right-12 w-64 h-64 bg-red-600/10 dark:bg-red-600/15 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 sm:p-8 shadow-xs">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-red-50 dark:bg-red-950/80 border border-red-200 dark:border-red-900/60 text-red-700 dark:text-red-400 text-2xs font-mono font-bold">
-              <span className="h-1.5 w-1.5 rounded-full bg-red-600 animate-pulse" />
+            <div className="inline-flex items-center px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 text-2xs font-mono font-bold">
               <span>ENGINEERING CLUB HUB</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-zinc-900 dark:text-white">
               Request Center
             </h1>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-xl leading-relaxed">
-              Propose new competitions, request hardware funding, form subteams, suggest workshops, or request lab equipment access.
+              Propose new competitions, request hardware funding, form teams, suggest workshops, or request lab equipment access.
             </p>
           </div>
           <Link href="/requests/new">
-            <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white font-bold gap-2 text-xs shadow-sm shadow-red-950/20 cursor-pointer h-9 px-4">
+            <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white font-bold gap-2 text-xs shadow-xs cursor-pointer h-9 px-4">
               <Plus className="h-4 w-4" />
               <span>New Request</span>
             </Button>
@@ -189,7 +185,7 @@ export default async function RequestsPage() {
               <Users className="h-5 w-5" />
             </div>
             <div>
-              <div className="font-bold text-xs text-zinc-800 dark:text-zinc-200 group-hover:text-red-600 dark:group-hover:text-red-400">Subteam</div>
+              <div className="font-bold text-xs text-zinc-800 dark:text-zinc-200 group-hover:text-red-600 dark:group-hover:text-red-400">Team</div>
               <div className="text-3xs text-zinc-500 dark:text-zinc-400">Recruit & build</div>
             </div>
           </div>

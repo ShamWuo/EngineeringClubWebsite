@@ -139,7 +139,7 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
             needs_funding: teamNeedsFunding,
           });
           if (!res.ok) throw new Error(res.error);
-          setSuccess('Subteam proposal submitted to officers!');
+          setSuccess('Team proposal submitted to officers!');
         } else if (activeType === 'workshop') {
           const res = await submitWorkshopRequest({
             topic: workshopTopic.trim(),
@@ -151,9 +151,9 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
           setSuccess('Workshop proposal submitted!');
         } else if (activeType === 'general') {
           const res = await submitGeneralRequest({
-            title: genTitle,
+            title: genTitle.trim(),
             category: genCategory,
-            description: genDescription,
+            description: genDescription.trim(),
             urgency: genUrgency,
           });
           if (!res.ok) throw new Error(res.error);
@@ -164,7 +164,7 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
           router.push('/requests');
         }, 800);
       } catch (err: any) {
-        setError(err?.message || 'Failed to submit request.');
+        setError(err.message || 'An unexpected error occurred. Please try again.');
       }
     });
   };
@@ -172,7 +172,7 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
   return (
     <div className="space-y-6">
       {/* Category Tabs */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 p-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 p-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900/60">
         <button
           type="button"
           onClick={() => { setActiveType('competition'); setError(null); }}
@@ -196,7 +196,7 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
           }`}
         >
           <DollarSign className="h-4 w-4" />
-          <span>Funding / Parts</span>
+          <span>Funding</span>
         </button>
 
         <button
@@ -209,7 +209,7 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
           }`}
         >
           <Users className="h-4 w-4" />
-          <span>Subteam</span>
+          <span>Team</span>
         </button>
 
         <button
@@ -245,14 +245,14 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
             <CardTitle className="text-base font-bold text-zinc-900 dark:text-white flex items-center gap-2">
               {activeType === 'competition' && <>🏆 Propose a New Competition</>}
               {activeType === 'funding' && <>💰 Procurement & Funding Request</>}
-              {activeType === 'team' && <>👥 Form a New Competition Subteam</>}
+              {activeType === 'team' && <>👥 Form a New Competition Team</>}
               {activeType === 'workshop' && <>💡 Propose a Technical Workshop</>}
               {activeType === 'general' && <>🛠️ Equipment, Tools & General Request</>}
             </CardTitle>
             <CardDescription className="text-xs text-zinc-500 dark:text-zinc-400">
               {activeType === 'competition' && 'Submit an engineering competition for club registration, backing, and travel funding.'}
               {activeType === 'funding' && 'Itemize components, sensors, raw stock, or tooling needed for team milestones.'}
-              {activeType === 'team' && 'Request an official subteam roster under an active club competition.'}
+              {activeType === 'team' && 'Request an official team roster under an active club competition.'}
               {activeType === 'workshop' && 'Suggest a hands-on session or volunteer to instruct fellow engineering members.'}
               {activeType === 'general' && 'Request special lab machine time, sponsorships, software licenses, or custom club support.'}
             </CardDescription>
@@ -382,7 +382,7 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-                      Associated Subteam
+                      Associated Team
                     </label>
                     <select
                       value={fundTeamId}
@@ -555,7 +555,7 @@ export function UniversalRequestForm({ competitions, teams }: UniversalRequestFo
                     className="h-4 w-4 rounded border-zinc-300 dark:border-zinc-700 text-red-600 focus:ring-red-600"
                   />
                   <label htmlFor="needsFunding" className="text-xs text-zinc-700 dark:text-zinc-300 cursor-pointer">
-                    This subteam will require dedicated club procurement funding this season
+                    This team will require dedicated club procurement funding this season
                   </label>
                 </div>
               </div>

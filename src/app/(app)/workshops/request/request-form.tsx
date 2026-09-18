@@ -75,7 +75,7 @@ export function WorkshopRequestForm() {
             <Textarea
               required
               rows={3}
-              placeholder="Explain how this skill helps active subteams or general career engineering growth..."
+              placeholder="Explain how this skill helps active teams or general career engineering growth..."
               value={rationale}
               onChange={(e) => setRationale(e.target.value)}
             />

@@ -77,68 +77,89 @@ export default async function WorkshopsPage() {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {upcoming.map((w) => {
-            const rsvpCount = rsvpCountMap.get(w.id) || 0;
-            const isRsvped = myRsvps.has(w.id);
+        {upcoming.length === 0 ? (
+          <div className="p-8 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-center space-y-3 shadow-2xs">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 mx-auto">
+              <CalendarCheck className="h-6 w-6" />
+            </div>
+            <div className="space-y-1">
+              <h3 className="font-bold text-sm text-zinc-900 dark:text-white">
+                No Workshops Currently Scheduled
+              </h3>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-md mx-auto">
+                We'll add upcoming technical masterclasses and machine certification workshops soon. Have a topic you want to learn or teach?
+              </p>
+            </div>
+            <Link href="/requests/new?type=workshop">
+              <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white font-bold text-xs">
+                Request / Propose a Workshop
+              </Button>
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {upcoming.map((w) => {
+              const rsvpCount = rsvpCountMap.get(w.id) || 0;
+              const isRsvped = myRsvps.has(w.id);
 
-            return (
-              <Card key={w.id} className="flex flex-col justify-between hover:border-zinc-300 dark:hover:border-zinc-700 bg-white dark:bg-zinc-900/80 border-zinc-200/90 dark:border-zinc-800 shadow-xs hover:shadow-md transition-all border-l-4 border-l-red-600 rounded-2xl">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between gap-2 mb-1.5">
-                    <Badge variant="info" className="text-3xs font-semibold">
-                      {w.skill_level || 'All Levels'}
-                    </Badge>
-                    <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
-                      {rsvpCount} / {w.capacity || '∞'} RSVPs
-                    </span>
-                  </div>
-                  <CardTitle className="text-lg font-bold line-clamp-1 leading-snug text-zinc-900 dark:text-white">
-                    {w.title}
-                  </CardTitle>
-                  <CardDescription className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2 mt-1 leading-relaxed">
-                    {w.description}
-                  </CardDescription>
-                </CardHeader>
-
-                <CardContent className="pt-0 space-y-2 text-xs text-zinc-600 dark:text-zinc-400">
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 py-2 border-t border-zinc-100 dark:border-zinc-800">
-                    {w.starts_at && (
-                      <span className="flex items-center gap-1 font-medium text-zinc-900 dark:text-zinc-200">
-                        <Clock className="h-3.5 w-3.5 text-red-600 dark:text-red-500" />
-                        {new Date(w.starts_at).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })} • {new Date(w.starts_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              return (
+                <Card key={w.id} className="flex flex-col justify-between hover:border-zinc-300 dark:hover:border-zinc-700 bg-white dark:bg-zinc-900/80 border-zinc-200/90 dark:border-zinc-800 shadow-xs hover:shadow-md transition-all border-l-4 border-l-red-600 rounded-2xl">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between gap-2 mb-1.5">
+                      <Badge variant="info" className="text-3xs font-semibold">
+                        {w.skill_level || 'All Levels'}
+                      </Badge>
+                      <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
+                        {rsvpCount} / {w.capacity || '∞'} RSVPs
                       </span>
-                    )}
-                    {w.location && (
-                      <span className="flex items-center gap-1">
-                        <MapPin className="h-3.5 w-3.5 text-zinc-400" />
-                        {w.location}
-                      </span>
-                    )}
-                  </div>
-                  {w.instructor_name && (
-                    <div className="text-2xs text-zinc-500">
-                      Instructor: <strong className="font-semibold text-zinc-700 dark:text-zinc-300">{w.instructor_name}</strong>
                     </div>
-                  )}
-                </CardContent>
+                    <CardTitle className="text-lg font-bold line-clamp-1 leading-snug text-zinc-900 dark:text-white">
+                      {w.title}
+                    </CardTitle>
+                    <CardDescription className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2 mt-1 leading-relaxed">
+                      {w.description}
+                    </CardDescription>
+                  </CardHeader>
 
-                <CardFooter className="pt-2 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-3">
-                  <Link href={`/workshops/${w.slug}`}>
-                    <Button variant="ghost" size="sm" className="text-xs text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white">
-                      Details & Syllabus →
-                    </Button>
-                  </Link>
-                  <WorkshopRsvpButton
-                    workshopId={w.id}
-                    isRsvped={isRsvped}
-                    isFull={w.capacity ? rsvpCount >= w.capacity : false}
-                  />
-                </CardFooter>
-              </Card>
-            );
-          })}
-        </div>
+                  <CardContent className="pt-0 space-y-2 text-xs text-zinc-600 dark:text-zinc-400">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 py-2 border-t border-zinc-100 dark:border-zinc-800">
+                      {w.starts_at && (
+                        <span className="flex items-center gap-1 font-medium text-zinc-900 dark:text-zinc-200">
+                          <Clock className="h-3.5 w-3.5 text-red-600 dark:text-red-500" />
+                          {new Date(w.starts_at).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })} • {new Date(w.starts_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      )}
+                      {w.location && (
+                        <span className="flex items-center gap-1">
+                          <MapPin className="h-3.5 w-3.5 text-zinc-400" />
+                          {w.location}
+                        </span>
+                      )}
+                    </div>
+                    {w.instructor_name && (
+                      <div className="text-2xs text-zinc-500">
+                        Instructor: <strong className="font-semibold text-zinc-700 dark:text-zinc-300">{w.instructor_name}</strong>
+                      </div>
+                    )}
+                  </CardContent>
+
+                  <CardFooter className="pt-2 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-3">
+                    <Link href={`/workshops/${w.slug}`}>
+                      <Button variant="ghost" size="sm" className="text-xs text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white">
+                        Details & Syllabus →
+                      </Button>
+                    </Link>
+                    <WorkshopRsvpButton
+                      workshopId={w.id}
+                      isRsvped={isRsvped}
+                      isFull={w.capacity ? rsvpCount >= w.capacity : false}
+                    />
+                  </CardFooter>
+                </Card>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       {/* Past Workshops & Materials Archive */}

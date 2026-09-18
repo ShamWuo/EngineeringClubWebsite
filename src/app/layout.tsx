@@ -5,7 +5,7 @@ import { ThemeProvider } from '@/components/theme/theme-provider';
 export const metadata: Metadata = {
   title: 'Fairview High School Engineering Club | FHS Knights',
   description:
-    'Members portal for Fairview High School engineering competitions, subteams, workshops, and request center.',
+    'Members portal for Fairview High School engineering competitions, teams, workshops, and request center.',
   icons: {
     icon: [
       { url: '/icon.png', type: 'image/png' },

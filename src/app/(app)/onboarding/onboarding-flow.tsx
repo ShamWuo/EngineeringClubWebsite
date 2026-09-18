@@ -117,13 +117,13 @@ export function OnboardingFlow({ currentUser, isRedo = false }: OnboardingFlowPr
       {/* Top Banner & Stepper Indicator */}
       <div className="text-center space-y-3">
         {isRedo ? (
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 dark:bg-red-950/80 border border-red-200 dark:border-red-900/60 text-red-700 dark:text-red-400 text-xs font-mono font-bold">
-            <ShieldAlert className="h-3.5 w-3.5 text-red-600 dark:text-red-400 animate-pulse" />
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-200 text-xs font-mono font-bold">
+            <ShieldAlert className="h-3.5 w-3.5 text-red-600 dark:text-red-400" />
             <span>ADMINISTRATOR RE-ORIENTATION</span>
           </div>
         ) : (
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 dark:bg-red-950/80 border border-red-200 dark:border-red-900/60 text-red-700 dark:text-red-400 text-xs font-mono font-bold">
-            <Sparkles className="h-3.5 w-3.5 text-red-600 dark:text-red-400 animate-pulse" />
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-200 text-xs font-mono font-bold">
+            <Sparkles className="h-3.5 w-3.5 text-red-600 dark:text-red-400" />
             <span>FIRST-TIME MEMBER ORIENTATION</span>
           </div>
         )}

@@ -10,7 +10,7 @@ export function PublicNav() {
   const links = [
     { href: "/competitions", label: "Competitions", icon: Trophy },
     { href: "/workshops", label: "Workshops", icon: CalendarCheck },
-    { href: "/#subteams", label: "Subteams", icon: Users },
+    { href: "/#teams", label: "Teams", icon: Users },
     { href: "/#how-it-works", label: "How It Works", icon: Wrench },
     { href: "/#makerspace", label: "Makerspace", icon: Wrench },
     { href: "/#faq", label: "FAQ", icon: HelpCircle },

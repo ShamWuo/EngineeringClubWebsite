@@ -52,10 +52,10 @@ export function HeroCopy({ className }: { className?: string }) {
               <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
-          <a href="#subteams" className="w-full sm:w-auto">
-            <Button variant="outline" size="lg" className="w-full sm:w-auto gap-2 font-semibold text-xs backdrop-blur-md bg-white/80 dark:bg-zinc-900/80 border-zinc-300 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-600 h-10 px-5">
+          <a href="#teams" className="w-full sm:w-auto">
+            <Button variant="outline" size="lg" className="w-full sm:w-auto gap-2 font-semibold text-xs bg-white dark:bg-zinc-900 border-zinc-300 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-600 h-10 px-5">
               <Users className="h-4 w-4 text-red-600 dark:text-red-400" />
-              <span>Explore Subteams</span>
+              <span>Explore Teams</span>
             </Button>
           </a>
           <Link href="/competitions" className="w-full sm:w-auto">

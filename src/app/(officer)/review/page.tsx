@@ -106,18 +106,18 @@ export default async function OfficerReviewQueuePage({
             )}
           </div>
           <p className="text-xs text-zinc-500 dark:text-zinc-400">
-            Review and decide proposals across competitions, subteams, workshops, hardware funding, and lab equipment access.
+            Review and decide proposals across competitions, teams, workshops, hardware funding, and lab equipment access.
           </p>
         </div>
       </div>
 
-      {/* Kind Tabs with Pending Badges */}
+      {/* Tabs */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-zinc-200 dark:border-zinc-800">
         {[
           { id: 'all', label: 'All Requests', count: totalPending },
           { id: 'competition', label: 'Competitions', count: pendingCompCount },
           { id: 'funding', label: 'Funding', count: pendingFundingCount },
-          { id: 'team', label: 'Subteams', count: pendingTeamCount },
+          { id: 'team', label: 'Teams', count: pendingTeamCount },
           { id: 'workshop', label: 'Workshops', count: pendingWorkshopCount },
           { id: 'general', label: 'Equipment / Other', count: pendingGeneralCount },
         ].map((tab) => (

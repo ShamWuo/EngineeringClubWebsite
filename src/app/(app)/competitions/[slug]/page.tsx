@@ -102,12 +102,12 @@ export default async function CompetitionDetailPage({
             </CardContent>
           </Card>
 
-          {/* Subteams section */}
+          {/* Teams section */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
                 <Users className="h-5 w-5 text-red-600 dark:text-red-500" />
-                Active Subteams ({teams.length})
+                Active Teams ({teams.length})
               </h2>
               <Link href={`/requests/new?type=team`}>
                 <Button variant="ghost" size="sm" className="text-xs gap-1 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300">
@@ -118,7 +118,7 @@ export default async function CompetitionDetailPage({
 
             {teams.length === 0 ? (
               <EmptyState
-                title="No Subteams Formed Yet"
+                title="No Teams Formed Yet"
                 description="Be the first to submit a team proposal for this competition challenge in the Request Center."
                 actionHref={`/requests/new?type=team`}
                 actionLabel="Submit Team Request"
@@ -173,7 +173,7 @@ export default async function CompetitionDetailPage({
                 Member Interest Registration
               </CardTitle>
               <CardDescription className="text-xs text-zinc-600 dark:text-zinc-400">
-                Express interest in this competition before joining or forming a specific subteam.
+                Express interest in this competition before joining or forming a specific team.
               </CardDescription>
             </CardHeader>
             <CardContent>

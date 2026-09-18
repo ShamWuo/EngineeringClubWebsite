@@ -99,8 +99,8 @@ export default async function PublicLayout({ children }: { children: React.React
                   </Link>
                 </li>
                 <li>
-                  <a href="#subteams" className="hover:text-red-600 dark:hover:text-red-400 transition-colors">
-                    Robotics & Race Subteams
+                  <a href="#teams" className="hover:text-red-600 dark:hover:text-red-400 transition-colors">
+                    Robotics & Race Teams
                   </a>
                 </li>
                 <li>

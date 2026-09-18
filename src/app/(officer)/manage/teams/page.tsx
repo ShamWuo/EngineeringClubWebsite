@@ -28,7 +28,7 @@ export default async function ManageTeamsPage() {
           Manage Team Rosters & Leads
         </h1>
         <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-          Review subteam rosters, assign Team Leads (enforced 1 lead per team), and add or remove members.
+          Review team rosters, assign Team Leads (enforced 1 lead per team), and add or remove members.
         </p>
       </div>
 

@@ -70,7 +70,7 @@ export default function LandingPage() {
 
             <div className="p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-950/40 hover:border-red-500/40 transition-colors">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-2xs font-mono font-bold uppercase tracking-wider text-zinc-500">Subteams</span>
+                <span className="text-2xs font-mono font-bold uppercase tracking-wider text-zinc-500">Teams</span>
                 <Users className="h-4 w-4 text-zinc-500" />
               </div>
               <div className="text-3xl font-black tracking-tight text-zinc-900 dark:text-white">
@@ -108,8 +108,8 @@ export default function LandingPage() {
 
       {/* Main Page Content */}
       <div className="pb-12 pt-20 max-w-7xl mx-auto">
-        {/* Subteams Showcase — light framed panel */}
-        <section id="subteams" className="space-y-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        {/* Teams Showcase — light framed panel */}
+        <section id="teams" className="space-y-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
             <div>
               <div className="inline-flex items-center gap-1.5 text-2xs font-mono font-bold uppercase tracking-widest text-red-600 dark:text-red-400 mb-1">
@@ -120,7 +120,7 @@ export default function LandingPage() {
                 Fairview Engineering Squads
               </h2>
               <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 max-w-2xl">
-                Join a specialized discipline subteam or recruit peers to establish a new competitive squad.
+                Join a specialized discipline team or recruit peers to establish a new competitive squad.
               </p>
             </div>
             <Link href="/requests/new?type=team">
@@ -141,15 +141,14 @@ export default function LandingPage() {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-3xs font-mono font-bold text-zinc-600 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded">
-                        {t.competition?.name || 'Independent Subteam'}
+                        {t.competition?.name || 'Independent Team'}
                       </span>
                       {t.is_recruiting ? (
-                        <span className="inline-flex items-center gap-1 text-3xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/70 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="inline-flex items-center text-3xs font-semibold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800">
                           Recruiting
                         </span>
                       ) : (
-                        <span className="text-3xs font-semibold px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
+                        <span className="text-3xs font-semibold px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">
                           Roster Locked
                         </span>
                       )}
@@ -505,8 +504,8 @@ export default function LandingPage() {
           <div className="absolute inset-0 bg-grid-pattern opacity-30 dark:opacity-15 pointer-events-none" />
           <div className="absolute top-0 right-0 h-64 w-64 rounded-full bg-red-500/10 dark:bg-red-600/15 blur-3xl pointer-events-none" />
           <div className="relative z-10 space-y-4 max-w-2xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 border border-red-200 text-red-700 dark:bg-red-950/80 dark:border-red-800/80 dark:text-red-400 text-2xs font-mono font-bold">
-              <CheckCircle2 className="h-3.5 w-3.5" />
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-zinc-100 border border-zinc-200 text-zinc-800 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-200 text-2xs font-mono font-bold">
+              <CheckCircle2 className="h-3.5 w-3.5 text-red-600 dark:text-red-400" />
               JOIN OVER {memberCount} FAIRVIEW BUILDERS
             </div>
             <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-zinc-900 dark:text-white">

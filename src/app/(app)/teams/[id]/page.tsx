@@ -61,7 +61,7 @@ export default async function TeamWorkspacePage({
           <div>
             <div className="flex items-center gap-2 mb-1.5">
               <Badge variant="outline" className="text-3xs font-mono">
-                {comp?.name || 'Competition Subteam'}
+                {comp?.name || 'Competition Team'}
               </Badge>
               {team.is_recruiting ? (
                 <Badge variant="success" className="text-3xs">Recruiting Members</Badge>
@@ -91,7 +91,7 @@ export default async function TeamWorkspacePage({
           {/* About Section */}
           <Card className="bg-white dark:bg-zinc-900/90 border-zinc-200/90 dark:border-zinc-800 shadow-sm">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base font-bold text-zinc-900 dark:text-white">Subteam Mission & Objectives</CardTitle>
+              <CardTitle className="text-base font-bold text-zinc-900 dark:text-white">Team Mission & Objectives</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-zinc-700 dark:text-zinc-300 whitespace-pre-wrap leading-relaxed">

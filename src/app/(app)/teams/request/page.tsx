@@ -36,7 +36,7 @@ export default async function TeamRequestPage({
           Submit Team Proposal Form
         </h1>
         <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-          Form a new student engineering subteam for an approved club competition. When approved by officers, the team is automatically created and you are designated as the Team Lead.
+          Form a new student engineering team for an approved club competition. When approved by officers, the team is automatically created and you are designated as the Team Lead.
         </p>
       </div>
 

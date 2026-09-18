@@ -241,28 +241,30 @@ export function AppSidebar({
             </div>
           )}
 
-          {/* Pinned Tier 1 Essential Hubs Rail */}
+          {/* Essential Club Hubs (Pinned Tier 1) */}
           {primaryLinks.length > 0 && (
             <div className="pt-3.5 border-t border-zinc-200 dark:border-zinc-800">
-              <div className="text-2xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest px-2 mb-1.5 font-mono">
-                Pinned Hubs (Tier 1)
+              <div className="flex items-center justify-between px-2 mb-1.5">
+                <span className="text-2xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider font-mono">
+                  Essential Club Hubs
+                </span>
               </div>
-              <div className="space-y-0.5">
+              <div className="space-y-1">
                 {primaryLinks.map((link) => (
                   <a
                     key={link.id}
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-red-600 dark:hover:text-red-400 transition-all group"
+                    className="flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-red-600 dark:hover:text-red-400 transition-colors group"
                   >
                     <div className="flex items-center gap-2 truncate">
-                      <span className="text-red-600 dark:text-red-500 shrink-0">
+                      <span className="flex h-5 w-5 items-center justify-center rounded bg-zinc-100 dark:bg-zinc-800 text-red-600 dark:text-red-400 shrink-0">
                         {getLinkIcon(link.icon, 'h-3.5 w-3.5')}
                       </span>
                       <span className="truncate">{link.label}</span>
                     </div>
-                    <ExternalLink className="h-3 w-3 text-zinc-400 dark:text-zinc-600 group-hover:text-red-600 dark:group-hover:text-red-400 opacity-0 group-hover:opacity-100 shrink-0" />
+                    <ExternalLink className="h-3 w-3 text-zinc-400 dark:text-zinc-500 group-hover:text-red-600 dark:group-hover:text-red-400 opacity-60 group-hover:opacity-100 shrink-0" />
                   </a>
                 ))}
               </div>

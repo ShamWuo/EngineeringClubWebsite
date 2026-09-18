@@ -103,7 +103,7 @@ export function TeamRequestForm({
 
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-              Subteam Mission, Objectives & Deliverables *
+              Team Mission, Objectives & Deliverables *
             </label>
             <Textarea
               required
