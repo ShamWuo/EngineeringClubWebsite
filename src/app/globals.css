@@ -246,46 +246,72 @@
 
 .vector-parallax-plane {
   will-change: transform;
-  transform: translate3d(
-    calc(var(--px, 0) * var(--drift, 0.2) * 1px),
-    calc(var(--py, 0) * var(--vdrift, 0.1) * 1px + var(--scroll-s, 0) * var(--lag, 0) * 1px),
-    0
+}
+
+/* ── Living Animated Sunset Dynamics ────────────────────────── */
+
+/* Living shifting sky gradient */
+/* Shifting twilight atmosphere: subtle lighting breathing (no position jumping or rotation) */
+.sunset-living-sky {
+  background: linear-gradient(
+    to bottom,
+    #100c24 0%,
+    #360f38 28%,
+    #7a1438 52%,
+    #c43c0a 74%,
+    #f59e0b 100%
   );
+  animation: sunset-sky-glow 18s ease-in-out infinite alternate;
 }
 
-.sunset-god-rays {
-  background: conic-gradient(
-    from 225deg at 67% 61%,
-    rgba(254, 240, 138, 0.18) 0deg,
-    transparent 9deg,
-    rgba(251, 146, 60, 0.14) 18deg,
-    transparent 28deg,
-    rgba(254, 240, 138, 0.22) 38deg,
-    transparent 50deg,
-    rgba(251, 146, 60, 0.12) 62deg,
-    transparent 74deg,
-    rgba(254, 240, 138, 0.16) 86deg,
-    transparent 102deg,
-    transparent 360deg
-  );
-  mask-image: radial-gradient(circle at 67% 61%, black 0%, transparent 72%);
-  -webkit-mask-image: radial-gradient(circle at 67% 61%, black 0%, transparent 72%);
-  animation: sunset-rays-breathe 11s ease-in-out infinite alternate;
+@keyframes sunset-sky-glow {
+  0% {
+    filter: brightness(1) saturate(1);
+  }
+  50% {
+    filter: brightness(1.06) saturate(1.12);
+  }
+  100% {
+    filter: brightness(0.98) saturate(1.05);
+  }
 }
 
-@keyframes sunset-rays-breathe {
-  from { opacity: 0.55; }
-  to   { opacity: 0.95; }
+/* Realistic horizontal cloud drifts: strictly X-axis glide, no swaying or tilting */
+.sunset-cloud-drift-1 {
+  animation: cloud-drift-1 70s ease-in-out infinite alternate;
 }
 
-/* Copy rides its own channel — eases downward as the page scrolls up (a
-   near-field object sinking out of frame) with a touch of pointer sway. */
+.sunset-cloud-drift-2 {
+  animation: cloud-drift-2 52s ease-in-out infinite alternate;
+}
+
+.sunset-cloud-drift-3 {
+  animation: cloud-drift-3 38s ease-in-out infinite alternate;
+}
+
+@keyframes cloud-drift-1 {
+  0%   { transform: translateX(-8%); }
+  100% { transform: translateX(8%); }
+}
+
+@keyframes cloud-drift-2 {
+  0%   { transform: translateX(6%); }
+  100% { transform: translateX(-6%); }
+}
+
+@keyframes cloud-drift-3 {
+  0%   { transform: translateX(-5%); }
+  100% { transform: translateX(5%); }
+}
+
+/* Copy rides its own channel — eases upward and fades on scroll */
 .hero-copy-drift {
   transform: translate3d(
-    calc(var(--copy-p, 0) * 0.06px),
-    calc(var(--copy-s, 0) * 1px),
+    calc(var(--px, 0) * 0.15px),
+    calc(var(--scroll-s, 0) * -0.55px),
     0
   );
+  opacity: max(0, calc(1 - var(--scroll-s, 0) / 380));
 }
 
 /* Text glow that keeps the headline legible over the crest lines */
